@@ -1,0 +1,17 @@
+﻿# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.vs/
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# Config
+appsettings.json
+appsettings.Development.json
