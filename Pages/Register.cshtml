@@ -1,0 +1,101 @@
+﻿@page
+@model Khronos4.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Register a free Khronos Pro account";
+}
+
+<div class="form-container">
+    <h3 class="text-center">Create a New Account</h3>
+
+    <form method="post">
+        <div class="form-group">
+            <label>First Name:</label>
+            <input asp-for="FirstName" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input asp-for="LastName" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+            <label>Suffix:</label>
+            <input asp-for="Suffix" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Congregation:</label>
+            <select asp-for="Congregation" asp-items="Model.Congregations" class="form-control">
+                <option value="">-- Select Congregation --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Language:</label>
+            <input asp-for="Language" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            <input asp-for="Email" type="email" class="form-control" required />
+        </div>
+
+        <!-- Password with Toggle -->
+        <div class="form-group position-relative">
+            <label>Password:</label>
+            <input asp-for="Password" type="password" class="form-control" id="passwordField" required />
+            <span class="toggle-password" onclick="togglePassword('passwordField', 'toggleIcon1')">
+                <i id="toggleIcon1" class="fas fa-eye"></i>
+            </span>
+        </div>
+
+        <!-- Confirm Password with Toggle -->
+        <div class="form-group position-relative">
+            <label>Confirm Password:</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" id="confirmPasswordField" required />
+            <span class="toggle-password" onclick="togglePassword('confirmPasswordField', 'toggleIcon2')">
+                <i id="toggleIcon2" class="fas fa-eye"></i>
+            </span>
+        </div>
+
+        <div class="form-group">
+            <label>Phone:</label>
+            <input asp-for="Phone" type="tel" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Security Question 1:</label>
+            <select asp-for="SecurityQuestion1" class="form-control">
+                <option>What is your favorite book?</option>
+                <option>What is your mother's maiden name?</option>
+                <option>What city were you born in?</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Answer 1:</label>
+            <input asp-for="SecurityAnswer1" type="text" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+            <label>Security Question 2:</label>
+            <select asp-for="SecurityQuestion2" class="form-control">
+                <option>What is your favorite book?</option>
+                <option>What is your mother's maiden name?</option>
+                <option>What city were you born in?</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Answer 2:</label>
+            <input asp-for="SecurityAnswer2" type="text" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn-login">Register</button>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p class="error-message">@Model.ErrorMessage</p>
+        }
+    </form>
+</div>

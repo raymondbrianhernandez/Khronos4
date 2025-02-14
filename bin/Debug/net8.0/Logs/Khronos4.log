@@ -1,0 +1,510 @@
+2025-02-09 21:54:00.3612 | INFO | ✅ Khronos4 Web App Started! 
+2025-02-09 21:54:00.5149 | INFO | User profile is available. Using 'C:\Users\Owner\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest. 
+2025-02-09 21:54:00.8979 | INFO | Now listening on: https://localhost:7094 
+2025-02-09 21:54:00.8979 | INFO | Now listening on: http://localhost:5151 
+2025-02-09 21:54:00.9520 | INFO | Application started. Press Ctrl+C to shut down. 
+2025-02-09 21:54:00.9520 | INFO | Hosting environment: Development 
+2025-02-09 21:54:00.9520 | INFO | Content root path: C:\Users\Owner\source\repos\Khronos4 
+2025-02-09 21:54:02.2084 | INFO | Request starting HTTP/2 GET https://localhost:7094/ - - - 
+2025-02-09 21:54:02.3980 | INFO | Executing endpoint 'HTTP: GET /' 
+2025-02-09 21:54:02.3980 | INFO | Executed endpoint 'HTTP: GET /' 
+2025-02-09 21:54:02.3980 | INFO | Request finished HTTP/2 GET https://localhost:7094/ - 302 0 - 202.3000ms 
+2025-02-09 21:54:02.4120 | INFO | Request starting HTTP/2 GET https://localhost:7094/Login - - - 
+2025-02-09 21:54:02.4342 | INFO | Executing endpoint '/Login' 
+2025-02-09 21:54:02.4596 | INFO | Route matched with {page = "/Login"}. Executing page /Login 
+2025-02-09 21:54:02.5939 | INFO | Executing handler method Khronos4.Pages.LoginModel.OnGet - ModelState is Valid 
+2025-02-09 21:54:02.6111 | INFO | Executed handler method OnGet, returned result . 
+2025-02-09 21:54:02.6138 | INFO | Executing an implicit handler method - ModelState is Valid 
+2025-02-09 21:54:02.6138 | INFO | Executed an implicit handler method, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-09 21:54:02.7223 | INFO | Request starting HTTP/2 GET https://localhost:7094/Dashboard - - - 
+2025-02-09 21:54:02.7223 | INFO | Executed page /Login in 260.5192ms 
+2025-02-09 21:54:02.7223 | INFO | Executed endpoint '/Login' 
+2025-02-09 21:54:02.7223 | INFO | Request finished HTTP/2 GET https://localhost:7094/Login - 302 - text/html;+charset=utf-8 317.2549ms 
+2025-02-09 21:54:02.7223 | INFO | Executing endpoint '/Dashboard' 
+2025-02-09 21:54:02.7223 | INFO | Route matched with {page = "/Dashboard"}. Executing page /Dashboard 
+2025-02-09 21:54:02.7388 | INFO | Executing handler method Khronos4.Pages.DashboardModel.OnGet - ModelState is Valid 
+2025-02-09 21:54:03.4740 | INFO | Executed handler method OnGet, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-09 21:54:03.4912 | INFO | Executed page /Dashboard in 757.5639ms 
+2025-02-09 21:54:03.4912 | INFO | Executed endpoint '/Dashboard' 
+2025-02-09 21:54:03.4912 | INFO | Request finished HTTP/2 GET https://localhost:7094/Dashboard - 200 - text/html;+charset=utf-8 776.1631ms 
+2025-02-09 21:54:03.5848 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-09 21:54:03.5848 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-09 21:54:03.5848 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 7.4203ms 
+2025-02-09 21:54:03.6248 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 38.3685ms 
+2025-02-09 21:54:05.0875 | INFO | Request starting HTTP/2 GET https://localhost:7094/H2HRecords - - - 
+2025-02-09 21:54:05.0875 | INFO | Executing endpoint '/H2HRecords' 
+2025-02-09 21:54:05.0875 | INFO | Route matched with {page = "/H2HRecords"}. Executing page /H2HRecords 
+2025-02-09 21:54:05.1003 | INFO | Executing handler method Khronos4.Pages.H2HRecordsModel.OnGetAsync - ModelState is Valid 
+2025-02-09 21:54:05.1371 | INFO | Executed handler method OnGetAsync, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-09 21:54:05.1554 | INFO | Executed page /H2HRecords in 59.9627ms 
+2025-02-09 21:54:05.1554 | INFO | Executed endpoint '/H2HRecords' 
+2025-02-09 21:54:05.1554 | INFO | Request finished HTTP/2 GET https://localhost:7094/H2HRecords - 200 - text/html;+charset=utf-8 68.6522ms 
+2025-02-09 21:54:05.2004 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-09 21:54:05.2004 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-09 21:54:05.2004 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 1.7026ms 
+2025-02-09 21:54:05.2193 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 19.0700ms 
+2025-02-10 10:05:37.0095 | INFO | ✅ Khronos4 Web App Started! 
+2025-02-10 10:05:37.1941 | INFO | User profile is available. Using 'C:\Users\Owner\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest. 
+2025-02-10 10:05:37.7027 | INFO | Now listening on: https://localhost:7094 
+2025-02-10 10:05:37.7027 | INFO | Now listening on: http://localhost:5151 
+2025-02-10 10:05:37.7589 | INFO | Application started. Press Ctrl+C to shut down. 
+2025-02-10 10:05:37.7589 | INFO | Hosting environment: Development 
+2025-02-10 10:05:37.7589 | INFO | Content root path: C:\Users\Owner\source\repos\Khronos4 
+2025-02-10 10:05:38.6555 | INFO | Request starting HTTP/2 GET https://localhost:7094/ - - - 
+2025-02-10 10:05:38.8549 | INFO | Executing endpoint 'HTTP: GET /' 
+2025-02-10 10:05:38.8549 | INFO | Executed endpoint 'HTTP: GET /' 
+2025-02-10 10:05:38.8549 | INFO | Request finished HTTP/2 GET https://localhost:7094/ - 302 0 - 212.8391ms 
+2025-02-10 10:05:38.8662 | INFO | Request starting HTTP/2 GET https://localhost:7094/Login - - - 
+2025-02-10 10:05:38.8870 | INFO | Executing endpoint '/Login' 
+2025-02-10 10:05:38.9202 | INFO | Route matched with {page = "/Login"}. Executing page /Login 
+2025-02-10 10:05:39.0623 | INFO | Executing handler method Khronos4.Pages.LoginModel.OnGet - ModelState is Valid 
+2025-02-10 10:05:39.0772 | INFO | Executed handler method OnGet, returned result . 
+2025-02-10 10:05:39.0772 | INFO | Executing an implicit handler method - ModelState is Valid 
+2025-02-10 10:05:39.0772 | INFO | Executed an implicit handler method, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:05:39.1719 | INFO | Request starting HTTP/2 GET https://localhost:7094/Dashboard - - - 
+2025-02-10 10:05:39.1799 | INFO | Executed page /Login in 255.7048ms 
+2025-02-10 10:05:39.1799 | INFO | Executed endpoint '/Login' 
+2025-02-10 10:05:39.1799 | INFO | Executing endpoint '/Dashboard' 
+2025-02-10 10:05:39.1799 | INFO | Route matched with {page = "/Dashboard"}. Executing page /Dashboard 
+2025-02-10 10:05:39.1799 | INFO | Request finished HTTP/2 GET https://localhost:7094/Login - 302 - text/html;+charset=utf-8 317.6935ms 
+2025-02-10 10:05:39.1799 | INFO | Executing handler method Khronos4.Pages.DashboardModel.OnGet - ModelState is Valid 
+2025-02-10 10:05:40.0088 | INFO | Executed handler method OnGet, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:05:40.0289 | INFO | Executed page /Dashboard in 845.6953ms 
+2025-02-10 10:05:40.0289 | INFO | Executed endpoint '/Dashboard' 
+2025-02-10 10:05:40.0349 | INFO | Request finished HTTP/2 GET https://localhost:7094/Dashboard - 200 - text/html;+charset=utf-8 863.0525ms 
+2025-02-10 10:05:40.0578 | INFO | Request starting HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/css/bootstrap.min.css - - - 
+2025-02-10 10:05:40.0691 | INFO | Request starting HTTP/2 GET https://localhost:7094/css/site.css?v=_-rd1BMAxPCCk54-1QgEQcshnnISyEgqt4SBparegLI - - - 
+2025-02-10 10:05:40.0691 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/khronos.gif - - - 
+2025-02-10 10:05:40.0691 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/schedule.png - - - 
+2025-02-10 10:05:40.0691 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/map.png - - - 
+2025-02-10 10:05:40.0691 | INFO | Request starting HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/js/bootstrap.bundle.min.js - - - 
+2025-02-10 10:05:40.0691 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/business-man.png - - - 
+2025-02-10 10:05:40.0691 | INFO | Request starting HTTP/2 GET https://localhost:7094/lib/jquery/dist/jquery.min.js - - - 
+2025-02-10 10:05:40.1180 | INFO | Request starting HTTP/2 GET https://localhost:7094/js/site.js?v=1MR_8Q3RvpWHpBhG9jti4xexJbQnlyOmZc0MHRj6F4c - - - 
+2025-02-10 10:05:40.1180 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-10 10:05:40.1353 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-10 10:05:40.1496 | INFO | Sending file. Request path: '/js/site.js'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\js\site.js' 
+2025-02-10 10:05:40.1496 | INFO | Request finished HTTP/2 GET https://localhost:7094/js/site.js?v=1MR_8Q3RvpWHpBhG9jti4xexJbQnlyOmZc0MHRj6F4c - 200 1737 text/javascript 32.5289ms 
+2025-02-10 10:05:40.1496 | INFO | Sending file. Request path: '/images/schedule.png'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\schedule.png' 
+2025-02-10 10:05:40.1496 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/schedule.png - 200 28360 image/png 81.1894ms 
+2025-02-10 10:05:40.1496 | INFO | Sending file. Request path: '/css/site.css'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\css\site.css' 
+2025-02-10 10:05:40.1496 | INFO | Sending file. Request path: '/images/business-man.png'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\business-man.png' 
+2025-02-10 10:05:40.1496 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/business-man.png - 200 16784 image/png 83.3750ms 
+2025-02-10 10:05:40.1496 | INFO | Request finished HTTP/2 GET https://localhost:7094/css/site.css?v=_-rd1BMAxPCCk54-1QgEQcshnnISyEgqt4SBparegLI - 200 12142 text/css 85.9044ms 
+2025-02-10 10:05:40.1496 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 33.5194ms 
+2025-02-10 10:05:40.1619 | INFO | Sending file. Request path: '/images/map.png'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\map.png' 
+2025-02-10 10:05:40.1619 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/map.png - 200 49758 image/png 93.2757ms 
+2025-02-10 10:05:40.1619 | INFO | Sending file. Request path: '/lib/bootstrap/dist/js/bootstrap.bundle.min.js'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js' 
+2025-02-10 10:05:40.1619 | INFO | Request finished HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/js/bootstrap.bundle.min.js - 200 78468 text/javascript 95.5644ms 
+2025-02-10 10:05:40.1619 | INFO | Sending file. Request path: '/lib/jquery/dist/jquery.min.js'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\lib\jquery\dist\jquery.min.js' 
+2025-02-10 10:05:40.1619 | INFO | Sending file. Request path: '/images/khronos.gif'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\khronos.gif' 
+2025-02-10 10:05:40.1619 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/khronos.gif - 200 152253 image/gif 98.8187ms 
+2025-02-10 10:05:40.1619 | INFO | Request finished HTTP/2 GET https://localhost:7094/lib/jquery/dist/jquery.min.js - 200 89501 text/javascript 98.0222ms 
+2025-02-10 10:05:40.1619 | INFO | Sending file. Request path: '/lib/bootstrap/dist/css/bootstrap.min.css'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css' 
+2025-02-10 10:05:40.1619 | INFO | Request finished HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/css/bootstrap.min.css - 200 162720 text/css 111.8821ms 
+2025-02-10 10:05:40.1898 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 55.3277ms 
+2025-02-10 10:05:44.3169 | INFO | Request starting HTTP/2 GET https://localhost:7094/H2HRecords - - - 
+2025-02-10 10:05:44.3169 | INFO | Executing endpoint '/H2HRecords' 
+2025-02-10 10:05:44.3169 | INFO | Route matched with {page = "/H2HRecords"}. Executing page /H2HRecords 
+2025-02-10 10:05:44.3169 | INFO | Executing handler method Khronos4.Pages.H2HRecordsModel.OnGetAsync - ModelState is Valid 
+2025-02-10 10:05:44.3661 | INFO | Executed handler method OnGetAsync, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:05:44.3847 | INFO | Executed page /H2HRecords in 59.9623ms 
+2025-02-10 10:05:44.3847 | INFO | Executed endpoint '/H2HRecords' 
+2025-02-10 10:05:44.3847 | INFO | Request finished HTTP/2 GET https://localhost:7094/H2HRecords - 200 - text/html;+charset=utf-8 68.9167ms 
+2025-02-10 10:05:44.4267 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-10 10:05:44.4267 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-10 10:05:44.4267 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 2.7794ms 
+2025-02-10 10:05:44.4474 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 20.8559ms 
+2025-02-10 10:05:51.6058 | INFO | Request starting HTTP/2 POST https://localhost:7094/H2HRecords - application/x-www-form-urlencoded 376 
+2025-02-10 10:05:51.6058 | INFO | Executing endpoint '/H2HRecords' 
+2025-02-10 10:05:51.6058 | INFO | Route matched with {page = "/H2HRecords"}. Executing page /H2HRecords 
+2025-02-10 10:05:51.6316 | INFO | Executing handler method Khronos4.Pages.H2HRecordsModel.OnPostAsync - ModelState is Invalid 
+2025-02-10 10:05:51.6316 | INFO | Start processing HTTP request GET https://maps.googleapis.com/maps/api/geocode/json?address=21042%20Keswick%20St&key=AIzaSyC8li2lywcN-LK9aCsVFpuCoGX1F7IO_-8 
+2025-02-10 10:05:51.6316 | INFO | Sending HTTP request GET https://maps.googleapis.com/maps/api/geocode/json?address=21042%20Keswick%20St&key=AIzaSyC8li2lywcN-LK9aCsVFpuCoGX1F7IO_-8 
+2025-02-10 10:05:51.8643 | INFO | Received HTTP response headers after 223.8084ms - 200 
+2025-02-10 10:05:51.8643 | INFO | End processing HTTP request after 229.5928ms - 200 
+2025-02-10 10:05:51.8643 | INFO | 📡 API Response: {
+   "results" : 
+   [
+      {
+         "address_components" : 
+         [
+            {
+               "long_name" : "21042",
+               "short_name" : "21042",
+               "types" : 
+               [
+                  "street_number"
+               ]
+            },
+            {
+               "long_name" : "Keswick Street",
+               "short_name" : "Keswick St",
+               "types" : 
+               [
+                  "route"
+               ]
+            },
+            {
+               "long_name" : "Canoga Park",
+               "short_name" : "Canoga Park",
+               "types" : 
+               [
+                  "neighborhood",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "Los Angeles",
+               "short_name" : "Los Angeles",
+               "types" : 
+               [
+                  "locality",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "Los Angeles County",
+               "short_name" : "Los Angeles County",
+               "types" : 
+               [
+                  "administrative_area_level_2",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : 
+               [
+                  "administrative_area_level_1",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : 
+               [
+                  "country",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "91304",
+               "short_name" : "91304",
+               "types" : 
+               [
+                  "postal_code"
+               ]
+            },
+            {
+               "long_name" : "5610",
+               "short_name" : "5610",
+               "types" : 
+               [
+                  "postal_code_suffix"
+               ]
+            }
+         ],
+         "formatted_address" : "21042 Keswick St, Canoga Park, CA 91304, USA",
+         "geometry" : 
+         {
+            "bounds" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 34.2101575,
+                  "lng" : -118.5921651
+               },
+               "southwest" : 
+               {
+                  "lat" : 34.20995,
+                  "lng" : -118.5923441
+               }
+            },
+            "location" : 
+            {
+               "lat" : 34.2100536,
+               "lng" : -118.5922447
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 34.2114572302915,
+                  "lng" : -118.5909056197085
+               },
+               "southwest" : 
+               {
+                  "lat" : 34.2087592697085,
+                  "lng" : -118.5936035802915
+               }
+            }
+         },
+         "navigation_points" : 
+         [
+            {
+               "location" : 
+               {
+                  "latitude" : 34.2102035,
+                  "longitude" : -118.5922451
+               }
+            }
+         ],
+         "place_id" : "ChIJReHN5G2cwoARFamG61MsFDo",
+         "types" : 
+         [
+            "premise"
+         ]
+      }
+   ],
+   "status" : "OK"
+} 
+2025-02-10 10:05:51.8643 | INFO | 📍 Extracted Coordinates: Lat=34.2100536, Lng=-118.5922447 
+2025-02-10 10:05:51.9417 | INFO | Executed handler method OnPostAsync, returned result Microsoft.AspNetCore.Mvc.RedirectToPageResult. 
+2025-02-10 10:05:51.9417 | INFO | Executing RedirectToPageResult, redirecting to H2HRecords. 
+2025-02-10 10:05:51.9417 | INFO | Executed page /H2HRecords in 335.5766ms 
+2025-02-10 10:05:51.9417 | INFO | Executed endpoint '/H2HRecords' 
+2025-02-10 10:05:51.9417 | INFO | Request finished HTTP/2 POST https://localhost:7094/H2HRecords - 302 0 - 340.1943ms 
+2025-02-10 10:05:51.9417 | INFO | Request starting HTTP/2 GET https://localhost:7094/H2HRecords - - - 
+2025-02-10 10:05:51.9417 | INFO | Executing endpoint '/H2HRecords' 
+2025-02-10 10:05:51.9417 | INFO | Route matched with {page = "/H2HRecords"}. Executing page /H2HRecords 
+2025-02-10 10:05:51.9417 | INFO | Executing handler method Khronos4.Pages.H2HRecordsModel.OnGetAsync - ModelState is Valid 
+2025-02-10 10:05:51.9600 | INFO | Executed handler method OnGetAsync, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:05:51.9600 | INFO | Executed page /H2HRecords in 11.8869ms 
+2025-02-10 10:05:51.9600 | INFO | Executed endpoint '/H2HRecords' 
+2025-02-10 10:05:51.9600 | INFO | Request finished HTTP/2 GET https://localhost:7094/H2HRecords - 200 - text/html;+charset=utf-8 15.6047ms 
+2025-02-10 10:05:52.0066 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-10 10:05:52.0066 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-10 10:05:52.0066 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 1.5752ms 
+2025-02-10 10:05:52.0066 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 11.0025ms 
+2025-02-10 10:07:55.5985 | INFO | ✅ Khronos4 Web App Started! 
+2025-02-10 10:07:55.7789 | INFO | User profile is available. Using 'C:\Users\Owner\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest. 
+2025-02-10 10:07:56.2391 | INFO | Now listening on: https://localhost:7094 
+2025-02-10 10:07:56.2391 | INFO | Now listening on: http://localhost:5151 
+2025-02-10 10:07:56.2813 | INFO | Application started. Press Ctrl+C to shut down. 
+2025-02-10 10:07:56.2813 | INFO | Hosting environment: Development 
+2025-02-10 10:07:56.2813 | INFO | Content root path: C:\Users\Owner\source\repos\Khronos4 
+2025-02-10 10:07:57.4320 | INFO | Request starting HTTP/2 GET https://localhost:7094/ - - - 
+2025-02-10 10:07:57.6395 | INFO | Executing endpoint 'HTTP: GET /' 
+2025-02-10 10:07:57.6395 | INFO | Executed endpoint 'HTTP: GET /' 
+2025-02-10 10:07:57.6467 | INFO | Request finished HTTP/2 GET https://localhost:7094/ - 302 0 - 222.0411ms 
+2025-02-10 10:07:57.6624 | INFO | Request starting HTTP/2 GET https://localhost:7094/Login - - - 
+2025-02-10 10:07:57.6764 | INFO | Executing endpoint '/Login' 
+2025-02-10 10:07:57.7473 | INFO | Route matched with {page = "/Login"}. Executing page /Login 
+2025-02-10 10:07:57.8910 | INFO | Executing handler method Khronos4.Pages.LoginModel.OnGet - ModelState is Valid 
+2025-02-10 10:07:57.9090 | INFO | Executed handler method OnGet, returned result . 
+2025-02-10 10:07:57.9119 | INFO | Executing an implicit handler method - ModelState is Valid 
+2025-02-10 10:07:57.9119 | INFO | Executed an implicit handler method, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:07:58.0146 | INFO | Request starting HTTP/2 GET https://localhost:7094/Dashboard - - - 
+2025-02-10 10:07:58.0195 | INFO | Executed page /Login in 258.0067ms 
+2025-02-10 10:07:58.0195 | INFO | Executed endpoint '/Login' 
+2025-02-10 10:07:58.0195 | INFO | Request finished HTTP/2 GET https://localhost:7094/Login - 302 - text/html;+charset=utf-8 362.1918ms 
+2025-02-10 10:07:58.0195 | INFO | Executing endpoint '/Dashboard' 
+2025-02-10 10:07:58.0195 | INFO | Route matched with {page = "/Dashboard"}. Executing page /Dashboard 
+2025-02-10 10:07:58.0195 | INFO | Executing handler method Khronos4.Pages.DashboardModel.OnGet - ModelState is Valid 
+2025-02-10 10:07:58.9710 | INFO | Executed handler method OnGet, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:07:58.9887 | INFO | Executed page /Dashboard in 961.0375ms 
+2025-02-10 10:07:58.9887 | INFO | Executed endpoint '/Dashboard' 
+2025-02-10 10:07:58.9887 | INFO | Request finished HTTP/2 GET https://localhost:7094/Dashboard - 200 - text/html;+charset=utf-8 988.2859ms 
+2025-02-10 10:07:59.1150 | INFO | Request starting HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/css/bootstrap.min.css - - - 
+2025-02-10 10:07:59.1150 | INFO | Request starting HTTP/2 GET https://localhost:7094/css/site.css?v=_-rd1BMAxPCCk54-1QgEQcshnnISyEgqt4SBparegLI - - - 
+2025-02-10 10:07:59.1150 | INFO | Request starting HTTP/2 GET https://localhost:7094/lib/jquery/dist/jquery.min.js - - - 
+2025-02-10 10:07:59.1150 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/schedule.png - - - 
+2025-02-10 10:07:59.1150 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/khronos.gif - - - 
+2025-02-10 10:07:59.1150 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/business-man.png - - - 
+2025-02-10 10:07:59.1150 | INFO | Request starting HTTP/2 GET https://localhost:7094/images/map.png - - - 
+2025-02-10 10:07:59.1321 | INFO | Request starting HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/js/bootstrap.bundle.min.js - - - 
+2025-02-10 10:07:59.1727 | INFO | Request starting HTTP/2 GET https://localhost:7094/js/site.js?v=1MR_8Q3RvpWHpBhG9jti4xexJbQnlyOmZc0MHRj6F4c - - - 
+2025-02-10 10:07:59.1791 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-10 10:07:59.1971 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-10 10:07:59.2132 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 33.1734ms 
+2025-02-10 10:07:59.2423 | INFO | Sending file. Request path: '/js/site.js'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\js\site.js' 
+2025-02-10 10:07:59.2423 | INFO | Request finished HTTP/2 GET https://localhost:7094/js/site.js?v=1MR_8Q3RvpWHpBhG9jti4xexJbQnlyOmZc0MHRj6F4c - 200 1737 text/javascript 70.6352ms 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/images/schedule.png'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\schedule.png' 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/images/business-man.png'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\business-man.png' 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/css/site.css'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\css\site.css' 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/business-man.png - 200 16784 image/png 136.9117ms 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/schedule.png - 200 28360 image/png 137.6339ms 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/css/site.css?v=_-rd1BMAxPCCk54-1QgEQcshnnISyEgqt4SBparegLI - 200 12142 text/css 137.9998ms 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/images/map.png'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\map.png' 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/map.png - 200 49758 image/png 140.5227ms 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/lib/bootstrap/dist/js/bootstrap.bundle.min.js'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js' 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/lib/jquery/dist/jquery.min.js'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\lib\jquery\dist\jquery.min.js' 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/js/bootstrap.bundle.min.js - 200 78468 text/javascript 134.7996ms 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/lib/jquery/dist/jquery.min.js - 200 89501 text/javascript 148.0583ms 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/images/khronos.gif'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\images\khronos.gif' 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/images/khronos.gif - 200 152253 image/gif 149.7509ms 
+2025-02-10 10:07:59.2539 | INFO | Sending file. Request path: '/lib/bootstrap/dist/css/bootstrap.min.css'. Physical path: 'C:\Users\Owner\source\repos\Khronos4\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css' 
+2025-02-10 10:07:59.2539 | INFO | Request finished HTTP/2 GET https://localhost:7094/lib/bootstrap/dist/css/bootstrap.min.css - 200 162720 text/css 153.6748ms 
+2025-02-10 10:07:59.2928 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 99.0372ms 
+2025-02-10 10:08:00.8656 | INFO | Request starting HTTP/2 GET https://localhost:7094/H2HRecords - - - 
+2025-02-10 10:08:00.8656 | INFO | Executing endpoint '/H2HRecords' 
+2025-02-10 10:08:00.8656 | INFO | Route matched with {page = "/H2HRecords"}. Executing page /H2HRecords 
+2025-02-10 10:08:00.8791 | INFO | Executing handler method Khronos4.Pages.H2HRecordsModel.OnGetAsync - ModelState is Valid 
+2025-02-10 10:08:00.9240 | INFO | Executed handler method OnGetAsync, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:08:00.9449 | INFO | Executed page /H2HRecords in 70.9915ms 
+2025-02-10 10:08:00.9449 | INFO | Executed endpoint '/H2HRecords' 
+2025-02-10 10:08:00.9449 | INFO | Request finished HTTP/2 GET https://localhost:7094/H2HRecords - 200 - text/html;+charset=utf-8 80.1088ms 
+2025-02-10 10:08:01.0370 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-10 10:08:01.0370 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-10 10:08:01.0370 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 2.5293ms 
+2025-02-10 10:08:01.0587 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 21.0580ms 
+2025-02-10 10:08:14.6399 | INFO | Request starting HTTP/2 POST https://localhost:7094/H2HRecords - application/x-www-form-urlencoded 383 
+2025-02-10 10:08:14.6399 | INFO | Executing endpoint '/H2HRecords' 
+2025-02-10 10:08:14.6399 | INFO | Route matched with {page = "/H2HRecords"}. Executing page /H2HRecords 
+2025-02-10 10:08:14.6585 | INFO | Executing handler method Khronos4.Pages.H2HRecordsModel.OnPostAsync - ModelState is Invalid 
+2025-02-10 10:08:14.6638 | INFO | Start processing HTTP request GET https://maps.googleapis.com/maps/api/geocode/json?address=44433%20Kingtree%20Ave&key=AIzaSyC8li2lywcN-LK9aCsVFpuCoGX1F7IO_-8 
+2025-02-10 10:08:14.6638 | INFO | Sending HTTP request GET https://maps.googleapis.com/maps/api/geocode/json?address=44433%20Kingtree%20Ave&key=AIzaSyC8li2lywcN-LK9aCsVFpuCoGX1F7IO_-8 
+2025-02-10 10:08:14.8638 | INFO | Received HTTP response headers after 196.6053ms - 200 
+2025-02-10 10:08:14.8638 | INFO | End processing HTTP request after 202.455ms - 200 
+2025-02-10 10:08:14.8638 | INFO | 📡 API Response: {
+   "results" : 
+   [
+      {
+         "address_components" : 
+         [
+            {
+               "long_name" : "44433",
+               "short_name" : "44433",
+               "types" : 
+               [
+                  "street_number"
+               ]
+            },
+            {
+               "long_name" : "Kingtree Avenue",
+               "short_name" : "Kingtree Ave",
+               "types" : 
+               [
+                  "route"
+               ]
+            },
+            {
+               "long_name" : "Lancaster",
+               "short_name" : "Lancaster",
+               "types" : 
+               [
+                  "locality",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "Los Angeles County",
+               "short_name" : "Los Angeles County",
+               "types" : 
+               [
+                  "administrative_area_level_2",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : 
+               [
+                  "administrative_area_level_1",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : 
+               [
+                  "country",
+                  "political"
+               ]
+            },
+            {
+               "long_name" : "93534",
+               "short_name" : "93534",
+               "types" : 
+               [
+                  "postal_code"
+               ]
+            },
+            {
+               "long_name" : "3307",
+               "short_name" : "3307",
+               "types" : 
+               [
+                  "postal_code_suffix"
+               ]
+            }
+         ],
+         "formatted_address" : "44433 Kingtree Ave, Lancaster, CA 93534, USA",
+         "geometry" : 
+         {
+            "bounds" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 34.690486,
+                  "lng" : -118.1512878
+               },
+               "southwest" : 
+               {
+                  "lat" : 34.6903741,
+                  "lng" : -118.1514177
+               }
+            },
+            "location" : 
+            {
+               "lat" : 34.6904359,
+               "lng" : -118.151331
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 34.6918369302915,
+                  "lng" : -118.1500037697085
+               },
+               "southwest" : 
+               {
+                  "lat" : 34.6891389697085,
+                  "lng" : -118.1527017302915
+               }
+            }
+         },
+         "navigation_points" : 
+         [
+            {
+               "location" : 
+               {
+                  "latitude" : 34.6905388,
+                  "longitude" : -118.1513322
+               }
+            }
+         ],
+         "place_id" : "ChIJF-YPuttawoAROTePNWADp04",
+         "types" : 
+         [
+            "premise"
+         ]
+      }
+   ],
+   "status" : "OK"
+} 
+2025-02-10 10:08:14.8638 | INFO | 📍 Extracted Coordinates: Lat=34.6904359, Lng=-118.151331 
+2025-02-10 10:08:14.9306 | INFO | Executed handler method OnPostAsync, returned result Microsoft.AspNetCore.Mvc.RedirectToPageResult. 
+2025-02-10 10:08:14.9306 | INFO | Executing RedirectToPageResult, redirecting to H2HRecords. 
+2025-02-10 10:08:14.9306 | INFO | Executed page /H2HRecords in 288.9783ms 
+2025-02-10 10:08:14.9306 | INFO | Executed endpoint '/H2HRecords' 
+2025-02-10 10:08:14.9306 | INFO | Request finished HTTP/2 POST https://localhost:7094/H2HRecords - 302 0 - 293.6672ms 
+2025-02-10 10:08:14.9306 | INFO | Request starting HTTP/2 GET https://localhost:7094/H2HRecords - - - 
+2025-02-10 10:08:14.9306 | INFO | Executing endpoint '/H2HRecords' 
+2025-02-10 10:08:14.9306 | INFO | Route matched with {page = "/H2HRecords"}. Executing page /H2HRecords 
+2025-02-10 10:08:14.9306 | INFO | Executing handler method Khronos4.Pages.H2HRecordsModel.OnGetAsync - ModelState is Valid 
+2025-02-10 10:08:14.9430 | INFO | Executed handler method OnGetAsync, returned result Microsoft.AspNetCore.Mvc.RazorPages.PageResult. 
+2025-02-10 10:08:14.9430 | INFO | Executed page /H2HRecords in 7.9472ms 
+2025-02-10 10:08:14.9430 | INFO | Executed endpoint '/H2HRecords' 
+2025-02-10 10:08:14.9430 | INFO | Request finished HTTP/2 GET https://localhost:7094/H2HRecords - 200 - text/html;+charset=utf-8 11.3472ms 
+2025-02-10 10:08:14.9956 | INFO | Request starting HTTP/2 GET https://localhost:7094/_vs/browserLink - - - 
+2025-02-10 10:08:14.9956 | INFO | Request starting HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - - - 
+2025-02-10 10:08:14.9956 | INFO | Request finished HTTP/2 GET https://localhost:7094/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript;+charset=utf-8 1.9724ms 
+2025-02-10 10:08:15.0112 | INFO | Request finished HTTP/2 GET https://localhost:7094/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 15.5010ms 

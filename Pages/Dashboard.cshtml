@@ -1,0 +1,57 @@
+﻿@page
+@model Khronos4.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Khronos Pro 4 Dashboard";
+
+    // Variables for the calendar widget
+    var currentDate = DateTime.Now;
+    var currentMonth = currentDate.ToString("MMMM yyyy");
+    var firstDayOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+    var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+}
+
+<div class="dashboard-container">
+    <div class="dashboard-title">Welcome, @Model.UserFullName from @Model.CongregationName Congregation!</div>
+
+    @* ****************************** MAIN GRID ****************************** *@
+    <center>
+    <div class="tile-grid">
+
+        @* Calendar Widget *@
+        <div class="tile calendar-container tile-green">
+            <img src="~/images/schedule.png" alt="Calendar Icon" class="tile-icon">
+            <div class="tile-title">@currentMonth Placements</div>
+            <div class="calendar-grid">
+                @for (var day = firstDayOfMonth; day <= lastDayOfMonth; day = day.AddDays(1))
+                {
+                    <a href="/Placements?date=@day.ToString("yyyy-MM-dd")" class="calendar-day">@day.Day</a>
+                }
+            </div>
+        </div>
+        
+        @* Field Service Widget *@
+        <div class="tile tile-green">
+            <img src="~/images/map.png" alt="Brother Icon" class="tile-icon">
+            <div class="tile-title">Field Service</div>
+            <div class="tile-buttons">
+                <a href="/H2HRecords" class="btn-tile">House-to-House Records</a>
+                <a href="/Annual Report" class="btn-tile">Annual Report</a>
+                <a href="/Placements" class="btn-tile">Placements</a>
+            </div>
+        </div>
+
+        @* KH Meetings Widget *@
+        <div class="tile tile-green">
+            <img src="~/images/business-man.png" alt="Brother Icon" class="tile-icon">
+            <div class="tile-title">KH Meetings</div>
+            <div class="tile-buttons">
+                <a href="@Model.JWMeetingUrl" target="_blank" class="btn-tile">Workbook This Week</a>
+                <a href="/MidweekMeetingManager" class="btn-tile">Midweek Meeting Manager</a>
+                <a href="/PublicTalkManager" class="btn-tile">Public Talk Manager</a>
+            </div>
+        </div>
+        
+    </div>
+    </center>
+</div>
+

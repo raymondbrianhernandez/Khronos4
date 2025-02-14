@@ -1,0 +1,331 @@
+﻿@page
+@model Khronos4.Pages.H2HRecordsModel
+@{
+    ViewData["Title"] = "House to House Records - Khronos Pro 4";
+}
+
+<!-- MapLibre CSS -->
+<link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+
+<h4 class="page-title">House-to-House Records</h4>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@* Begin Page Markup *@
+<!-- MAPLIBRE MAP -->
+<div id="map" class="map-container"></div>
+
+@* 
+  Added a row with a toggle button and a live search bar.
+  Using Bootstrap flex utilities to arrange them in one row.
+*@
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Toggle Button to Show/Hide Form -->
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#householderFormContainer" aria-expanded="false" aria-controls="householderFormContainer">
+        Add Householder Form
+    </button>
+
+    <!-- Live Search Bar (placed on the same row) -->
+    <input type="text" id="searchInput" class="form-control w-50" placeholder="Search householders..." />
+</div>
+
+@* 
+  Collapsible form container.
+  The container has the custom class "card-custom" (which you already defined for dark mode) 
+  and the form elements remain unchanged.
+*@
+<div class="collapse" id="householderFormContainer">
+    <div class="card card-body card-custom">
+        <form id="householderForm" method="post">
+            <div class="form-group mb-2">
+                <label>Name:</label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+                <label>Address:</label>
+                <input asp-for="Address" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+                <label>City:</label>
+                <input asp-for="City" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+                <label>Province/State:</label>
+                <input asp-for="Province" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+                <label>Postal Code:</label>
+                <input asp-for="Postal_Code" class="form-control" required />
+            </div>
+            <div class="form-group mb-2">
+                <label>Country:</label>
+                <input asp-for="Country" class="form-control" value="USA" />
+            </div>
+            <div class="form-group mb-2">
+                <label>Telephone:</label>
+                <input asp-for="Telephone" class="form-control" />
+            </div>
+            <div class="form-group mb-2">
+                <label>Language:</label>
+                <select asp-for="Language" asp-items="Model.LanguageOptions" class="form-control"></select>
+            </div>
+            <div class="form-group mb-2">
+                <label>Notes:</label>
+                <textarea asp-for="Notes" class="form-control"></textarea>
+            </div>
+            <div class="form-group mb-2">
+                <label>Status:</label>
+                <select asp-for="Status" class="form-control">
+                    <option value="Interested">Interested</option>
+                    <option value="Not Home">Not Home</option>
+                    <option value="Do Not Return">Do Not Return</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Householder</button>
+        </form>
+    </div>
+</div>
+
+@* 
+  Wrap the table in a Bootstrap "table-responsive" container.
+  This container will add horizontal scrolling if needed on small screens.
+  Also, note that the table has the custom class "table-custom" for dark mode styles.
+*@
+<div class="table-responsive">
+    <table class="table table-striped table-custom table-responsive">
+        <colgroup>
+            <col style="width: 2%; white-space: nowrap;"> <!-- # -->
+            <col style="width: 20%; white-space: nowrap;">  <!-- Name -->
+            <col style="width: 20%; white-space: nowrap;">  <!-- Directions -->
+            <col style="width: 15%; white-space: nowrap;">  <!-- Telephone -->
+            <!-- This column takes the remaining space -->
+            <col style="width: 35%;">                        <!-- Notes -->
+            <col style="width: 20%; white-space: nowrap;">  <!-- Actions -->
+        </colgroup>
+        <thead class="table-dark">
+            <tr class="text-center">
+                <th>#</th>
+                <th>Name</th>
+                <th>Directions</th>
+                <th>Telephone</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int rowNumber = 1; }
+            @foreach (var householder in Model.Householders)
+            {
+                <tr id="row-@householder.Id">
+                    <td><b>@rowNumber</b></td>
+                    <td>@householder.Name</td>
+                    @* <td>
+                        @householder.Address<br /> @householder.City, @householder.Postal_Code @householder.Country
+                    </td> *@
+                    <td style="text-align: center;">
+                        <!-- Directions Button opens Google Maps Directions in a new tab -->
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="openDirections('@householder.Address')">
+                            @householder.Address<br /> @householder.City, @householder.Postal_Code @householder.Country
+                        </button>
+                    </td>
+                    <td style="text-align: center;">
+                        <a href="tel:@householder.Telephone">@householder.Telephone</a>
+                    </td>
+                    @* Status column is commented out *@
+                    <td style="max-width:300px;">@householder.Notes</td>
+                    <td style="text-align: center;">
+                        <!-- Edit button toggles the collapse of the edit form row -->
+                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#editRow-@householder.Id" aria-expanded="false" aria-controls="editRow-@householder.Id">
+                            Edit
+                        </button>
+                        <!-- Delete button calls a JavaScript confirm function -->
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(@householder.Id)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                @* Collapsible row for editing the record *@
+                <tr class="collapse" id="editRow-@householder.Id">
+                    <td colspan="7">
+                        <div class="card card-body card-custom">
+                            <form method="post" asp-page-handler="Edit">
+                                <!-- Hidden field for the record Id -->
+                                <input type="hidden" name="Id" value="@householder.Id" />
+                                <div class="mb-2">
+                                    <label>Name:</label>
+                                    <input type="text" name="Name" class="form-control" value="@householder.Name" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Address:</label>
+                                    <input type="text" name="Address" class="form-control" value="@householder.Address" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label>City:</label>
+                                    <input type="text" name="City" class="form-control" value="@householder.City" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Province/State:</label>
+                                    <input type="text" name="Province" class="form-control" value="@householder.Province" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Postal Code:</label>
+                                    <input type="text" name="Postal_Code" class="form-control" value="@householder.Postal_Code" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Country:</label>
+                                    <input type="text" name="Country" class="form-control" value="@householder.Country" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Telephone:</label>
+                                    <input type="text" name="Telephone" class="form-control" value="@householder.Telephone" />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Language:</label>
+                                    <!-- For editing, display language as plain text input -->
+                                    <input type="text" name="Language" class="form-control" value="@householder.Language" />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Notes:</label>
+                                    <textarea name="Notes" class="form-control">@householder.Notes</textarea>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Status:</label>
+                                    <input type="text" name="Status" class="form-control" value="@householder.Status" />
+                                </div>
+                                <div class="mt-2">
+                                    <button type="submit" class="btn btn-success btn-sm">Save Changes</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#editRow-@householder.Id">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                rowNumber++;
+            }
+        </tbody>
+    </table>
+</div>
+
+@* Inline style block added to enforce a minimum table width on very small screens *@
+<style>
+    @@media (max-width: 480px) {
+        .table-responsive table {
+            min-width: 500px; /* Adjust this value as needed */
+        }
+    }
+</style>
+
+<!-- MAPLIBRE JS -->
+<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const apiKey = "@Model.MapLibreApiKey";
+        let defaultCoords = { lat: 34.0522, lng: -118.2437 }; // Fallback location
+
+        // Output householders data as JSON
+        var householders = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.Householders.Select(h => new
+            {
+                h.Name,
+                h.Latitude,
+                h.Longitude,
+                h.Address
+            })
+            ));
+
+        function initializeMap(coords) {
+            const map = new maplibregl.Map({
+                container: 'map',
+                style: `https://api.maptiler.com/maps/hybrid/style.json?key=${apiKey}`,
+                center: [coords.lng, coords.lat],
+                zoom: 10
+            });
+
+            map.on('load', function () {
+                // Add a marker for the current location (optional)
+                new maplibregl.Marker({ color: "#FF0000" })
+                    .setLngLat([coords.lng, coords.lat])
+                    .addTo(map);
+
+                // Add markers for each householder using the default marker style
+                householders.forEach(function (householder) {
+                    if (householder.Latitude && householder.Longitude) {
+                        new maplibregl.Marker({ color: "#007bff" })
+                            .setLngLat([householder.Longitude, householder.Latitude])
+                            .setPopup(new maplibregl.Popup({ offset: 25 })
+                                .setHTML(`<p>${householder.Name}</p>`))
+                            .addTo(map);
+                    } else {
+                        console.warn("Invalid coordinates for householder:", householder);
+                    }
+                });
+            });
+        }
+
+        // Use browser geolocation if available; otherwise, fallback to defaultCoords
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    initializeMap({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                () => {
+                    console.warn("⚠️ Geolocation failed. Using default location.");
+                    initializeMap(defaultCoords);
+                }
+            );
+        } else {
+            console.warn("⚠️ Geolocation not supported. Using default location.");
+            initializeMap(defaultCoords);
+        }
+    });
+</script>
+
+<!-- GOOGLE MAPS JS -->
+<script>
+    // Opens Google Maps Directions for the given address in a new tab
+    function openDirections(address) {
+        // Build the URL for Google Maps Directions API
+        var url = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(address);
+        window.open(url, '_blank');
+    }
+</script>
+
+<!-- DELETE BUTTON JS -->
+<script>
+    // Confirm deletion before navigating to the delete action
+    function confirmDelete(id) {
+        if (confirm("Are you sure you want to delete this householder?")) {
+        // Correct URL: use '&id=' to pass the id parameter
+        window.location.href = "?handler=Delete&id=" + id;
+        }
+    }
+</script>
+
+<!-- LIVE SEARCH JS -->
+<script>
+    // Wait for the DOM to load
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+
+        searchInput.addEventListener("keyup", function () {
+            const filter = this.value.toLowerCase();
+            // Select all table rows in the main table body (adjust selector if needed)
+            const rows = document.querySelectorAll("table.table tbody tr:not(.collapse)");
+
+            rows.forEach(function (row) {
+                // Concatenate text content from all cells in the row
+                const rowText = row.textContent.toLowerCase();
+                // If the row contains the filter text, display it; otherwise hide it
+                row.style.display = rowText.includes(filter) ? "" : "none";
+            });
+        });
+    });
+</script>

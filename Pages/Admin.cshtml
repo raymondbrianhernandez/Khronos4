@@ -1,0 +1,72 @@
+﻿@page
+@model Khronos4.Pages.AdminModel
+@{
+    ViewData["Title"] = "Khronos Pro 4 Admin Terminal";
+}
+
+<!-- jQuery & Terminal.js -->
+<script src="https://cdn.jsdelivr.net/npm/jquery"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css" />
+
+<!-- Terminal Container -->
+<div class="terminal-wrapper">
+    <div id="admin-terminal"></div>
+</div>
+
+<script>
+    $('body').terminal({
+        login: function () {
+            var term = this;
+            if (term.loggedIn) return; // Prevent re-running if already logged in
+
+            // Prompt for email first
+            term.read("Email: ").then(function (email) {
+                // Then prompt for password with proper masking
+                return term.read("Password: ", {
+                    echo: '*' // Each character will be replaced with '*'
+                }).then(function (password) {
+                    term.echo('Verifying user and admin status...\n');
+
+                    // AJAX POST request to validate login
+                    return $.post('@Url.Page("/Admin")', { Email: email, Password: password })
+                        .done(function (response) {
+                            if (response.success) {
+                                term.echo('Login successful! Redirecting...\n');
+                                term.loggedIn = true; // Set flag so it won't re-prompt
+                                setTimeout(function () {
+                                    window.location.href = '@Url.Page("/AdminDashboard")';
+                                }, 2000);
+                            } else {
+                                term.error(response.error);
+                                term.exec('login'); // Restart login prompt if incorrect
+                            }
+                        })
+                        .fail(function () {
+                            term.error("Server error. Please try again.\n");
+                            term.exec('login'); // Restart login prompt if request fails
+                        });
+                });
+            });
+        },
+
+        clear: function () {
+            this.clear();
+        },
+
+        help: function () {
+            this.echo("Available Commands:");
+            this.echo(" - login     : Authenticate as an admin.");
+            this.echo(" - clear     : Clears the terminal.");
+            this.echo(" - exit      : Go back to Login.");
+            this.echo(" - db_status : Display Database status.");
+            this.echo(" - help      : Displays available commands.\n");
+        }
+    }, {
+        greetings: '2025 Khronos Pro 4 Terminal by Raymond Hernandez [arbhie.com] \n' +
+            'Only Super Admins are allowed here.  Other admins, please use the regular login page.\n\n' +
+            'Type "help" for available commands.\n',
+        prompt: 'admin@khronos.pro:~$ '
+    });
+</script>
+

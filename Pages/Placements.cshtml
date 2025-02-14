@@ -1,0 +1,45 @@
+﻿@page
+@model Khronos4.Pages.PlacementsModel
+@{
+    ViewData["Title"] = "Placements - Khronos Pro 4";
+
+    var currentMonthNumber = DateTime.ParseExact(Model.CurrentMonth, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
+    var firstDay = new DateTime(Model.CurrentYear, currentMonthNumber, 1);
+    var lastDay = firstDay.AddMonths(1).AddDays(-1);
+    int totalDays = lastDay.Day;
+    int startDayOfWeek = (int)firstDay.DayOfWeek; // 0 = Sunday, etc.
+}
+
+<div class="dashboard-container">
+    <h2 class="text-center">Placements</h2>
+
+    <!-- Responsive Placement Calendar Container -->
+    <div class="placementcalendar-wrapper">
+        <div class="placementcalendar-container">
+            <div class="placementcalendar-grid">
+                @* Render headers for days of the week *@
+                @{
+                    string[] dayHeaders = new string[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+                    foreach (var day in dayHeaders)
+                    {
+                        <div class="placementcalendar-day header">@day</div>
+                    }
+                }
+
+                @* Render empty cells for days before the first day of the month *@
+                @for (int i = 0; i < startDayOfWeek; i++)
+                {
+                    <div class="placementcalendar-day empty"></div>
+                }
+
+                @* Render the day numbers *@
+                @for (int day = 1; day <= totalDays; day++)
+                {
+                    <div class="placementcalendar-day">
+                        @day
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

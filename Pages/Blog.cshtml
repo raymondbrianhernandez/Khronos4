@@ -1,0 +1,35 @@
+﻿@page
+@model Khronos4.Pages.BlogModel
+@{
+    ViewData["Title"] = "Blog - Khronos Pro 4";
+}
+
+<!-- Recent Blog Revisions -->
+<div class="blog-revisions">
+    <h5>Developer's Blog</h5>
+    
+    <table class="table table-bordered table-custom">
+        <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Revision</th>
+                <th>Note</th>
+                <th>Category</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var revision in Model.Revisions)
+            {
+                <tr>
+                    <td>@revision.RevisionDate</td>
+                    <td>@revision.Revision</td>
+                    <td>@revision.Note</td>
+                    <td>@revision.Category</td>
+                    <td>@revision.Author</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

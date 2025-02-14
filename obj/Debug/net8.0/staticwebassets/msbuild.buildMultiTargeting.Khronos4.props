@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Khronos4.props" />
+</Project>

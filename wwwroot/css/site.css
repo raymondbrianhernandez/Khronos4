@@ -1,0 +1,650 @@
+﻿/* ===== Global Styles ===== */
+:root {
+    --background-color: #ffffff;
+    --text-color: #333;
+    --nav-background: #f8f9fa;
+    --nav-text-color: #333;
+    --footer-background: #f1f1f1;
+    --footer-text-color: #666;
+    --button-background: #0056b3;
+    --button-hover: #003f7f;
+    /* Reversed Dropdown */
+    --dropdown-background: #333;
+    --dropdown-text-color: #e0e0e0;
+    /* Table Blog */
+    --table-header-bg: #343a40; /* Dark gray */
+    --table-header-text: #ffffff;
+    --table-row-bg: #ffffff;
+    --table-row-text: #333;
+    --table-border-color: #dee2e6;
+}
+
+/* ===== Dark Mode (Reversed Dropdown) ===== */
+.dark-mode {
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --nav-background: #222;
+    --nav-text-color: #e0e0e0;
+    --footer-background: #181818;
+    --footer-text-color: #bbb;
+    --button-background: #007bff;
+    --button-hover: #0056b3;
+    /* Reversed Dropdown */
+    --dropdown-background: #f8f9fa;
+    --dropdown-text-color: #333;
+    /* Table Blog */
+    --table-header-bg: #222;
+    --table-header-text: #ddd;
+    --table-row-bg: #1e1e1e;
+    --table-row-text: #e0e0e0;
+    --table-border-color: #444;
+}
+
+/* ===== Page Layout ===== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+}
+
+h1, h2, h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+p {
+    font-family: 'Lato', sans-serif;
+}
+
+/* ===== Header & Navbar ===== */
+.navbar {
+    background: var(--nav-background);
+    color: var(--nav-text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+    .navbar .navbar-brand {
+        font-weight: bold;
+        color: var(--nav-text-color);
+    }
+
+    .navbar .nav-link {
+        color: var(--nav-text-color);
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+        .navbar .nav-link:hover {
+            color: #007bff;
+        }
+
+/* Light/Dark Mode Toggle */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: var(--button-background);
+    color: white;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+    .toggle-switch:hover {
+        background: var(--button-hover);
+    }
+
+/* ===== Centered Content ===== */
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* ===== Forms and Buttons ===== */
+.form-container {
+    max-width: 400px;
+    width: 100%;
+    min-width: 275px;
+    margin: 0 auto; /* Centers horizontally */
+    background: var(--form-background);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--form-border);
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+    .form-group label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+        color: var(--text-color);
+    }
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    /*border: 1px solid var(--form-border);*/
+    border-radius: 5px;
+    font-size: 14px;
+    background: var(--input-background);
+    color: var(--input-text-color);
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 10px;
+    background: var(--button-background);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    .btn-login:hover {
+        background: var(--button-hover);
+    }
+
+/* ===== Footer ===== */
+footer {
+    background: var(--footer-background);
+    color: var(--footer-text-color);
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    width: 100%;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* ===== Centered Header ===== */
+.centered-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* ===== Apply Dark Mode to Navbar & Dropdowns ===== */
+.navbar {
+    background: var(--nav-background) !important;
+    color: var(--nav-text-color) !important;
+    transition: background 0.3s, color 0.3s;
+}
+
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+        color: var(--nav-text-color) !important;
+    }
+
+        .navbar .navbar-brand:hover,
+        .navbar .nav-link:hover {
+            color: #007bff !important;
+        }
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background: var(--dropdown-background);
+    color: var(--dropdown-text-color);
+    border: none;
+}
+
+    .dropdown-menu .dropdown-item {
+        color: var(--dropdown-text-color);
+    }
+
+        .dropdown-menu .dropdown-item:hover {
+            background: #444;
+            color: white;
+        }
+
+/* Footer Styling */
+footer {
+    background: var(--footer-background);
+    color: var(--footer-text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Dark Mode Toggle Button */
+.toggle-switch {
+    background: var(--button-background);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+    .toggle-switch:hover {
+        background: var(--button-hover);
+    }
+
+.login-links {
+    text-align: center; /* Centers the links horizontally */
+    margin-top: 15px; /* Adds some space above */
+}
+
+    .login-links a {
+        text-decoration: none; /* Removes underline */
+        color: var(--text-color); /* Uses theme colors */
+        font-weight: 500;
+    }
+
+        .login-links a:hover {
+            text-decoration: underline; /* Adds underline on hover */
+            color: var(--button-background);
+        }
+
+.centered-header {
+    text-align: center;
+    margin-bottom: 20px; /* Space below the header */
+}
+
+.quote {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 2px; /* Reduce space between quote and scripture */
+}
+
+.scripture {
+    font-size: 1rem;
+    font-style: italic;
+    margin-top: 0px; /* Removes extra spacing */
+}
+
+.blog-revisions {
+    margin-top: 20px;
+    padding: 15px;
+    background: var(--form-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .blog-revisions h4 {
+        text-align: center;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+.revision-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .revision-list li {
+        padding: 10px;
+        border-bottom: 1px solid var(--form-border);
+    }
+
+        .revision-list li:last-child {
+            border-bottom: none;
+        }
+
+.revision-meta {
+    font-size: 12px;
+    color: gray;
+}
+
+.revision-note {
+    font-weight: 500;
+}
+
+.logo {
+    height: 80px; /* Controls the height */
+    width: 80px; /* Ensures square shape */
+    object-fit: cover; /* Prevents distortion */
+    border-radius: 5px; /* Optional: Slightly rounded corners */
+}
+
+/* Apply Colors to Table */
+.table-custom thead {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+}
+
+.table-custom tbody tr {
+    background-color: var(--table-row-bg);
+    color: var(--table-row-text);
+}
+
+.table-custom th, .table-custom td {
+    border-color: var(--table-border-color);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+    .toggle-password i {
+        color: #777;
+        font-size: 16px;
+    }
+
+    .toggle-password:hover i {
+        color: #333;
+    }
+
+/* ===== Dashboard Styling ===== */
+.dashboard-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.dashboard-title {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+/* Grid layout */
+.tile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 20px;
+}
+
+/* Individual Tile */
+.tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Title stays on top */
+    text-align: center;
+    padding: 5px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 250px;
+    height: 200px;
+    position: relative;
+    transition: background 0.3s, transform 0.2s ease-in-out;
+}
+
+.tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tile i {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+/* Tile Title */
+.tile-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* Tile Content (Ensures text fits inside the tile) */
+.tile-content {
+    font-size: 14px;
+    line-height: 0.5;
+    overflow: hidden;
+    max-height: 80px;
+}
+
+.tile-green {
+    background: #93E9BE;
+    color: #333;
+}
+
+.tile-icon {
+    width: 30px; /* Adjust size */
+    height: 30px;
+    margin-bottom: 5px; /* Space below the icon */
+}
+
+/* Responsive Grid Layout */
+@media (max-width: 1024px) {
+    .tile-grid {
+        grid-template-columns: repeat(2, minmax(250px, 1fr)); /* 2 Columns on Tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .tile-grid {
+        grid-template-columns: repeat(1, minmax(250px, 1fr)); /* 1 Column on Mobile */
+    }
+}
+
+/* Calendar Widget */
+.calendar-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columns for days */
+    gap: 2px;
+    width: 90%; /* Ensures it fits inside tile */
+    max-width: 200px; /* Prevents overflow */
+}
+
+/* Buttons inside Tiles */
+.btn-tile {
+    display: block;
+    text-align: center;
+    background: #93E9BE;
+    color: #333;
+    padding: 2px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.2s ease-in-out;
+}
+
+    .btn-tile:hover {
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+/* MAP STYLING */
+/* Dynamic MAP STYLING - Adjusts to 80% of screen width */
+.map-container {
+    width: 80vw; /* 80% of the viewport width */
+    height: 500px; /* Fixed height to maintain aspect ratio */
+    max-width: 1200px; /* Prevents it from getting too large on big screens */
+    min-width: 275px; /* Ensures it doesn't get too small on mobile */
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto 20px auto; /* Centers the map horizontally */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) { /* Tablets */
+    .map-container {
+        width: 90vw; /* Increase width for smaller screens */
+    }
+}
+
+@media (max-width: 768px) { /* Mobile */
+    .map-container {
+        width: 95vw; /* Almost full width on mobile */
+        height: 400px; /* Reduce height slightly */
+    }
+}
+
+
+/* TABLE STYLING */
+.table-container {
+    width: 100%;
+    min-width: 275px;
+    overflow-x: auto;
+    background: var(--form-background);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .table-custom th {
+        background: var(--table-header-bg);
+        color: var(--table-header-text);
+        padding: 10px;
+        text-align: left;
+    }
+
+    .table-custom td {
+        padding: 10px;
+        border-bottom: 1px solid var(--table-border-color);
+    }
+
+.dark-mode .table-custom thead {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+}
+
+.dark-mode .table-custom tbody tr {
+    background-color: var(--table-row-bg);
+    color: var(--table-row-text);
+}
+
+.dark-mode .table-custom th,
+.dark-mode .table-custom td {
+    border-color: var(--table-border-color);
+}
+
+/* Default card custom styling */
+.card-custom {
+    background-color: var(--form-background, #ffffff);
+    color: var(--text-color, #333);
+    border: 1px solid var(--form-border, #dee2e6);
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+/* Dark mode overrides for the card */
+.dark-mode .card-custom {
+    background-color: var(--form-background-dark, #1e1e1e);
+    color: var(--text-color, #e0e0e0);
+    border: 1px solid var(--form-border-dark, #444);
+}
+
+.table-dark th {
+    text-align: center !important;
+}
+
+/* ===== Placement Calendar Styling ===== */
+.placementcalendar-wrapper {
+    width: 100%;
+    min-height: 500px; /* Ensures it takes enough space */
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+}
+
+/* Calendar container spans 80% on desktops */
+.placementcalendar-container {
+    max-width: 1600px; /* Allow wider max width */
+    width: 85%; /* Slightly bigger than before */
+    background: var(--background-color);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Calendar Grid - 7 equal columns */
+.placementcalendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px; /* Increased spacing */
+    padding: 10px;
+}
+
+/* Individual Calendar Days */
+.placementcalendar-day {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 15px; /* Increased padding for better spacing */
+    text-align: center;
+    font-size: 18px; /* Made text slightly larger */
+    aspect-ratio: 1 / 1;
+    border-radius: 5px;
+}
+
+    /* Header Row (Days of the Week) */
+    .placementcalendar-day.header {
+        background: #343a40;
+        color: #fff;
+        font-weight: bold;
+        padding: 20px; /* More padding */
+        text-transform: uppercase;
+    }
+
+    /* Empty Days (for months that don't start on Sunday) */
+    .placementcalendar-day.empty {
+        background: transparent;
+        border: none;
+    }
+
+/* ===== Responsive Adjustments ===== */
+
+/* Increase width on medium screens */
+@media (max-width: 1024px) {
+    .placementcalendar-container {
+        width: 95%;
+    }
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 768px) {
+    .placementcalendar-container {
+        width: 98%; /* Almost full width */
+        padding: 15px;
+    }
+
+    .placementcalendar-day {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+        .placementcalendar-day.header {
+            padding: 15px;
+        }
+}

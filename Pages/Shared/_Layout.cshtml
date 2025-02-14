@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Khronos Pro 4</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <div class="container">
+                <!-- Logo/Brand -->
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-page="/Login">
+                    <img src="/images/khronos.gif" alt="Logo" class="logo me-2"> <!-- Small Logo -->
+                    Khronos Pro 4
+                </a>
+
+                <!-- Mobile Toggle Button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar Links (Collapsible) -->
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-page="/Dashboard">Home</a>
+                            </li>
+
+                            <!-- Field Service (Popout Dropdown) -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="serviceDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Field Service
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="serviceDropdown">
+                                    <li><a class="dropdown-item" asp-page="/H2HRecords">House to House Records</a></li>
+                                    <li><a class="dropdown-item" asp-page="/AnnualReport">Annual Report</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Placements">Placements</a></li>
+                                    <li><a class="dropdown-item" asp-page="/MinistryTools">Ministry Tools</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- KH Meetings (Popout Dropdown) -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="meetingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    KH Meetings
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="meetingsDropdown">
+                                    <li><a class="dropdown-item" asp-page="/Assignments">Assignments</a></li>
+                                    <li><a class="dropdown-item" asp-page="/OCLMManager">OCLM Manager</a></li>
+                                    <li><a class="dropdown-item" asp-page="/PTManager">PT Manager</a></li>
+                                    <li><a class="dropdown-item" asp-page="/ServiceGroup">Service Group</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- Study Tools (Popout Dropdown) -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="notebookDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Study Tools
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="notebookDropdown">
+                                    <li><a class="dropdown-item" asp-page="/MeetingNotes">Meeting Notes</a></li>
+                                    <li><a class="dropdown-item" asp-page="/FieldServiceNotes">Field Service Notes</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- Fun Stuffs (Popout Dropdown) -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="funDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Fun Stuffs
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="funDropdown">
+                                    <li><a class="dropdown-item" asp-page="/Blog">Developer's Blog</a></li>
+                                    <li><a class="dropdown-item" asp-page="/TriviaGame">Trivia Game</a></li>
+                                    <li><a class="dropdown-item" asp-page="/EmojiGame">Emoji Game</a></li>
+                                    <li><a class="dropdown-item" asp-page="/SheetMusics">Sheet Musics</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Templates">Invitation Templates</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-area="" asp-page="/Account">Account</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-area="" asp-page="/Admin">Admin</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-area="" asp-page="/Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- Fun Stuffs for Unauthenticated Users -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="funDropdownGuest" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Fun Stuffs
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="funDropdownGuest">
+                                    <li><a class="dropdown-item" asp-page="/Blog">Developer's Blog</a></li>
+                                    <li><a class="dropdown-item" asp-page="/TriviaGame">Trivia Game</a></li>
+                                    <li><a class="dropdown-item" asp-page="/EmojiGame">Emoji Game</a></li>
+                                    <li><a class="dropdown-item" asp-page="/SheetMusics">Sheet Musics</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Templates">Invitation Templates</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-area="" asp-page="/Admin">Admin</a>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- Light/Dark Mode Toggle -->
+                    <div class="ms-3">
+                        <button id="toggleTheme" class="toggle-switch">🌙 Dark Mode</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            &copy; 2022 - @DateTime.Now.Year Khronos Pro 4 -
+            <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
