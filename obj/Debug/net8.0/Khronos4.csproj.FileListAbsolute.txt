@@ -160,6 +160,7 @@ C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.csproj.CoreCompil
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.RazorAssemblyInfo.cache
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.RazorAssemblyInfo.cs
+C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.sourcelink.json
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\staticwebassets\msbuild.Khronos4.Microsoft.AspNetCore.StaticWebAssets.props
@@ -176,4 +177,3 @@ C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\refint\Khronos4.dll
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.pdb
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.genruntimeconfig.cache
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\ref\Khronos4.dll
-C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.sourcelink.json

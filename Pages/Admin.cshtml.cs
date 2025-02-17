@@ -33,34 +33,30 @@ namespace Khronos4.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Check if Email and Password are provided
+            // Validate input
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
             {
-                string err = "Email and Password are required.";
-                return new JsonResult(new { success = false, error = err });
+                return new JsonResult(new { success = false, error = "Email and Password are required." });
             }
 
-            // Look up the user by Email
+            // Lookup user in database
             var user = _context.Users.FirstOrDefault(u => u.Email == Email);
             if (user == null)
             {
-                string err = "User not found.";
-                return new JsonResult(new { success = false, error = err });
+                return new JsonResult(new { success = false, error = "User not found." });
             }
 
-            // Compute the hashed password
+            // Hash the entered password and compare with stored hash
             var hashedPassword = HashPassword(Password.Trim());
             if (user.PasswordHash != hashedPassword)
             {
-                string err = "Incorrect email/password.";
-                return new JsonResult(new { success = false, error = err });
+                return new JsonResult(new { success = false, error = "Incorrect email/password." });
             }
 
-            // Check that the user is a Super Admin
-            if (user.AdminRole != "Super Admin")
+            // Ensure only Super Admins can access
+            if (user.AdminRole?.Trim().ToLower() != "super admin")
             {
-                string err = "Only Super Administrators are allowed, please use the regular login page.";
-                return new JsonResult(new { success = false, error = err });
+                return new JsonResult(new { success = false, error = "Only Super Administrators are allowed, please use the regular login page." });
             }
 
             // Create authentication claims
@@ -68,27 +64,20 @@ namespace Khronos4.Pages
             {
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim("FullName", $"{user.FirstName} {user.LastName}"),
-                new Claim("AdminRole", user.AdminRole),
-                new Claim("Congregation", user.Congregation ?? "Unassigned")
+                new Claim("AdminRole", user.AdminRole.Trim()),  // Ensure no spaces
+                new Claim("Congregation", user.Congregation?.Trim() ?? "Unassigned")
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = true
-            };
+            var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-            // Sign in the user
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+            // Sign in user
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            // Return JSON success response for AJAX requests
             return new JsonResult(new { success = true });
         }
 
-        // Helper method for password hashing using SHA256
+        // Helper method for hashing password
         private string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();

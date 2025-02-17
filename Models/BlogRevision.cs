@@ -10,20 +10,20 @@ namespace Khronos4.Models
 
         [Required]
         [MaxLength(100)]
-        public string RevisionDate { get; set; }
+        public string? RevisionDate { get; set; }
 
         [Required]
         [MaxLength(500)]
-        public string Note { get; set; }
+        public string? Note { get; set; }
 
         [MaxLength(100)]
-        public string Revision { get; set; }
+        public string? Revision { get; set; }
 
         [MaxLength(100)]
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string Author { get; set; }
+        public string? Author { get; set; }
     }
 }

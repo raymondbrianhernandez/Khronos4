@@ -62,6 +62,11 @@ p {
     font-family: 'Lato', sans-serif;
 }
 
+/* ===== Placements ===== */
+.pb-3 {
+    width: 1000px !important;
+}
+
 /* ===== Header & Navbar ===== */
 .navbar {
     background: var(--nav-background);
@@ -484,7 +489,7 @@ footer {
 .map-container {
     width: 80vw; /* 80% of the viewport width */
     height: 500px; /* Fixed height to maintain aspect ratio */
-    max-width: 1200px; /* Prevents it from getting too large on big screens */
+    max-width: 1000px !important; /* Prevents it from getting too large on big screens */
     min-width: 275px; /* Ensures it doesn't get too small on mobile */
     border-radius: 10px;
     overflow: hidden;
@@ -661,3 +666,65 @@ footer {
     box-shadow: 0 0 10px #00ff00; /* Green glow */
     padding: 10px; /* Internal padding */
 }
+
+/* Placements */
+/* General Table Styling */
+.placements-table {
+    width: 1000px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+    .placements-table th, .placements-table td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .placements-table th {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Alternate Row Colors */
+    .placements-table tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .placements-table tbody tr:nth-child(even) {
+        background-color: #e6e6e6;
+    }
+
+/* Style Dropdowns */
+.styled-select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+    .styled-select {
+        background-color: #222;
+        color: #ddd;
+        border: 1px solid #555;
+    }
+}
+
+/* Style Buttons */
+.update-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+    .update-btn:hover {
+        background-color: #218838;
+    }

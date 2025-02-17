@@ -2,44 +2,75 @@
 @model Khronos4.Pages.PlacementsModel
 @{
     ViewData["Title"] = "Placements - Khronos Pro 4";
-
-    var currentMonthNumber = DateTime.ParseExact(Model.CurrentMonth, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
-    var firstDay = new DateTime(Model.CurrentYear, currentMonthNumber, 1);
-    var lastDay = firstDay.AddMonths(1).AddDays(-1);
-    int totalDays = lastDay.Day;
-    int startDayOfWeek = (int)firstDay.DayOfWeek; // 0 = Sunday, etc.
+    @using System.Globalization
+;
 }
 
-<div class="dashboard-container">
-    <h2 class="text-center">Placements</h2>
+<h2>Placements for @Model.CurrentMonth @Model.CurrentYear</h2>
 
-    <!-- Responsive Placement Calendar Container -->
-    <div class="placementcalendar-wrapper">
-        <div class="placementcalendar-container">
-            <div class="placementcalendar-grid">
-                @* Render headers for days of the week *@
-                @{
-                    string[] dayHeaders = new string[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-                    foreach (var day in dayHeaders)
-                    {
-                        <div class="placementcalendar-day header">@day</div>
-                    }
-                }
+<form method="post">
+    <table class="placements-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Hours</th>
+                <th>Placements</th>
+                <th>Return Visits</th>
+                <th>Bible Studies</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int day = 1; day <= DateTime.DaysInMonth(Model.CurrentYear, DateTime.ParseExact(Model.CurrentMonth, "MMMM", CultureInfo.InvariantCulture).Month); day++)
+            {
+                <tr>
+                    <td>@day</td>
 
-                @* Render empty cells for days before the first day of the month *@
-                @for (int i = 0; i < startDayOfWeek; i++)
-                {
-                    <div class="placementcalendar-day empty"></div>
-                }
+                    <td>
+                        <select name="Hours" class="styled-select">
+                            @for (int i = 0; i <= 15; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </td>
 
-                @* Render the day numbers *@
-                @for (int day = 1; day <= totalDays; day++)
-                {
-                    <div class="placementcalendar-day">
-                        @day
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-</div>
+                    <td>
+                        <select name="Placements" class="styled-select">
+                            @for (int i = 0; i <= 20; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </td>
+
+                    <td>
+                        <select name="RVs" class="styled-select">
+                            @for (int i = 0; i <= 15; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </td>
+
+                    <td>
+                        <select name="BS" class="styled-select">
+                            @for (int i = 0; i <= 10; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </td>
+
+                    <td>
+                        <button type="submit" asp-page-handler="UpdatePlacement"
+                                asp-route-date="@(new DateTime(Model.CurrentYear, DateTime.ParseExact(Model.CurrentMonth, "MMMM", CultureInfo.InvariantCulture).Month, day))"
+                                class="update-btn">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
