@@ -176,3 +176,4 @@ C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\refint\Khronos4.dll
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.pdb
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.genruntimeconfig.cache
 C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\ref\Khronos4.dll
+C:\Users\Owner\source\repos\Khronos4\obj\Debug\net8.0\Khronos4.sourcelink.json

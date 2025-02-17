@@ -15,6 +15,7 @@ namespace Khronos4.Data
         public DbSet<User> Users { get; set; }
         public DbSet<BlogRevision> BlogRevisions { get; set; }
         public DbSet<Householder> Householders { get; set; }
+        public DbSet<Congregation> Congregations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

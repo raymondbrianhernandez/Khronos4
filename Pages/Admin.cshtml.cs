@@ -49,10 +49,10 @@ namespace Khronos4.Pages
             }
 
             // Compute the hashed password
-            var hashedPassword = HashPassword(Password);
+            var hashedPassword = HashPassword(Password.Trim());
             if (user.PasswordHash != hashedPassword)
             {
-                string err = "Invalid password.";
+                string err = "Incorrect email/password.";
                 return new JsonResult(new { success = false, error = err });
             }
 

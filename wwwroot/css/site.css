@@ -648,3 +648,16 @@ footer {
             padding: 15px;
         }
 }
+
+/* --- Terminal Container: a responsive square with green text --- */
+#admin-terminal {
+    width: 50vw; /* 50% of viewport width */
+    max-width: 700px; /* No larger than 400px */
+    aspect-ratio: 1 / 1; /* Forces the container to be square */
+    background-color: #000; /* Black background */
+    color: #00ff00 !important; /* Bright green text */
+    font-family: monospace; /* Monospace font for terminal look */
+    border: 5px solid #808080; /* Green border */
+    box-shadow: 0 0 10px #00ff00; /* Green glow */
+    padding: 10px; /* Internal padding */
+}

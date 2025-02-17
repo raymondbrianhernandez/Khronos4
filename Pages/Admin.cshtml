@@ -6,7 +6,7 @@
 
 <!-- jQuery & Terminal.js -->
 <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
+<script src="https://unpkg.com/jquery.terminal@2.x.x/js/jquery.terminal.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css" />
 
 <!-- Terminal Container -->
@@ -15,58 +15,111 @@
 </div>
 
 <script>
-    $('body').terminal({
-        login: function () {
-            var term = this;
-            if (term.loggedIn) return; // Prevent re-running if already logged in
+    $(function () {
+        $('#admin-terminal').terminal({
+            login: function () {
+                var term = this;
+                if (term.loggedIn) return; // Prevent re-login
 
-            // Prompt for email first
-            term.read("Email: ").then(function (email) {
-                // Then prompt for password with proper masking
-                return term.read("Password: ", {
-                    echo: '*' // Each character will be replaced with '*'
-                }).then(function (password) {
-                    term.echo('Verifying user and admin status...\n');
+                // Prompt for email first
+                term.read("Email: ").then(function (email) {
+                    if (!email.trim()) {
+                        term.error("Email cannot be empty!");
+                        term.exec("login"); // Restart login
+                        return;
+                    }
 
-                    // AJAX POST request to validate login
-                    return $.post('@Url.Page("/Admin")', { Email: email, Password: password })
-                        .done(function (response) {
-                            if (response.success) {
-                                term.echo('Login successful! Redirecting...\n');
-                                term.loggedIn = true; // Set flag so it won't re-prompt
-                                setTimeout(function () {
-                                    window.location.href = '@Url.Page("/AdminDashboard")';
-                                }, 2000);
-                            } else {
-                                term.error(response.error);
-                                term.exec('login'); // Restart login prompt if incorrect
+                    let hiddenPassword = ""; // Initialize stored password
+
+                    // Push a new input mode for the password
+                    term.push(function (command, term) {
+                        // This callback is not used because we handle Enter in keydown.
+                    }, {
+                        prompt: "Password: ",
+                        keydown: function (e, term) {
+                            if (e.which === 13) { // Enter key pressed
+                                term.pop(); // Exit password input mode
+
+                                // Trim the hidden password before sending it
+                                hiddenPassword = hiddenPassword.trim();
+
+                                term.echo("\nVerifying user and admin status...\n");
+
+                                // Use the stored hiddenPassword to make the AJAX call
+                                $.post('@Url.Page("/Admin")', { Email: email, Password: hiddenPassword })
+                                    .done(function (response) {
+                                        if (response.success) {
+                                            term.echo("Login successful! Redirecting...\n");
+                                            term.loggedIn = true; // Mark as logged in
+                                            setTimeout(function () {
+                                                window.location.href = '@Url.Page("/AdminDashboard")';
+                                            }, 2000);
+                                        } else {
+                                            term.error(response.error);
+                                            term.exec("login"); // Restart login prompt if incorrect
+                                        }
+                                    })
+                                    .fail(function () {
+                                        term.error("Server error. Please try again.\n");
+                                        term.exec("login"); // Restart login prompt on error
+                                    });
+                                return false; // Prevent default behavior
                             }
-                        })
-                        .fail(function () {
-                            term.error("Server error. Please try again.\n");
-                            term.exec('login'); // Restart login prompt if request fails
-                        });
+                            // Handle backspace or delete keys
+                            if (e.which === 8 || e.which === 46) {
+                                hiddenPassword = hiddenPassword.slice(0, -1);
+                            }
+
+                            // For any printable character (ignore Enter key)
+                            else if (e.originalEvent && e.originalEvent.key && e.originalEvent.key.length === 1) {
+                                hiddenPassword += e.originalEvent.key;
+                            }
+
+                            // Update the terminal command to show asterisks for masking
+                            term.set_command("*".repeat(hiddenPassword.length));
+                            return false; // Prevent default input behavior
+                        }
+                    });
                 });
-            });
-        },
+            },
 
-        clear: function () {
-            this.clear();
-        },
+            db_status: function () {
+                var term = this;
+                $.ajax({
+                    url: '@Url.Page("/DbStatus")',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        // Echo the database status retrieved from the endpoint
+                        term.echo(" - db_status : Database status: " + data.status);
+                    },
+                    error: function () {
+                        term.error(" - db_status : Unable to retrieve database status.");
+                    }
+                });
+            },
 
-        help: function () {
-            this.echo("Available Commands:");
-            this.echo(" - login     : Authenticate as an admin.");
-            this.echo(" - clear     : Clears the terminal.");
-            this.echo(" - exit      : Go back to Login.");
-            this.echo(" - db_status : Display Database status.");
-            this.echo(" - help      : Displays available commands.\n");
-        }
-    }, {
-        greetings: '2025 Khronos Pro 4 Terminal by Raymond Hernandez [arbhie.com] \n' +
-            'Only Super Admins are allowed here.  Other admins, please use the regular login page.\n\n' +
-            'Type "help" for available commands.\n',
-        prompt: 'admin@khronos.pro:~$ '
+            clear: function () {
+                this.clear();
+            },
+
+            help: function () {
+                this.echo("Available Commands:");
+                this.echo(" - db_status : Database status.");
+                this.echo(" - login     : Authenticate as an admin.");
+                this.echo(" - clear     : Clears the terminal.");
+                this.echo(" - help      : Displays available commands.\n");
+            }
+        }, {
+            greetings:
+                '(c)2025 Khronos Pro 4 Terminal by Raymond Hernandez\n' +
+                'Only Super Admins are allowed here. Other admins, please use the regular login page.\n\n' +
+                'Type "help" for available commands.\n',
+            prompt: 'khronos.pro:~$ ',
+            history: false,
+            mask: false  // We handle masking via our custom keydown handler
+        });
     });
 </script>
+
 
