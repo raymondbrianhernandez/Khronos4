@@ -3,12 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\Owner\\source\\repos\\Khronos4\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\placements.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\placements.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\placements.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\placements.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\placements.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\placements.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
@@ -22,47 +34,90 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
+              "Title": "Dashboard.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml.cs",
+              "RelativeDocumentMoniker": "Pages\\Dashboard.cshtml.cs",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml.cs",
+              "RelativeToolTip": "Pages\\Dashboard.cshtml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAABqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-18T02:29:51.552Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Dashboard.cshtml",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml",
+              "RelativeDocumentMoniker": "Pages\\Dashboard.cshtml",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml",
+              "RelativeToolTip": "Pages\\Dashboard.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-02-18T02:22:09.043Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Login.cshtml",
+              "RelativeDocumentMoniker": "Pages\\Login.cshtml",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Login.cshtml",
+              "RelativeToolTip": "Pages\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-02-18T02:21:49.126Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "Placements.cshtml.cs",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Placements.cshtml.cs",
               "RelativeDocumentMoniker": "Pages\\Placements.cshtml.cs",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Placements.cshtml.cs",
-              "RelativeToolTip": "Pages\\Placements.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Placements.cshtml.cs*",
+              "RelativeToolTip": "Pages\\Placements.cshtml.cs*",
+              "ViewState": "AgIAABkAAAAAAAAAAAAqwEAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-17T21:08:36.176Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Placements.cshtml",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Placements.cshtml",
               "RelativeDocumentMoniker": "Pages\\Placements.cshtml",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Placements.cshtml*",
-              "RelativeToolTip": "Pages\\Placements.cshtml*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEAAAACqAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Placements.cshtml",
+              "RelativeToolTip": "Pages\\Placements.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-02-17T21:08:34.016Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "site.css",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
               "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\css\\site.css",
               "RelativeToolTip": "wwwroot\\css\\site.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAAG0BAAAAAAAAAAAuwHsBAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2025-02-11T08:08:13.109Z",
               "EditorCaption": ""

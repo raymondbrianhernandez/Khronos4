@@ -425,6 +425,7 @@ footer {
 .tile-green {
     background: #93E9BE;
     color: #333;
+    overflow:auto;
 }
 
 .tile-icon {
@@ -667,64 +668,81 @@ footer {
     padding: 10px; /* Internal padding */
 }
 
-/* Placements */
-/* General Table Styling */
+/* ===== Placements Table Styling ===== */
 .placements-table {
-    width: 1000px;
+    width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    font-family: Arial, sans-serif;
+    font-size: 16px;
+    background-color: var(--table-row-bg);
+    color: var(--table-row-text);
+    border: 1px solid var(--table-border-color);
 }
 
-    .placements-table th, .placements-table td {
-        padding: 10px;
+    .placements-table th,
+    .placements-table td {
+        padding: 12px;
         text-align: center;
-        border: 1px solid #ddd;
+        border: 1px solid var(--table-border-color);
     }
 
+    /* Header Styling */
     .placements-table th {
-        background-color: #4CAF50;
-        color: white;
+        background-color: var(--table-header-bg);
+        color: var(--table-header-text);
         font-weight: bold;
     }
 
-    /* Alternate Row Colors */
-    .placements-table tbody tr:nth-child(odd) {
-        background-color: #f2f2f2;
+    
+
+    .placements-table tr:nth-child(odd) {
+        background-color: var(--table-row-bg);
     }
 
-    .placements-table tbody tr:nth-child(even) {
-        background-color: #e6e6e6;
+/* Responsive Table */
+@media (max-width: 768px) {
+    .placements-table {
+        font-size: 14px;
     }
 
-/* Style Dropdowns */
-.styled-select {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    background-color: white;
+        .placements-table th,
+        .placements-table td {
+            padding: 10px;
+        }
 }
 
-@media (prefers-color-scheme: dark) {
-    .styled-select {
-        background-color: #222;
-        color: #ddd;
-        border: 1px solid #555;
+/* Mobile Optimizations (iPhone & Small Devices) */
+@media (max-width: 480px) {
+    .placements-table {
+        font-size: 12px;
+    }
+
+        .placements-table th,
+        .placements-table td {
+            padding: 8px;
+        }
+
+        .placements-table th {
+            font-size: 14px;
+        }
+
+    /* Make table scrollable on smaller screens */
+    .placements-table-container {
+        overflow-x: auto;
     }
 }
 
-/* Style Buttons */
-.update-btn {
-    background-color: #28a745;
+/* Button Styling */
+.placements-table button {
+    background-color: var(--button-background);
     color: white;
     border: none;
-    padding: 5px 10px;
-    font-size: 14px;
+    padding: 8px 12px;
     cursor: pointer;
+    transition: background 0.3s;
     border-radius: 5px;
 }
 
-    .update-btn:hover {
-        background-color: #218838;
+    .placements-table button:hover {
+        background-color: var(--button-hover);
     }

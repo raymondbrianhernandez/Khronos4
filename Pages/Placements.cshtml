@@ -1,9 +1,9 @@
 ﻿@page
 @model Khronos4.Pages.PlacementsModel
+@using System.Globalization
+
 @{
     ViewData["Title"] = "Placements - Khronos Pro 4";
-    @using System.Globalization
-;
 }
 
 <h2>Placements for @Model.CurrentMonth @Model.CurrentYear</h2>
@@ -17,49 +17,42 @@
                 <th>Placements</th>
                 <th>Return Visits</th>
                 <th>Bible Studies</th>
+                <th>LDC Credit</th>
+                <th>Notes</th> <!-- New Notes Column -->
                 <th>Update</th>
             </tr>
         </thead>
         <tbody>
             @for (int day = 1; day <= DateTime.DaysInMonth(Model.CurrentYear, DateTime.ParseExact(Model.CurrentMonth, "MMMM", CultureInfo.InvariantCulture).Month); day++)
             {
+                var data = Model.PlacementEntries.ContainsKey(day) ? Model.PlacementEntries[day] : new Khronos4.Pages.PlacementsModel.PlacementData();
+
                 <tr>
                     <td>@day</td>
 
                     <td>
-                        <select name="Hours" class="styled-select">
-                            @for (int i = 0; i <= 15; i++)
-                            {
-                                <option value="@i">@i</option>
-                            }
-                        </select>
+                        <input type="number" name="Hours" value="@data.Hours" min="0" class="input-field">
                     </td>
 
                     <td>
-                        <select name="Placements" class="styled-select">
-                            @for (int i = 0; i <= 20; i++)
-                            {
-                                <option value="@i">@i</option>
-                            }
-                        </select>
+                        <input type="number" name="Placements" value="@data.Placements" min="0" class="input-field">
                     </td>
 
                     <td>
-                        <select name="RVs" class="styled-select">
-                            @for (int i = 0; i <= 15; i++)
-                            {
-                                <option value="@i">@i</option>
-                            }
-                        </select>
+                        <input type="number" name="RVs" value="@data.RVs" min="0" class="input-field">
                     </td>
 
                     <td>
-                        <select name="BS" class="styled-select">
-                            @for (int i = 0; i <= 10; i++)
-                            {
-                                <option value="@i">@i</option>
-                            }
-                        </select>
+                        <input type="number" name="BS" value="@data.BS" min="0" class="input-field">
+                    </td>
+
+                    <td>
+                        <input type="number" name="LDC" value="@data.LDC" min="0" class="input-field">
+                    </td>
+
+                    <!-- New Notes Field -->
+                    <td>
+                        <input type="text" name="Notes" value="@data.Notes" class="input-field notes-field">
                     </td>
 
                     <td>

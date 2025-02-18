@@ -1,71 +1,85 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.SqlClient;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Threading.Tasks;
-using Khronos4.Data;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
+using Khronos4.Models;
 
 namespace Khronos4.Pages
 {
     public class PlacementsModel : PageModel
     {
-        private readonly AppDbContext _context;
+        public string UserFullName { get; set; }
 
-        public PlacementsModel(AppDbContext context)
+        private readonly IConfiguration _configuration;
+
+        public PlacementsModel(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
         }
 
         public string CurrentMonth { get; set; }
         public int CurrentYear { get; set; }
+        public Dictionary<int, PlacementData> PlacementEntries { get; set; } = new();
 
-        [BindProperty(SupportsGet = true)]
-        public DateTime? Date { get; set; }
-
-        [BindProperty]
-        public int Hours { get; set; }
-        [BindProperty]
-        public int Placements { get; set; }
-        [BindProperty]
-        public int RVs { get; set; }
-        [BindProperty]
-        public int BS { get; set; }
-
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            DateTime date = Date ?? DateTime.Now;
-            CurrentMonth = date.ToString("MMMM", CultureInfo.InvariantCulture);
-            CurrentYear = date.Year;
+            DateTime today = DateTime.Now;
+            CurrentMonth = today.ToString("MMMM", CultureInfo.InvariantCulture);
+            CurrentYear = today.Year;
+            UserFullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "Unknown User";
+            await LoadPlacementData();
         }
 
-        public async Task<IActionResult> OnPostUpdatePlacementAsync()
+        private async Task LoadPlacementData()
         {
-            if (Date == null)
+            var placements = new Dictionary<int, PlacementData>();
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                ModelState.AddModelError("", "Date is required.");
-                return Page();
+                await connection.OpenAsync();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "dbo.GetPlacements";
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Ensure Owner is passed as NVARCHAR
+                    command.Parameters.Add(new SqlParameter("@Owner", SqlDbType.NVarChar) { Value = UserFullName });
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var day = reader.GetInt32(0);  // Assuming first column is "day" (integer)
+                            placements[day] = new PlacementData
+                            {
+                                Hours = reader.IsDBNull(1) ? 0m : Convert.ToDecimal(reader.GetValue(1)),
+                                Placements = reader.IsDBNull(2) ? 0 : reader.GetInt32(2),
+                                RVs = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
+                                BS = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
+                                LDC = reader.IsDBNull(5) ? 0m : Convert.ToDecimal(reader.GetValue(5)),
+                                Notes = reader.IsDBNull(6) ? "" : reader.GetString(6)
+                            };
+                        }
+                    }
+                }
             }
 
-            var owner = User.Identity.Name; // Adjust this if needed
+            PlacementEntries = placements;
+        }
 
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText = "EXEC dbo.UpdatePlacement @Owner, @Date, @Hours, @Placements, @RVs, @BS";
-                command.Parameters.Add(new SqlParameter("@Owner", owner));
-                command.Parameters.Add(new SqlParameter("@Date", Date));
-                command.Parameters.Add(new SqlParameter("@Hours", Hours));
-                command.Parameters.Add(new SqlParameter("@Placements", Placements));
-                command.Parameters.Add(new SqlParameter("@RVs", RVs));
-                command.Parameters.Add(new SqlParameter("@BS", BS));
-
-                await _context.Database.OpenConnectionAsync();
-                await command.ExecuteNonQueryAsync();
-                _context.Database.CloseConnection();
-            }
-
-            return RedirectToPage();
+        public class PlacementData
+        {
+            public decimal Hours { get; set; }
+            public int Placements { get; set; }
+            public int RVs { get; set; }
+            public int BS { get; set; }
+            public decimal LDC { get; set; }
+            public string Notes { get; set; }
         }
     }
 }
