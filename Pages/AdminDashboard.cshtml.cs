@@ -23,8 +23,17 @@ namespace Khronos4.Pages
         public List<User> Users { get; set; }
         public List<BlogRevision> BlogRevisions { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
+            // Retrieve the user's admin role from their claims
+            var userRole = User.Claims.FirstOrDefault(c => c.Type == "AdminRole")?.Value?.Trim().ToLower();
+
+            // If user is already a "Super Admin", redirect them to AdminDashboard
+            if (userRole != "super admin")
+            {
+                return RedirectToPage("/Dashboard");
+            }
+
             // Load Congregations from stored procedure
             Congregations = await _context.Congregations
                 .FromSqlRaw("EXEC dbo.GetCongregations")
@@ -37,6 +46,14 @@ namespace Khronos4.Pages
             BlogRevisions = await _context.BlogRevisions
                 .FromSqlRaw("EXEC dbo.GetBlog")
                 .ToListAsync();
+
+            return Page();
+        }
+
+        private bool IsSuperAdmin()
+        {
+            var userRole = User.Claims.FirstOrDefault(c => c.Type == "AdminRole")?.Value;
+            return userRole == "Super Admin";
         }
 
         // DELETE handlers for each section

@@ -63,7 +63,8 @@ namespace Khronos4.Pages
             {
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim("FullName", $"{user.FirstName} {user.LastName}"),
-                new Claim("Congregation", user.Congregation ?? "Unassigned")
+                new Claim("Congregation", user.Congregation ?? "Unassigned"),
+                new Claim("AdminRole", user.AdminRole ?? "User")
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

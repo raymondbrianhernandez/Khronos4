@@ -44,6 +44,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+}
+
 // Redirect root to login
 app.MapGet("/", context =>
 {

@@ -31,6 +31,20 @@ namespace Khronos4.Pages
 
         public string ErrorMessage { get; set; }
 
+        public async Task<IActionResult> OnGetAsync()
+        {
+            // Retrieve the user's admin role from their claims
+            var userRole = User.Claims.FirstOrDefault(c => c.Type == "AdminRole")?.Value?.Trim().ToLower();
+
+            // If user is already a "Super Admin", redirect them to AdminDashboard
+            if (userRole == "super admin")
+            {
+                return RedirectToPage("/AdminDashboard");
+            }
+
+            return Page(); // Otherwise, stay on the Admin page
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             // Validate input

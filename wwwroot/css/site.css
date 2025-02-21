@@ -669,21 +669,24 @@ footer {
 }
 
 /* ===== Placements Table Styling ===== */
+/* ===== Placements Table Styling ===== */
 .placements-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 16px;
+    margin-top: 15px;
+    font-size: 14px;
     background-color: var(--table-row-bg);
     color: var(--table-row-text);
     border: 1px solid var(--table-border-color);
 }
 
+    /* Table Headers and Cells */
     .placements-table th,
     .placements-table td {
-        padding: 12px;
+        padding: 6px 8px; /* Reduced padding for thinner rows */
         text-align: center;
         border: 1px solid var(--table-border-color);
+        white-space: nowrap; /* Prevents text wrapping */
     }
 
     /* Header Styling */
@@ -691,58 +694,117 @@ footer {
         background-color: var(--table-header-bg);
         color: var(--table-header-text);
         font-weight: bold;
+        font-size: 14px;
+        padding: 8px 10px;
     }
 
-    
-
+    /* Alternate Row Colors */
     .placements-table tr:nth-child(odd) {
         background-color: var(--table-row-bg);
     }
 
-/* Responsive Table */
-@media (max-width: 768px) {
-    .placements-table {
-        font-size: 14px;
-    }
-
-        .placements-table th,
-        .placements-table td {
-            padding: 10px;
-        }
+/* Input Fields */
+.input-field {
+    width: 60px; /* Smaller input fields */
+    padding: 4px;
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid var(--table-border-color);
+    border-radius: 4px;
 }
 
-/* Mobile Optimizations (iPhone & Small Devices) */
-@media (max-width: 480px) {
+/* Notes Field - Wider */
+.notes-field {
+    width: 120px;
+}
+
+/* Button Styling */
+.update-btn {
+    background-color: var(--button-background);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+    .update-btn:hover {
+        background-color: var(--button-hover);
+    }
+
+/* Responsive Table for Smaller Screens */
+@media (max-width: 768px) {
     .placements-table {
         font-size: 12px;
     }
 
         .placements-table th,
         .placements-table td {
-            padding: 8px;
+            padding: 4px 6px; /* Further reducing padding for better fit */
         }
 
-        .placements-table th {
-            font-size: 14px;
-        }
+    .input-field {
+        width: 50px;
+        font-size: 10px;
+    }
 
-    /* Make table scrollable on smaller screens */
+    .notes-field {
+        width: 100px;
+        font-size: 10px;
+    }
+
+    .update-btn {
+        font-size: 10px;
+        padding: 5px 8px;
+    }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 480px) {
     .placements-table-container {
-        overflow-x: auto;
+        overflow-x: auto; /* Enables horizontal scrolling if needed */
+    }
+
+    .placements-table {
+        font-size: 10px;
+    }
+
+        .placements-table th,
+        .placements-table td {
+            padding: 3px 5px;
+        }
+
+    .input-field {
+        width: 40px;
+        font-size: 9px;
+    }
+
+    .notes-field {
+        width: 90px;
+        font-size: 9px;
+    }
+
+    .update-btn {
+        font-size: 9px;
+        padding: 4px 6px;
     }
 }
 
-/* Button Styling */
-.placements-table button {
-    background-color: var(--button-background);
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: background 0.3s;
-    border-radius: 5px;
+/* Style for the totals row */
+.totals-row {
+    background-color: #f8f9fa; /* Light gray background */
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1em; /* Increase font size */
+    height: 50px; /* Adjust row height */
 }
 
-    .placements-table button:hover {
-        background-color: var(--button-hover);
+    /* Make text inside the totals row slightly bigger */
+    .totals-row td {
+        padding: 5px;
+        font-size: 1.1em; /* Slightly larger text */
+        border-top: 2px solid var(--table-border-color); /* Separate totals from the rest */
     }
+

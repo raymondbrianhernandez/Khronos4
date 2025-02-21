@@ -4,66 +4,94 @@
 
 @{
     ViewData["Title"] = "Placements - Khronos Pro 4";
+
+    // Fallback: if Model.CurrentMonth is null/empty, use today's month name.
+    var monthName = !string.IsNullOrWhiteSpace(Model.CurrentMonth)
+                        ? Model.CurrentMonth
+                        : DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture);
+
+    // Parse the month number from the month name
+    var monthNumber = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
+
+    // Fallback to today's year if Model.CurrentYear is not set (0)
+    int year = Model.CurrentYear != 0 ? Model.CurrentYear : DateTime.Now.Year;
+
+    decimal totalHours = 0m;
+    int totalPlacements = 0;
+    int totalRVs = 0;
+    int totalBS = 0;
+    decimal totalLDC = 0m;
 }
 
-<h2>Placements for @Model.CurrentMonth @Model.CurrentYear</h2>
+<h4>Placements for @monthName @year for @Model.UserFullName</h4>
 
-<form method="post">
-    <table class="placements-table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Hours</th>
-                <th>Placements</th>
-                <th>Return Visits</th>
-                <th>Bible Studies</th>
-                <th>LDC Credit</th>
-                <th>Notes</th> <!-- New Notes Column -->
-                <th>Update</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int day = 1; day <= DateTime.DaysInMonth(Model.CurrentYear, DateTime.ParseExact(Model.CurrentMonth, "MMMM", CultureInfo.InvariantCulture).Month); day++)
-            {
-                var data = Model.PlacementEntries.ContainsKey(day) ? Model.PlacementEntries[day] : new Khronos4.Pages.PlacementsModel.PlacementData();
+@if (!string.IsNullOrEmpty(Request.Query["error"]))
+{
+    <div class="alert alert-danger">@Request.Query["error"]</div>
+}
 
+
+<div class="table-responsive">
+    <form method="post">
+        <table class="placements-table">
+            <thead>
                 <tr>
-                    <td>@day</td>
+                    <th>Date</th>
+                    <th>Hours</th>
+                    <th>Placements</th>
+                    <th>Return Visits</th>
+                    <th>Bible Studies</th>
+                    <th>LDC Credit</th>
+                    <th>Notes</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+            <tbody>      
+                @foreach (var entry in Model.PlacementEntries)
+                {
+                    var currentDate = entry.Key;
+                    var data = entry.Value;
+                    var dateStr = currentDate.ToString("yyyy-MM-dd"); // Unique identifier per row
 
-                    <td>
-                        <input type="number" name="Hours" value="@data.Hours" min="0" class="input-field">
-                    </td>
+                    // ✅ Correctly add values to totals
+                    totalHours += data.Hours;
+                    totalPlacements += data.Placements;
+                    totalRVs += data.RVs;
+                    totalBS += data.BS;
+                    totalLDC += data.LDC;
 
-                    <td>
-                        <input type="number" name="Placements" value="@data.Placements" min="0" class="input-field">
-                    </td>
+                    <tr>
+                        <td><b>@currentDate.ToString("MMM dd")</b></td>
+                        <td><input type="number" name="hours_@dateStr" value="@data.Hours.ToString("0.0", CultureInfo.InvariantCulture)" step="0.1" class="input-field"></td>
+                        <td><input type="number" name="placements_@dateStr" value="@data.Placements" class="input-field"></td>
+                        <td><input type="number" name="rvs_@dateStr" value="@data.RVs" class="input-field"></td>
+                        <td><input type="number" name="bs_@dateStr" value="@data.BS" class="input-field"></td>
+                        <td><input type="number" name="ldc_@dateStr" value="@data.LDC.ToString("0.0", CultureInfo.InvariantCulture)" step="0.1" class="input-field"></td>
+                        <td><input type="text" name="notes_@dateStr" value="@data.Notes" class="input-field notes-field"></td>
+                        <td>
+                            <button type="submit" asp-page-handler="UpdatePlacement"
+                                    asp-route-date="@dateStr"
+                                    class="update-btn">
+                                Update
+                            </button>
+                        </td>
+                    </tr>
+                }
 
-                    <td>
-                        <input type="number" name="RVs" value="@data.RVs" min="0" class="input-field">
-                    </td>
-
-                    <td>
-                        <input type="number" name="BS" value="@data.BS" min="0" class="input-field">
-                    </td>
-
-                    <td>
-                        <input type="number" name="LDC" value="@data.LDC" min="0" class="input-field">
-                    </td>
-
-                    <!-- New Notes Field -->
-                    <td>
-                        <input type="text" name="Notes" value="@data.Notes" class="input-field notes-field">
-                    </td>
-
-                    <td>
-                        <button type="submit" asp-page-handler="UpdatePlacement"
-                                asp-route-date="@(new DateTime(Model.CurrentYear, DateTime.ParseExact(Model.CurrentMonth, "MMMM", CultureInfo.InvariantCulture).Month, day))"
-                                class="update-btn">
-                            Update
-                        </button>
+                <!-- ✅ Totals Row -->
+                <tr class="totals-row">
+                    <td><strong>Total:</strong></td>
+                    <td><strong>@totalHours hrs</strong></td>
+                    <td><strong>@totalPlacements placed</strong></td>
+                    <td><strong>@totalRVs RVs</strong></td>
+                    <td><strong>@totalBS BS</strong></td>
+                    <td><strong>@totalLDC hrs</strong></td>
+                    <td><strong>Total Hours + LDC:</strong></td>
+                    <td style="background-color: red; color: white; font-weight: bold;">
+                        <strong>@(totalHours + totalLDC) hrs</strong>
                     </td>
                 </tr>
-            }
-        </tbody>
-    </table>
-</form>
+            </tbody>
+        </table>
+    </form>
+</div>
