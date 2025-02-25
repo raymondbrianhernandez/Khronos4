@@ -66,10 +66,9 @@ namespace Khronos4.Pages
 
                 if (string.IsNullOrWhiteSpace(UserFullName) || UserFullName == "Unknown User")
                 {
-                    return Content("⚠️ Error: User not recognized.", "text/html");
+                    return RedirectToPage("Placements", new { error = "User not recognized." });
                 }
 
-                // Generate unique field names per date
                 var dateStr = date.ToString("yyyy-MM-dd");
 
                 // Retrieve values using unique names
@@ -86,36 +85,15 @@ namespace Khronos4.Pages
                     notes = null;
                 }
 
-                // Convert to correct types
-                if (!decimal.TryParse(hoursStr, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsedHours))
-                    return Content($"⚠️ Error: Invalid hours value received: {hoursStr}", "text/html");
-
-                if (!int.TryParse(placementsStr, out int parsedPlacements))
-                    return Content($"⚠️ Error: Invalid placements value received: {placementsStr}", "text/html");
-
-                if (!int.TryParse(rvsStr, out int parsedRVs))
-                    return Content($"⚠️ Error: Invalid return visits value received: {rvsStr}", "text/html");
-
-                if (!int.TryParse(bsStr, out int parsedBS))
-                    return Content($"⚠️ Error: Invalid bible studies value received: {bsStr}", "text/html");
-
-                if (!decimal.TryParse(ldcStr, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsedLDC))
-                    parsedLDC = 0m; // Default if blank
-
-                // Debugging output
-                var debugMessage = $@"
-                    <h3>🛠 Debugging Information</h3>
-                    <ul>
-                        <li><strong>Owner:</strong> {UserFullName}</li>
-                        <li><strong>Date:</strong> {date}</li>
-                        <li><strong>Hours:</strong> {parsedHours}</li>
-                        <li><strong>Placements:</strong> {parsedPlacements}</li>
-                        <li><strong>Return Visits:</strong> {parsedRVs}</li>
-                        <li><strong>Bible Studies:</strong> {parsedBS}</li>
-                        <li><strong>LDC:</strong> {parsedLDC}</li>
-                        <li><strong>Notes:</strong> {notes ?? "(empty)"}</li>
-                    </ul>
-                ";
+                // Convert values safely
+                if (!decimal.TryParse(hoursStr, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsedHours) ||
+                    !int.TryParse(placementsStr, out int parsedPlacements) ||
+                    !int.TryParse(rvsStr, out int parsedRVs) ||
+                    !int.TryParse(bsStr, out int parsedBS) ||
+                    !decimal.TryParse(ldcStr, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsedLDC))
+                {
+                    return RedirectToPage("Placements", new { error = "Invalid input values." });
+                }
 
                 // Execute update
                 var parameters = new[]
@@ -130,13 +108,22 @@ namespace Khronos4.Pages
                     new SqlParameter("@Notes", SqlDbType.NVarChar) { Value = string.IsNullOrWhiteSpace(notes) ? (object)DBNull.Value : notes }
                 };
 
-                await _context.Database.ExecuteSqlRawAsync("EXEC [dbo].[UpdatePlacement] @Owner, @Date, @Hours, @Placements, @RVs, @BS, @LDC, @Notes", parameters);
+                int rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                           "EXEC [dbo].[UpdatePlacement] @Owner, @Date, @Hours, @Placements, @RVs, @BS, @LDC, @Notes",
+                           parameters);
 
-                return Content($"✅ <h2>Success! Placement updated.</h2><br>{debugMessage}", "text/html");
+                if (rowsAffected > 0)
+                {
+                    return RedirectToPage("/Placements", new { success = 1 });
+                }
+                else
+                {
+                    return RedirectToPage("/Placements", new { error = 1 });
+                }
             }
             catch (Exception ex)
             {
-                return Content($"<h2>🚨 Error in UpdatePlacement</h2><p>{ex.Message}</p><pre>{ex.StackTrace}</pre>", "text/html");
+                return RedirectToPage("Placements", new { error = "An error occurred while updating." });
             }
         }
 

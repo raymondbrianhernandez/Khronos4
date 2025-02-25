@@ -61,4 +61,6 @@ app.MapGet("/", context =>
 });
 
 app.MapRazorPages();
+app.MapControllers();
+
 app.Run();

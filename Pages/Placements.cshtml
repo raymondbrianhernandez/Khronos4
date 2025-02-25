@@ -25,11 +25,14 @@
 
 <h4>Placements for @monthName @year for @Model.UserFullName</h4>
 
+@if (!string.IsNullOrEmpty(Request.Query["success"]))
+{
+    <div class="alert alert-success">✅ Monthly Report updated successfully!</div>
+}
 @if (!string.IsNullOrEmpty(Request.Query["error"]))
 {
-    <div class="alert alert-danger">@Request.Query["error"]</div>
+    <div class="alert alert-danger">❌ Failed to update, please update manually.</div>
 }
-
 
 <div class="table-responsive">
     <form method="post">
@@ -53,7 +56,7 @@
                     var data = entry.Value;
                     var dateStr = currentDate.ToString("yyyy-MM-dd"); // Unique identifier per row
 
-                    // ✅ Correctly add values to totals
+                    // Correctly add values to totals
                     totalHours += data.Hours;
                     totalPlacements += data.Placements;
                     totalRVs += data.RVs;
@@ -61,13 +64,16 @@
                     totalLDC += data.LDC;
 
                     <tr>
-                        <td><b>@currentDate.ToString("MMM dd")</b></td>
+                        <!-- Change the display format to "SUN 23" -->
+                        <td><b>@currentDate.ToString("d ddd", CultureInfo.InvariantCulture)</b></td>
                         <td><input type="number" name="hours_@dateStr" value="@data.Hours.ToString("0.0", CultureInfo.InvariantCulture)" step="0.1" class="input-field"></td>
                         <td><input type="number" name="placements_@dateStr" value="@data.Placements" class="input-field"></td>
                         <td><input type="number" name="rvs_@dateStr" value="@data.RVs" class="input-field"></td>
                         <td><input type="number" name="bs_@dateStr" value="@data.BS" class="input-field"></td>
                         <td><input type="number" name="ldc_@dateStr" value="@data.LDC.ToString("0.0", CultureInfo.InvariantCulture)" step="0.1" class="input-field"></td>
-                        <td><input type="text" name="notes_@dateStr" value="@data.Notes" class="input-field notes-field"></td>
+                        <td>
+                            <textarea name="notes_@dateStr" class="input-field notes-field">@data.Notes</textarea>
+                        </td>
                         <td>
                             <button type="submit" asp-page-handler="UpdatePlacement"
                                     asp-route-date="@dateStr"
@@ -78,7 +84,7 @@
                     </tr>
                 }
 
-                <!-- ✅ Totals Row -->
+                <!-- Totals Row -->
                 <tr class="totals-row">
                     <td><strong>Total:</strong></td>
                     <td><strong>@totalHours hrs</strong></td>

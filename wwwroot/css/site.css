@@ -761,6 +761,12 @@ footer {
     }
 }
 
+.notes-field {
+    width: 200px; 
+    height: 50px; 
+    resize: both; 
+}
+
 /* Mobile Optimizations */
 @media (max-width: 480px) {
     .placements-table-container {
@@ -808,3 +814,64 @@ footer {
         border-top: 2px solid var(--table-border-color); /* Separate totals from the rest */
     }
 
+/* LED Clock */
+.led-display {
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    background: black;
+    color: lime;
+    padding: 5px;
+    border-radius: 5px;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.btn-green {
+    background: #28a745;
+}
+
+    .btn-green:hover {
+        background: #218838;
+    }
+
+.btn-red {
+    background: #dc3545;
+}
+
+    .btn-red:hover {
+        background: #c82333;
+    }
+
+.btn-yellow {
+    background: #ffd60a;
+}
+
+    .btn-yellow:hover {
+        background: #ffc300;
+    }
+
+/*One Search*/
+.onesearchbanner {
+    text-align: center;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px;
+}
+
+#checkAll,
+#uncheckAll,
+#search_all,
+#search-img {
+    margin: 5px;
+    border-radius: 10px;
+}
+
+.jw_img_search {
+    text-align: center;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 30px 20px;
+}

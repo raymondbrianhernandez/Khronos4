@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Khronos4.Models;
+using System.Text.Json;
 
 namespace Khronos4.Pages
 {
@@ -48,6 +48,34 @@ namespace Khronos4.Pages
             JWMeetingUrl = GenerateJWMeetingUrl(DateTime.Now);
 
             return Page();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> OnPostUpdatePlacementAsync([FromBody] Placement placementData)
+        {
+            if (placementData == null || string.IsNullOrWhiteSpace(placementData.Owner))
+            {
+                return new JsonResult(new { success = false, message = "Missing required fields." }) { StatusCode = 400 };
+            }
+
+            var parameters = new[]
+            {
+            new SqlParameter("@Owner", System.Data.SqlDbType.NVarChar) { Value = placementData.Owner },
+            new SqlParameter("@Date", System.Data.SqlDbType.Date) { Value = placementData.Date },
+            new SqlParameter("@Hours", System.Data.SqlDbType.Decimal) { Value = placementData.Hours },
+            new SqlParameter("@Placements", System.Data.SqlDbType.Int) { Value = placementData.Placements },
+            new SqlParameter("@RVs", System.Data.SqlDbType.Int) { Value = placementData.RVs },
+            new SqlParameter("@BS", System.Data.SqlDbType.Int) { Value = placementData.BS },
+            new SqlParameter("@LDC", System.Data.SqlDbType.Decimal) { Value = placementData.LDC },
+            new SqlParameter("@Notes", System.Data.SqlDbType.NVarChar) { Value = string.IsNullOrWhiteSpace(placementData.Notes) ? (object)DBNull.Value : placementData.Notes }
+        };
+
+            int rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                "EXEC [dbo].[UpdatePlacement] @Owner, @Date, @Hours, @Placements, @RVs, @BS, @LDC, @Notes",
+                parameters);
+
+            var result = new { success = true, rowsUpdated = rowsAffected };
+            return new JsonResult(result);
         }
 
         private string GetCongregationName(string congregationId)

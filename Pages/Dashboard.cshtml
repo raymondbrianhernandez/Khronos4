@@ -28,6 +28,28 @@
                 }
             </div>
         </div>
+
+        @* Timer *@
+        <div class="tile tile-green">
+            <img src="~/images/clock.png" alt="Timer" class="tile-icon">
+            <div class="tile-title">Service Timer</div>
+
+            <!-- LED-Style Current Time -->
+            <div class="tile-buttons">
+                <div id="current-time" class="led-display">--:--:--</div>
+            </div>
+
+            <!-- Stopwatch -->
+            <div class="tile-buttons">
+                <div id="stopwatch" class="led-display">00:00:00</div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="tile-buttons">
+                <button id="startStopBtn" class="btn-green" data-user="@Model.UserFullName">Start</button>
+                <button id="resetBtn" class="btn-yellow">Reset</button>
+            </div>
+        </div>
         
         @* Field Service Widget *@
         <div class="tile tile-green">
@@ -35,8 +57,9 @@
             <div class="tile-title">Field Service</div>
             <div class="tile-buttons">
                 <a href="/H2HRecords" class="btn-tile">House-to-House Records</a>
-                <a href="/Annual Report" class="btn-tile">Annual Report</a>
+                <a href="/AnnualReport" class="btn-tile">Annual Report</a>
                 <a href="/Placements" class="btn-tile">Placements</a>
+                <a href="/OneSearch" class="btn-tile">One Search Tool</a>
             </div>
         </div>
 
@@ -48,10 +71,138 @@
                 <a href="@Model.JWMeetingUrl" target="_blank" class="btn-tile">Workbook This Week</a>
                 <a href="/MidweekMeetingManager" class="btn-tile">Midweek Meeting Manager</a>
                 <a href="/PublicTalkManager" class="btn-tile">Public Talk Manager</a>
+                <a href="/Assignments" class="btn-tile">Assignments</a>
             </div>
+        </div>
+
+        @* Upcoming Assignments *@
+        <div class="tile tile-green">
+            <img src="~/images/assignment.png" alt="Assignments" class="tile-icon">
+            <div class="tile-title">Upcoming Assignments</div>
+            <ol>
+                <li>2/2/25 - Talk (5min)</li>
+                <li>3/2/25 - Bible Reading (4min)</li>
+            </ol>
+        </div>
+
+        @* Upcoming Talks *@
+        <div class="tile tile-green">
+            <img src="~/images/presentation.png" alt="Public Talks" class="tile-icon">
+            <div class="tile-title">Upcoming Talks</div>
+            <ol>
+                <li>4/2/25 - [45] Local Cong</li>
+                <li>5/2/25 - [102] Sample Cong</li>
+            </ol>
         </div>
         
     </div>
     </center>
 </div>
 
+<script>
+    let isRunning = false;
+    let elapsedTime = 0;
+    let timerInterval;
+
+    // Ensure event listeners are added after DOM loads
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("startStopBtn").addEventListener("click", toggleTimer);
+        document.getElementById("resetBtn").addEventListener("click", resetTimer);
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 1000);
+    });
+
+    // Update the current time display
+    function updateCurrentTime() {
+        const now = new Date();
+        document.getElementById("current-time").innerText = now.toLocaleTimeString();
+    }
+
+    // Update the stopwatch display in HH:MM:SS format
+    function updateStopwatch() {
+        let totalSeconds = Math.floor(elapsedTime / 1000);
+        let hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        let minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        let seconds = String(totalSeconds % 60).padStart(2, '0');
+        document.getElementById("stopwatch").innerText = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Toggle the timer (Start/Stop)
+    function toggleTimer() {
+        const startStopBtn = document.getElementById("startStopBtn");
+
+        if (isRunning) {
+            clearInterval(timerInterval);
+            let totalSeconds = Math.floor(elapsedTime / 1000);
+            let hoursDecimal = (totalSeconds / 3600).toFixed(2); // e.g., "1.50"
+
+            // Prompt the user with the elapsed time
+            if (confirm(`You accumulated ${hoursDecimal} hours. Would you like this to be recorded in your report?`)) {
+                saveTimeToDatabase(hoursDecimal);
+            }
+
+            startStopBtn.innerText = "Start";
+            startStopBtn.classList.remove("btn-red");
+            startStopBtn.classList.add("btn-green");
+        } else {
+            let startTime = Date.now() - elapsedTime;
+            timerInterval = setInterval(() => {
+                elapsedTime = Date.now() - startTime;
+                updateStopwatch();
+            }, 1000);
+            startStopBtn.innerText = "Stop";
+            startStopBtn.classList.remove("btn-green");
+            startStopBtn.classList.add("btn-red");
+        }
+        isRunning = !isRunning;
+    }
+
+    // Reset the timer
+    function resetTimer() {
+        clearInterval(timerInterval);
+        elapsedTime = 0;
+        isRunning = false;
+        document.getElementById("startStopBtn").innerText = "Start";
+        document.getElementById("startStopBtn").classList.remove("btn-red");
+        document.getElementById("startStopBtn").classList.add("btn-green");
+        updateStopwatch();
+    }
+
+    // Save the recorded time to the database via an AJAX call
+    function saveTimeToDatabase(hours) {
+        let currentDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+        let owner = document.getElementById("startStopBtn").getAttribute("data-user");
+
+        let requestData = {
+            Owner: owner,
+            Date: currentDate,
+            Hours: parseFloat(hours),
+            Placements: 0,
+            RVs: 0,
+            BS: 0,
+            LDC: 0,
+            Notes: "Recorded time via Khronos Pro timer"
+        };
+
+        fetch('/api/UpdatePlacement', { // Note: using /api/UpdatePlacement
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => response.text())
+            .then(text => {
+                if (!text.trim()) {
+                    throw new Error("Empty response from server.");
+                }
+                const data = JSON.parse(text);
+                if (data.success) {
+                    alert("Time successfully recorded in your report!");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                alert("Error: " + error.message);
+            });
+    }
+</script>

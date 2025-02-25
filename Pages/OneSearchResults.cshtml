@@ -1,0 +1,34 @@
+﻿@page
+@model Khronos4.Pages.ResultsModel
+@{
+    ViewData["Title"] = "One Search Results - Khronos Pro 4";
+}
+
+<div style="text-align:center; max-width: 500px; margin: 0 auto;">
+    <h4>Search Results</h4>
+
+    <hr />
+
+    @if (Model.SearchUrls.Any())
+    {
+        @foreach (var url in Model.SearchUrls)
+        {
+            string siteName = url.Contains("fastpeoplesearch") ? "Results from Fast People Search" :
+            url.Contains("searchpeoplefree") ? "Results from Search People Free" :
+            url.Contains("whitepages") ? "Results from White Pages" :
+            url.Contains("thatsthem") ? "Results from That's Them" :
+            url.Contains("truepeoplesearch") ? "Results from True People Search" :
+            url.Contains("smartbackgroundchecks") ? "Results from Smart Background Check" :
+            "Results from Unknown Site";
+
+            <p><a href="@url" target="_blank">@siteName</a></p>
+        }
+    }
+    else
+    {
+        <p>No search sites selected.</p>
+    }
+    <hr />
+    <br>
+    <a href="/OneSearch">Go Back</a>
+</div>

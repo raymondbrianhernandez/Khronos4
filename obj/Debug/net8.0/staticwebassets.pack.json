@@ -77,6 +77,10 @@
       "PackagePath": "staticwebassets\\images\\notes.png"
     },
     {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\presentation.png",
+      "PackagePath": "staticwebassets\\images\\presentation.png"
+    },
+    {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\schedule.png",
       "PackagePath": "staticwebassets\\images\\schedule.png"
     },

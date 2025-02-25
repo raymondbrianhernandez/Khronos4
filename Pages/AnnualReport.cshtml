@@ -1,0 +1,49 @@
+﻿@page
+@model Khronos4.Pages.AnnualReportModel
+@{
+    ViewData["Title"] = $"Annual Report - JW Service Year {Model.ServiceYearStart}-{Model.ServiceYearEnd}";
+}
+
+<div style="text-align:center; max-width: 800px; margin: 0 auto;">
+    <h4>@Model.UserFullName's Annual Report for</h4>
+    <h4>@Model.ServiceYearEnd Service Year</h4>
+    <p>September 1, @Model.ServiceYearStart - August 31, @Model.ServiceYearEnd</p>
+    
+    <table border="1" width="100%" style="border-collapse: collapse; text-align: center;">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Hours</th>
+                <th>Placements</th>
+                <th>Return Visits</th>
+                <th>Bible Studies</th>
+                <th>LDC Credit</th>
+                <th>TOTAL HOURS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var summary in Model.MonthlySummaries)
+            {
+                <tr>
+                    <td>@summary.MonthName</td>
+                    <td>@summary.Hours</td>
+                    <td>@summary.Placements</td>
+                    <td>@summary.RVs</td>
+                    <td>@summary.BS</td>
+                    <td>@summary.LDC</td>
+                    <td>@(summary.Hours + summary.LDC)</td>
+                </tr>
+            }
+            <!-- Yearly Total Row -->
+            <tr style="font-weight: bold; background-color: #f2f2f2;">
+                <td>Annual Total</td>
+                <td>@Model.TotalYearlyHours</td>
+                <td>@Model.TotalYearlyPlacements</td>
+                <td>@Model.TotalYearlyRVs</td>
+                <td>@Model.TotalYearlyBS</td>
+                <td>@Model.TotalYearlyLDC</td>
+                <td>@(Model.TotalYearlyHours + Model.TotalYearlyLDC)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
