@@ -16,6 +16,7 @@ namespace Khronos4.Pages
     public class DashboardModel : PageModel
     {
         private readonly AppDbContext _context;
+
         public string UserEmail { get; set; }
         public string UserFullName { get; set; }
         public string CongregationName { get; set; }
@@ -40,8 +41,6 @@ namespace Khronos4.Pages
             UserEmail = user.Identity.Name;
             UserFullName = user.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "Unknown User";
             string congregationId = user.Claims.FirstOrDefault(c => c.Type == "Congregation")?.Value ?? "0";
-
-            // Fetch Congregation Name using Stored Procedure
             CongregationName = GetCongregationName(congregationId);
 
             // Fetch the current JW Workbook Week
@@ -104,22 +103,25 @@ namespace Khronos4.Pages
 
         private string GenerateJWMeetingUrl(DateTime currentDate)
         {
-            // Determine the workbook period (Jan-Feb, Mar-Apr, etc.)
+            // Define the workbook periods (Jan-Feb, Mar-Apr, etc.)
             string[] months = { "january-february", "march-april", "may-june", "july-august", "september-october", "november-december" };
-            int periodIndex = (currentDate.Month - 1) / 2; // Determine the period index
+            int periodIndex = (currentDate.Month - 1) / 2; // Determine workbook period index
             string monthRange = months[periodIndex];
 
-            // Get the start and end of the current week
-            DateTime startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek + 1); // Monday
+            // Get the start and end of the current week (Monday - Sunday)
+            DateTime startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek + 1); // Move to Monday
             DateTime endOfWeek = startOfWeek.AddDays(6); // Sunday
 
-            // Format the schedule without commas
-            string meetingSchedule = $"{startOfWeek.ToString("MMMM d", CultureInfo.InvariantCulture)}-{endOfWeek.Day} {currentDate.Year}";
+            // Extract month names
+            string startMonth = startOfWeek.ToString("MMMM", CultureInfo.InvariantCulture);
+            string endMonth = endOfWeek.ToString("MMMM", CultureInfo.InvariantCulture);
 
-            // Replace spaces with dashes and remove commas
-            string formattedSchedule = Regex.Replace(meetingSchedule, @"\s+", "-");
+            // ✅ Correct Formatting: Only include second month if different
+            string formattedSchedule = (startMonth == endMonth)
+                ? $"{startMonth}-{startOfWeek.Day}-{endOfWeek.Day}-{currentDate.Year}" // Ex: "March-3-9-2025"
+                : $"{startMonth}-{startOfWeek.Day}-{endMonth}-{endOfWeek.Day}-{currentDate.Year}"; // Ex: "February-24-March-2-2025"
 
-            // Construct the final JW.org URL
+            // ✅ Construct the correct JW.org URL
             return $"https://www.jw.org/en/library/jw-meeting-workbook/{monthRange}-{currentDate.Year}-mwb/Life-and-Ministry-Meeting-Schedule-for-{formattedSchedule}/";
         }
     }

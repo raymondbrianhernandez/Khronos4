@@ -9,9 +9,11 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Khronos4.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Khronos4.Pages
 {
+    [Authorize]
     public class AnnualReportModel : PageModel
     {
         private readonly AppDbContext _context;

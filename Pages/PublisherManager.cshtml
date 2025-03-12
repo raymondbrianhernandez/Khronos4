@@ -1,0 +1,306 @@
+﻿@page
+@model Khronos4.Pages.PublisherManagerModel
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Publisher Manager - Khronos Pro 4";
+}
+
+<div class="page_heading">
+    <h4>Our Christian Life and Ministry Manager</h4>
+    <p>
+        <a href="/OCLMManager">OCLM Manager Home</a> |
+        <a href="/PublisherManager">Manage Publishers</a> |
+        <a href="https://www.jw.org/en/library/jw-meeting-workbook/" target="_blank">JW Workbook</a> |
+        <a href="/Statistics">Statistics</a>
+    </p>
+</div>
+
+@* Display TempData Debug Messages *@
+@* @if (TempData["DebugCongregationId"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["DebugCongregationId"]
+    </div>
+} *@
+
+@* @if (TempData["DebugPublisherListCount"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["DebugPublisherListCount"]
+    </div>
+} *@
+
+@* @if (TempData["DebugError"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["DebugError"]
+    </div>
+} *@
+
+@* @if (TempData["DebugReaderIndex"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["DebugReaderIndex"]
+    </div>
+} *@
+
+@* @if (TempData["DebugColumns"] != null)
+{
+    <div class="alert alert-danger">
+        @Html.Raw(TempData["DebugColumns"].ToString())
+    </div>
+} *@
+
+@* @if (TempData["Debug"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Debug"]
+    </div>
+} *@
+
+@* @if (TempData["DebugFormValues"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["DebugFormValues"]
+    </div>
+} *@
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+@if (TempData["UploadMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["UploadMessage"]
+    </div>
+}
+
+
+@* ADD PUBLISHER AREA *@
+<div class="upload-publishers-area">
+
+    @* ADD PUBLISHER SINGLE *@
+    <div class="form-container publisher-manager">
+        <form method="post">
+            <input type="hidden" asp-for="Publisher.Id">
+
+            <div class="form-group-publisher-manager">
+                <label>Full Name:</label>
+                <input type="text" asp-for="Publisher.Name" required>
+            </div>
+
+            @* Ensure Congregation ID is correctly set as an integer *@
+            <input type="hidden" asp-for="Publisher.Congregation" value="@Model.Publisher.Congregation" />
+
+            <div class="form-group-publisher-manager">
+                <label>Service Group:</label>
+                <input type="number" asp-for="Publisher.ServiceGroup">
+            </div>
+
+            <div class="form-group-publisher-manager">
+                <label>Privilege:</label>
+                <select asp-for="Publisher.Privilege" required>
+                    <option value="">-- Select Privilege --</option> 
+                    <option value="Elder">Elder</option>
+                    <option value="Servant">Servant</option>
+                    <option value="Brother">Brother</option>
+                    <option value="Sister">Sister</option>
+                </select>
+            </div>
+
+            <div class="form-group-publisher-manager">
+                <label>Regular Pioneer:</label>
+                <select asp-for="Publisher.IsRP" class="form-control">
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+
+            <div class="form-group-publisher-manager">
+                <label>Phone Number:</label>
+                <input type="text" asp-for="Publisher.PhoneNumber" pattern="^\+?[1-9]\d{1,14}$"
+                       title="Enter a valid phone number (e.g., +18181234567)" oninput="sanitizePhone(this)">
+            </div>
+
+            <div class="form-group-publisher-manager">
+                <label>Email:</label>
+                <input type="email" asp-for="Publisher.Email" />
+            </div>
+
+            <input type="hidden" asp-for="Publisher.Status" value="Active" />
+
+            <div class="form-group-publisher-manager">
+                <label>Notes:</label>
+                <textarea asp-for="Publisher.Notes"></textarea>
+            </div>
+
+            <div class="form-group-publisher-manager">
+                <button type="submit" asp-page-handler="AddPublisher">Add Publisher</button>
+            </div>
+        </form>
+    </div>
+
+    @* ADD PUBLISHER BULK *@
+    <div class="form-container publisher-manager">
+        <div>
+            <strong>Bulk Upload Tool</strong>
+            <p>
+                Use this tool to upload an Excel .CSV file to add multiple publishers. Download this
+                <a href="./templates/UploadPublishersTemplate.csv">Excel CSV File</a> for the proper CSV format.
+            </p>
+        </div>
+
+        <div class="csv-example-container">
+            <p><strong>Example of Excel .CSV file</strong></p>
+            <img src="~/images/BulkImportTemplate.png" alt="CSV Example" class="csv-example-image" />
+        </div>
+
+        <div class="form-group-publisher-manager">
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" name="csvFile" accept=".csv" class="csv-input">
+                <button type="submit" asp-page-handler="BulkUpload" class="csv-upload-btn">Bulk Upload</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@* BULK ADD PUBLISHER PREVIEW *@
+<div class="full-width-container">
+    <center>
+        @if (HttpContext.Session.GetString("BulkUploadPreview") != null)
+        {
+            var serializedPreview = HttpContext.Session.GetString("BulkUploadPreview");
+            var previewList = System.Text.Json.JsonSerializer.Deserialize<List<Khronos4.Models.CSVPublisher>>(serializedPreview);
+
+            if (previewList != null && previewList.Any())
+            {
+                <strong>Preview CSV Upload</strong>
+                <table class="publisher-table">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Service Group</th>
+                            <th>Privilege</th>
+                            <th>Phone #</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pub in previewList)
+                        {
+                            <tr>
+                                <td>@pub.Name</td>
+                                <td>@pub.ServiceGroup</td>
+                                <td>@pub.Privilege</td>
+                                <td>@(string.IsNullOrWhiteSpace(pub.PhoneNumber) ? "N/A" : pub.PhoneNumber)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <form method="post">
+                    <button type="submit" asp-page-handler="ConfirmBulkUpload" class="btn btn-success">Confirm Upload</button>
+                </form>
+            }
+            else
+            {
+                <p>No records to preview.</p>
+            }
+        }
+    </center>
+</div>
+
+@* CURRENT PUBLISHERS *@
+@if (Model.PublisherList != null && Model.PublisherList.Any())
+{
+    <div class="full-width-container">
+        <table class="publisher-table">
+        <thead>
+            <tr>
+                <th class="col-id">#</th>
+                <th class="col-name">Publisher</th>
+                <th class="col-sgroup">Group</th>
+                <th class="col-privilege">Privilege</th>
+                <th class="col-rp">RP</th>
+                <th class="col-phone">Phone</th>
+                @* <th class="col-email">Email</th> *@
+                <th class="col-notes">Notes</th>
+                <th class="col-actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var publisher in Model.PublisherList)
+            {
+                <tr>
+                    <form method="post">
+                    <td>
+                            @i
+                            @{
+                                i++;
+                            }
+                    </td>
+                    <td>
+                        <input type="text" name="name" value="@publisher.Name" required class="fit-content-input">
+                    </td>
+                    <td>
+                        <input type="text" name="serviceGroup" value="@publisher.ServiceGroup" pattern="[0-9]*" title="Enter a number" required class="fit-content-input">
+                    </td>
+                    <td>
+                        <select name="privilege">
+                            <option value="Elder" selected="@(publisher.Privilege == "Elder" ? "selected" : null)">Elder</option>
+                            <option value="Servant" selected="@(publisher.Privilege == "Servant" ? "selected" : null)">Servant</option>
+                            <option value="Brother" selected="@(publisher.Privilege == "Brother" ? "selected" : null)">Brother</option>
+                            <option value="Sister" selected="@(publisher.Privilege == "Sister" ? "selected" : null)">Sister</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="isRP" class="form-control" onchange="updateIsRP('@publisher.Id', this.value)">
+                            <option value="true" selected="@(publisher.IsRP ? "selected" : null)">Yes</option>
+                            <option value="false" selected="@(!publisher.IsRP ? "selected" : null)">No</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="phoneNumber" value="@publisher.PhoneNumber" pattern="^\+?[1-9]\d{1,14}$"
+                               title="Enter a valid phone number (e.g., +18181234567)" oninput="sanitizePhone(this)" class="fit-content-input">
+                    </td>
+                    @* <td>
+                        <input type="email" name="email" value="@publisher.Email" class="fit-content-input">
+                    </td> *@
+                    <td>
+                        <textarea name="notes" rows="2" class="notes-box">@publisher.Notes</textarea>
+                    </td>
+                    <td>
+                        <input type="hidden" name="id" value="@publisher.Id">
+                        <button type="submit" asp-page-handler="EditPublisher">Update</button>
+                        <button class="btn-danger" type="submit" asp-page-handler="DeletePublisher"
+                                onclick="return confirm('Are you sure you want to delete @publisher.Name?');">
+                            Delete
+                        </button>
+                    </td>
+                    </form>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+}
+else
+{
+    <div class="full-width-container">
+        <br />
+        <p>No publishers entered yet. Please add publisher's names.</p>
+    </div>
+}

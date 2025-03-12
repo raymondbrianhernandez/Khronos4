@@ -13,8 +13,36 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\BulkImportTemplate.png",
+      "PackagePath": "staticwebassets\\images\\BulkImportTemplate.png"
+    },
+    {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\Credits.txt",
       "PackagePath": "staticwebassets\\images\\Credits.txt"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\Driving.jpg",
+      "PackagePath": "staticwebassets\\images\\Driving.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\LetterWriting.jpg",
+      "PackagePath": "staticwebassets\\images\\LetterWriting.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\OclmElder.jpg",
+      "PackagePath": "staticwebassets\\images\\OclmElder.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\PioneerCouple.jpg",
+      "PackagePath": "staticwebassets\\images\\PioneerCouple.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\Speaker.jpg",
+      "PackagePath": "staticwebassets\\images\\Speaker.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\assessment.png",
+      "PackagePath": "staticwebassets\\images\\assessment.png"
     },
     {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\assignment.png",
@@ -43,6 +71,10 @@
     {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\goal.png",
       "PackagePath": "staticwebassets\\images\\goal.png"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\google.png",
+      "PackagePath": "staticwebassets\\images\\google.png"
     },
     {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\helmet.png",
@@ -83,6 +115,10 @@
     {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\schedule.png",
       "PackagePath": "staticwebassets\\images\\schedule.png"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\security.png",
+      "PackagePath": "staticwebassets\\images\\security.png"
     },
     {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\images\\stop-watch.png",
@@ -323,6 +359,22 @@
     {
       "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\templates\\BulkImportTemplate.png",
+      "PackagePath": "staticwebassets\\templates\\BulkImportTemplate.png"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\templates\\S-140_E.docx",
+      "PackagePath": "staticwebassets\\templates\\S-140_E.docx"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\templates\\S-140_TG.docx",
+      "PackagePath": "staticwebassets\\templates\\S-140_TG.docx"
+    },
+    {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\templates\\UploadPublishersTemplate.csv",
+      "PackagePath": "staticwebassets\\templates\\UploadPublishersTemplate.csv"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Khronos4.Microsoft.AspNetCore.StaticWebAssets.props",

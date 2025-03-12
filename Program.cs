@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net.Http;
 using NLog;
 using NLog.Web;
-
+using Microsoft.Extensions.Logging; // Added for logging
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -34,6 +34,14 @@ builder.Services.AddSession(options =>
 // Configure Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Logging Services
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole(); // Add console logging
+    loggingBuilder.AddDebug();   // Add debug logging
+    // Add other logging providers as needed (e.g., file, database)
+});
 
 var app = builder.Build();
 

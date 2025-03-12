@@ -4,24 +4,21 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<h1>Admin Dashboard</h1>
+<div class="page_heading">
+    <h4>Admin Dashboard</h4>
+</div>
 
 <!-- SECTION: Congregations -->
-<h2>Congregations</h2>
-<!-- Button to add a new congregation -->
-<button class="btn btn-primary" onclick="window.location.href='@Url.Page("/AddCongregation")'">Add Congregation</button>
+<h5>Congregations</h5>
+
+<!-- Button to trigger modal for adding a congregation -->
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCongregationModal">Add Congregation</button>
+
+<!-- Congregation Table -->
 <div class="table-responsive">
     <table class="table table-striped table-custom">
-        <colgroup>
-            <col style="width: 10%;">
-            <col style="width: 30%;">
-            <col style="width: 20%;">
-            <col style="width: 20%;">
-            <col style="width: 20%;">
-        </colgroup>
         <thead class="table-dark text-center">
             <tr>
-                <th>ID</th>
                 <th>Name</th>
                 <th>Language</th>
                 <th>City</th>
@@ -32,7 +29,6 @@
             @foreach (var cong in Model.Congregations)
             {
                 <tr class="text-center">
-                    <td>@cong.CongID</td>
                     <td>@cong.Name</td>
                     <td>@cong.Language</td>
                     <td>@cong.City</td>
@@ -46,8 +42,61 @@
     </table>
 </div>
 
+<!-- Add Congregation Modal -->
+<div class="modal fade" id="addCongregationModal" tabindex="-1" aria-labelledby="addCongregationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Congregation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Congregation Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="language" class="form-label">Language</label>
+                        <input type="text" name="language" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" name="city" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" name="state" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" name="country" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cobe" class="form-label">CongCOBE</label>
+                        <input type="text" name="congCOBE" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sect" class="form-label">CongSect</label>
+                        <input type="text" name="congSect" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="so" class="form-label">CongSO</label>
+                        <input type="text" name="congSO" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="AddCongregation">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- SECTION: Users -->
-<h2>Users</h2>
+<h5>Users</h5>
 <button class="btn btn-primary" onclick="window.location.href='@Url.Page("/AddUser")'">Add User</button>
 <div class="table-responsive">
     <table class="table table-striped table-custom">
@@ -86,7 +135,7 @@
 </div>
 
 <!-- SECTION: Blog Entries -->
-<h2>Blog Entries</h2>
+<h5>Blog Entries</h5>
 <button class="btn btn-primary" onclick="window.location.href='@Url.Page("/AddBlog")'">Add Blog Entry</button>
 <div class="table-responsive">
     <table class="table table-striped table-custom">

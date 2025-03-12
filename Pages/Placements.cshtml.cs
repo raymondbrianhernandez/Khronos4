@@ -10,19 +10,27 @@ using Khronos4.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Khronos4.Data;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Khronos4.Pages
 {
+    [Authorize]
     public class PlacementsModel : PageModel
     {
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
+
+        public string UserFullName { get; set; }
+        public int SelectedMonth { get; set; }
+        public string SelectedMonthName { get; set; }
+        public int SelectedYear { get; set; }
+        public List<int> AvailableYears { get; set; } = new();
+        public Dictionary<DateTime, PlacementData> PlacementEntries { get; set; } = new();
+        public bool HasRecords { get; set; } = true;
         public string CurrentMonth { get; set; }
         public int CurrentYear { get; set; }
         public int CurrentMonthNumber { get; set; } // Store month as a number
-        public string UserFullName { get; set; }
-        public Dictionary<DateTime, PlacementData> PlacementEntries { get; set; } = new();
-
-        private readonly IConfiguration _configuration;
-        private readonly AppDbContext _context;
 
         public PlacementsModel(IConfiguration configuration, AppDbContext context)
         {
@@ -30,30 +38,26 @@ namespace Khronos4.Pages
             _context = context;
         }
 
-        public class PlacementData
+        public async Task OnGetAsync(int? month, int? year)
         {
-            public decimal Hours { get; set; }
-            public int Placements { get; set; }
-            public int RVs { get; set; }
-            public int BS { get; set; }
-            public decimal LDC { get; set; }
-            public string Notes { get; set; }
-        }
-
-        public async Task OnGetAsync()
-        {
-            CurrentYear = DateTime.Now.Year;
-            CurrentMonthNumber = DateTime.Now.Month;
-            CurrentMonth = DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture);
-
-            // Ensure UserFullName is properly set
             UserFullName = (User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "Unknown User").Trim();
 
-            // Call the stored procedure to ensure all days exist
-            await GenerateMonthlyPlacements(UserFullName, CurrentYear, CurrentMonthNumber);
+            // Load available years dynamically based on placement records
+            AvailableYears = await _context.Placements
+                .Where(p => p.Owner == UserFullName)
+                .Select(p => p.Date.Year)
+                .Distinct()
+                .OrderByDescending(y => y)
+                .ToListAsync();
 
-            // Load placements after ensuring they exist
-            await LoadPlacementData(UserFullName, CurrentYear, CurrentMonthNumber);
+            // Default to the most recent year if no selection is made
+            SelectedYear = year ?? (AvailableYears.Any() ? AvailableYears.First() : DateTime.Now.Year);
+            SelectedMonth = month ?? DateTime.Now.Month;
+
+            SelectedMonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(SelectedMonth);
+
+            // Load placements for the selected month and year
+            await LoadPlacementData(UserFullName, SelectedYear, SelectedMonth);
         }
 
         public async Task<IActionResult> OnPostUpdatePlacementAsync(DateTime date)
@@ -133,14 +137,22 @@ namespace Khronos4.Pages
 
             var parameters = new[]
             {
-        new SqlParameter("@Owner", SqlDbType.NVarChar) { Value = owner },
-        new SqlParameter("@Year", SqlDbType.Int) { Value = year },
-        new SqlParameter("@Month", SqlDbType.Int) { Value = month }
-    };
+                new SqlParameter("@Owner", SqlDbType.NVarChar) { Value = owner },
+                new SqlParameter("@Year", SqlDbType.Int) { Value = year },
+                new SqlParameter("@Month", SqlDbType.Int) { Value = month }
+            };
 
             var placements = await _context.Placements
                 .FromSqlRaw("EXEC [dbo].[GetMonthlyPlacements] @Owner, @Year, @Month", parameters)
                 .ToListAsync();
+
+            if (!placements.Any())
+            {
+                HasRecords = false;
+                return;
+            }
+
+            HasRecords = true;
 
             foreach (var placement in placements)
             {
@@ -166,6 +178,16 @@ namespace Khronos4.Pages
             };
 
             await _context.Database.ExecuteSqlRawAsync("EXEC [dbo].[GenerateMonthlyPlacements] @Owner, @Year, @Month", parameters);
+        }
+
+        public class PlacementData
+        {
+            public decimal Hours { get; set; }
+            public int Placements { get; set; }
+            public int RVs { get; set; }
+            public int BS { get; set; }
+            public decimal LDC { get; set; }
+            public string Notes { get; set; }
         }
     }
 }

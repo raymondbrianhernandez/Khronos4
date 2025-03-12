@@ -8,10 +8,8 @@
     --footer-text-color: #666;
     --button-background: #0056b3;
     --button-hover: #003f7f;
-    /* Reversed Dropdown */
     --dropdown-background: #333;
     --dropdown-text-color: #e0e0e0;
-    /* Table Blog */
     --table-header-bg: #343a40; /* Dark gray */
     --table-header-text: #ffffff;
     --table-row-bg: #ffffff;
@@ -29,15 +27,25 @@
     --footer-text-color: #bbb;
     --button-background: #007bff;
     --button-hover: #0056b3;
-    /* Reversed Dropdown */
     --dropdown-background: #f8f9fa;
     --dropdown-text-color: #333;
-    /* Table Blog */
     --table-header-bg: #222;
     --table-header-text: #ddd;
     --table-row-bg: #1e1e1e;
     --table-row-text: #e0e0e0;
     --table-border-color: #444;
+}
+
+/* ======= NAVBAR TOGGLE BUTTON ======= */
+.navbar-toggler {
+    background: var(--button-background);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.navbar-toggler:hover {
+    background: var(--button-hover);
 }
 
 /* ===== Page Layout ===== */
@@ -51,6 +59,11 @@ body {
     flex-direction: column;
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
+}
+
+.page_heading {
+    font-weight: bold;
+    text-align: center;
 }
 
 h1, h2, h3 {
@@ -434,6 +447,13 @@ footer {
     margin-bottom: 5px; /* Space below the icon */
 }
 
+.tile-icon-large {
+    width: 300px; /* Adjust size */
+    height: auto;
+    margin-bottom: 5px; /* Space below the icon */
+    filter: opacity(70%);
+}
+
 /* Responsive Grid Layout */
 @media (max-width: 1024px) {
     .tile-grid {
@@ -669,7 +689,6 @@ footer {
 }
 
 /* ===== Placements Table Styling ===== */
-/* ===== Placements Table Styling ===== */
 .placements-table {
     width: 100%;
     border-collapse: collapse;
@@ -874,4 +893,256 @@ footer {
     border-radius: 20px;
     padding: 20px;
     margin: 30px 20px;
+}
+
+/* Annual Report */
+.annual-totals-row {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* OCLM Manager - General Styles */
+.OCLM-Editor-Container {
+    margin-top: 20px;
+}
+
+.OCLM-Editor {
+    width: 100%;
+    border-collapse: collapse;
+    border: 4px solid black;
+}
+
+.OCLM-Editor th, .OCLM-Editor td {
+    border: 0px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+.full-width-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Publisher Manager Form */
+.publisher-manager {
+    width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.form-group-publisher-manager {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.form-group-publisher-manager label {
+    width: 120px;
+    font-weight: bold;
+}
+
+.form-group-publisher-manager input,
+.form-group-publisher-manager select,
+.form-group-publisher-manager textarea {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: auto;
+    min-width: 80px;
+    max-width: 300px;
+}
+
+.form-group-publisher-manager textarea {
+    resize: vertical;
+    height: 60px;
+}
+
+.form-group-publisher-manager button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.form-group-publisher-manager button:hover {
+    background-color: #0056b3;
+}
+
+/* Publisher Table Styles */
+.publisher-table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    background: var(--background-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+.publisher-table th, .publisher-table td {
+    padding: 10px;
+    border: 1px solid var(--table-border-color);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.publisher-table th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+}
+
+/* Publisher Table Header Column Widths */
+.publisher-table th.col-id { min-width: 40px; }
+.publisher-table th.col-name { min-width: 100px; }
+.publisher-table th.col-sgroup { min-width: 50px; }
+.publisher-table th.col-privilege { min-width: 80px; }
+.publisher-table th.col-rp { min-width: 60px; }
+.publisher-table th.col-phone { min-width: 100px; }
+.publisher-table th.col-email { min-width: 150px; }
+.publisher-table th.col-notes { min-width: 200px; }
+.publisher-table th.col-actions { min-width: 100px; }
+
+/* Publisher Table Input Field Styles */
+.publisher-table input,
+.publisher-table select,
+.publisher-table textarea {
+    width: auto !important;
+    min-width: 40px !important;
+    max-width: 250px;
+    padding: 5px;
+    /*display: inline-block;
+box-sizing: border-box;
+text-align: center;*/
+    box-sizing: border-box;
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--table-border-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+.publisher-table td {
+    padding: 1px;
+}
+
+/* Specific Input Widths */
+.publisher-table input[name="phoneNumber"] {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+}
+
+.publisher-table input[name="serviceGroup"],
+.publisher-table input[name="isRP"] {
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+}
+
+/* Reduced Input Max Width for Specific Columns */
+.publisher-table td.col-name input,
+.publisher-table td.col-sgroup input,
+.publisher-table td.col-privilege select {
+    max-width: 150px;
+}
+
+/* Fit Content Input Class */
+.fit-content-input {
+    min-width: 100px;
+    width: auto !important;
+}
+
+/* Notes Box Style */
+.notes-box {
+    display: inline-block;
+    width: 300px;
+    height: 40px;
+    font-size: 16px;
+    padding: 5px;
+    resize: vertical;
+    overflow: auto;
+    border: 1px solid var(--table-border-color);
+    border-radius: 4px;
+    vertical-align: middle;
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Upload Publishers Area */
+.upload-publishers-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .upload-publishers-area {
+        grid-template-columns: 1fr;
+    }
+}
+
+.csv-placeholder {
+    width: 100%;
+}
+
+/* ======= DARK MODE SUPPORT ======= */
+.dark-mode .publisher-manager {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+.dark-mode .publisher-table {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+.dark-mode .publisher-table th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+}
+
+.dark-mode .publisher-table input,
+.dark-mode .publisher-table select,
+.dark-mode .publisher-table textarea {
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--table-border-color);
+}
+
+.dark-mode .notes-box {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Success Message */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    margin: 20px auto;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.csv-example-container {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.csv-example-image {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
 }

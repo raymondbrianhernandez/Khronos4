@@ -23,7 +23,36 @@
     decimal totalLDC = 0m;
 }
 
-<h4>Placements for @monthName @year for @Model.UserFullName</h4>
+<div class="page_heading">
+    <h4>Placements for @Model.SelectedMonthName @Model.SelectedYear for @Model.UserFullName</h4>
+</div>
+
+<div class="monthly_table">
+    <!-- Month & Year Selection Form -->
+    <form method="get" style="margin-bottom: 20px;">
+        <label for="month">Select Month:</label>
+        <select id="month" name="month">
+            @for (int m = 1; m <= 12; m++)
+            {
+                <option value="@m" selected="@(m == Model.SelectedMonth ? "selected" : null)">
+                    @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                </option>
+            }
+        </select>
+
+        <label for="year">Select Year:</label>
+        <select id="year" name="year">
+            @foreach (var year in Model.AvailableYears)
+            {
+                <option value="@year" selected="@(year == Model.SelectedYear ? "selected" : null)">
+                    @year
+                </option>
+            }
+        </select>
+
+        <button type="submit">View Report</button>
+    </form>
+</div>
 
 @if (!string.IsNullOrEmpty(Request.Query["success"]))
 {
@@ -32,6 +61,10 @@
 @if (!string.IsNullOrEmpty(Request.Query["error"]))
 {
     <div class="alert alert-danger">❌ Failed to update, please update manually.</div>
+}
+@if (!Model.HasRecords)
+{
+    <div class="alert alert-danger">❌ No report for the selected month.</div>
 }
 
 <div class="table-responsive">

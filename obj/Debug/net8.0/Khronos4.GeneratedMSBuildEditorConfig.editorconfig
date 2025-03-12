@@ -70,6 +70,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9nb3V0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Owner/source/repos/Khronos4/Pages/OCLMManager.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT0NMTU1hbmFnZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Owner/source/repos/Khronos4/Pages/OneSearch.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT25lU2VhcmNoLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -84,6 +88,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Owner/source/repos/Khronos4/Pages/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Owner/source/repos/Khronos4/Pages/PublisherManager.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHVibGlzaGVyTWFuYWdlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Owner/source/repos/Khronos4/Pages/Register.cshtml]

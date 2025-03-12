@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Khronos4.Pages
 {
+    [Authorize]
     public class ResultsModel : PageModel
     {
         [BindProperty(SupportsGet = true)] public string Street { get; set; }

@@ -3,44 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\Owner\\source\\repos\\Khronos4\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\annualreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\annualreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\annualreport.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\annualreport.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\test.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\test.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\onesearch.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\onesearch.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\publishermanager.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\publishermanager.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\onesearchresults.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\onesearchresults.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\onesearch.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\onesearch.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\publishermanager.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\publishermanager.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\wwwroot\\templates\\uploadpublisherstemplate.csv||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:wwwroot\\templates\\uploadpublisherstemplate.csv||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\models\\csvpublisher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:models\\csvpublisher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -62,132 +46,75 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AnnualReport.cshtml.cs",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\AnnualReport.cshtml.cs",
-              "RelativeDocumentMoniker": "Pages\\AnnualReport.cshtml.cs",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\AnnualReport.cshtml.cs*",
-              "RelativeToolTip": "Pages\\AnnualReport.cshtml.cs*",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAAAEgAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-25T00:46:46.238Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AnnualReport.cshtml",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\AnnualReport.cshtml",
-              "RelativeDocumentMoniker": "Pages\\AnnualReport.cshtml",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\AnnualReport.cshtml*",
-              "RelativeToolTip": "Pages\\AnnualReport.cshtml*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC0AAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-25T00:40:36.481Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Dashboard.cshtml",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml",
-              "RelativeDocumentMoniker": "Pages\\Dashboard.cshtml",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml",
-              "RelativeToolTip": "Pages\\Dashboard.cshtml",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAADUAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-25T00:39:51.333Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "OneSearchResults.cshtml",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OneSearchResults.cshtml",
-              "RelativeDocumentMoniker": "Pages\\OneSearchResults.cshtml",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OneSearchResults.cshtml",
-              "RelativeToolTip": "Pages\\OneSearchResults.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-24T05:09:52.594Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Dashboard.cshtml.cs",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml.cs",
-              "RelativeDocumentMoniker": "Pages\\Dashboard.cshtml.cs",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Dashboard.cshtml.cs",
-              "RelativeToolTip": "Pages\\Dashboard.cshtml.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAB4AAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-22T01:37:54.705Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Test.cshtml",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Test.cshtml",
-              "RelativeDocumentMoniker": "Pages\\Test.cshtml",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Test.cshtml",
-              "RelativeToolTip": "Pages\\Test.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-24T21:14:24.427Z",
-              "EditorCaption": ""
+              "Title": "UploadPublishersTemplate.csv",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\templates\\UploadPublishersTemplate.csv",
+              "RelativeDocumentMoniker": "wwwroot\\templates\\UploadPublishersTemplate.csv",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\templates\\UploadPublishersTemplate.csv",
+              "RelativeToolTip": "wwwroot\\templates\\UploadPublishersTemplate.csv",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002120|",
+              "WhenOpened": "2025-03-12T08:50:56.852Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "OneSearch.cshtml",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OneSearch.cshtml",
-              "RelativeDocumentMoniker": "Pages\\OneSearch.cshtml",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OneSearch.cshtml",
-              "RelativeToolTip": "Pages\\OneSearch.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-24T04:41:35.845Z",
-              "EditorCaption": ""
+              "Title": "CSVPublisher.cs",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\CSVPublisher.cs",
+              "RelativeDocumentMoniker": "Models\\CSVPublisher.cs",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\CSVPublisher.cs",
+              "RelativeToolTip": "Models\\CSVPublisher.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-12T07:53:35.289Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
+              "Title": "site.js",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\js\\site.js",
+              "RelativeDocumentMoniker": "wwwroot\\js\\site.js",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\js\\site.js",
+              "RelativeToolTip": "wwwroot\\js\\site.js",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-03-12T04:33:29.619Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "site.css",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
               "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\css\\site.css",
               "RelativeToolTip": "wwwroot\\css\\site.css",
-              "ViewState": "AgIAADQDAAAAAAAAAAAewGcDAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAGIEAAAAAAAAAAApwHsEAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-02-11T08:08:13.109Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-11T23:35:23.926Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "OneSearch.cshtml.cs",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OneSearch.cshtml.cs",
-              "RelativeDocumentMoniker": "Pages\\OneSearch.cshtml.cs",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OneSearch.cshtml.cs",
-              "RelativeToolTip": "Pages\\OneSearch.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "PublisherManager.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\PublisherManager.cshtml.cs",
+              "RelativeDocumentMoniker": "Pages\\PublisherManager.cshtml.cs",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\PublisherManager.cshtml.cs",
+              "RelativeToolTip": "Pages\\PublisherManager.cshtml.cs",
+              "ViewState": "AgIAANQBAAAAAAAAAAAAAOYBAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-24T04:48:47.436Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T19:25:24.99Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAwEIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-24T04:03:23.026Z",
+              "DocumentIndex": 0,
+              "Title": "PublisherManager.cshtml",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\PublisherManager.cshtml",
+              "RelativeDocumentMoniker": "Pages\\PublisherManager.cshtml",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\PublisherManager.cshtml",
+              "RelativeToolTip": "Pages\\PublisherManager.cshtml",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAowKQAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-02-27T19:24:43.614Z",
               "EditorCaption": ""
             }
           ]
