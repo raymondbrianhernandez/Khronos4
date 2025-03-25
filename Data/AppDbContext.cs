@@ -19,6 +19,8 @@ namespace Khronos4.Data
         public DbSet<Placement> Placements { get; set; }
         public DbSet<MeetingSchedule> MeetingSchedules { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
+        public DbSet<ServiceGroup> ServiceGroups { get; set; }
+        public DbSet<OCLMPart> OCLMParts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

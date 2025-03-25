@@ -377,6 +377,10 @@
       "PackagePath": "staticwebassets\\templates\\UploadPublishersTemplate.csv"
     },
     {
+      "Id": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\templates\\~$-140_E.docx",
+      "PackagePath": "staticwebassets\\templates\\~$-140_E.docx"
+    },
+    {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Khronos4.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },

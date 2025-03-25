@@ -15,6 +15,13 @@
     --table-row-bg: #ffffff;
     --table-row-text: #333;
     --table-border-color: #dee2e6;
+    --elder-bg: #d4edda;
+    --servant-bg: #fff3cd;
+    --brother-bg: #d1ecf1;
+    --sister-bg: #f8d7da;
+    --rp-highlight: #ffd700;
+    --text-dark: #000;
+    --text-light: #fff;
 }
 
 /* ===== Dark Mode (Reversed Dropdown) ===== */
@@ -34,6 +41,13 @@
     --table-row-bg: #1e1e1e;
     --table-row-text: #e0e0e0;
     --table-border-color: #444;
+    --elder-bg: #245a24;
+    --servant-bg: #665c1e;
+    --brother-bg: #124a58;
+    --sister-bg: #6a1b1b;
+    --rp-highlight: #b8860b;
+    --text-dark: #fff;
+    --text-light: #000;
 }
 
 /* ======= NAVBAR TOGGLE BUTTON ======= */
@@ -975,7 +989,7 @@ footer {
     background-color: #0056b3;
 }
 
-/* Publisher Table Styles */
+/* ===== Publisher Table Styles ===== */
 .publisher-table {
     margin-top: 20px;
     width: 100%;
@@ -986,50 +1000,129 @@ footer {
     transition: background 0.3s, color 0.3s;
 }
 
-.publisher-table th, .publisher-table td {
-    padding: 10px;
-    border: 1px solid var(--table-border-color);
-    text-align: center;
-    white-space: nowrap;
-}
+    /* ===== Table Row & Form Element Styling ===== */
+    .publisher-table tr {
+        background-color: var(--table-row-bg);
+        color: var(--table-row-text);
+    }
 
-.publisher-table th {
-    background-color: var(--table-header-bg);
-    color: var(--table-header-text);
-}
+        /* Apply row colors dynamically */
+        .publisher-table tr.elder-row {
+            background-color: var(--elder-bg);
+            color: var(--text-dark);
+        }
 
-/* Publisher Table Header Column Widths */
-.publisher-table th.col-id { min-width: 40px; }
-.publisher-table th.col-name { min-width: 100px; }
-.publisher-table th.col-sgroup { min-width: 50px; }
-.publisher-table th.col-privilege { min-width: 80px; }
-.publisher-table th.col-rp { min-width: 60px; }
-.publisher-table th.col-phone { min-width: 100px; }
-.publisher-table th.col-email { min-width: 150px; }
-.publisher-table th.col-notes { min-width: 200px; }
-.publisher-table th.col-actions { min-width: 100px; }
+        .publisher-table tr.servant-row {
+            background-color: var(--servant-bg);
+            color: var(--text-dark);
+        }
 
-/* Publisher Table Input Field Styles */
-.publisher-table input,
-.publisher-table select,
-.publisher-table textarea {
-    width: auto !important;
-    min-width: 40px !important;
-    max-width: 250px;
-    padding: 5px;
-    /*display: inline-block;
-box-sizing: border-box;
-text-align: center;*/
-    box-sizing: border-box;
-    background: var(--background-color);
-    color: var(--text-color);
-    border: 1px solid var(--table-border-color);
-    transition: background 0.3s, color 0.3s;
-}
+        .publisher-table tr.brother-row {
+            background-color: var(--brother-bg);
+            color: var(--text-dark);
+        }
 
-.publisher-table td {
-    padding: 1px;
-}
+        .publisher-table tr.sister-row {
+            background-color: var(--sister-bg);
+            color: var(--text-dark);
+        }
+
+        .publisher-table tr.rp-highlight {
+            background-color: var(--rp-highlight);
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+    /* Ensure all form elements inside table rows inherit row colors */
+    .publisher-table input,
+    .publisher-table select,
+    .publisher-table textarea {
+        background-color: inherit !important; /* Match row background */
+        color: inherit !important; /* Match row text color */
+        border: 1px solid var(--table-border-color);
+        padding: 5px;
+        border-radius: 4px;
+        transition: background 0.3s, color 0.3s;
+    }
+
+        /* Checkboxes should match row color */
+        .publisher-table input[type="checkbox"] {
+            accent-color: inherit !important;
+        }
+
+    /* Adjust select dropdown styles */
+    .publisher-table select {
+        width: 100%;
+        padding: 5px;
+        font-size: 14px;
+        border: 1px solid var(--table-border-color);
+    }
+
+    /* Buttons inside forms */
+    .publisher-table button {
+        background-color: var(--button-background);
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+        .publisher-table button:hover {
+            background-color: var(--button-hover);
+        }
+
+    /* ===== Table Header Styling ===== */
+    .publisher-table th, .publisher-table td {
+        padding: 10px;
+        border: 1px solid var(--table-border-color);
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .publisher-table th {
+        background-color: var(--table-header-bg);
+        color: var(--table-header-text);
+    }
+
+        /* ===== Column Widths ===== */
+        .publisher-table th.col-id {
+            min-width: 40px;
+        }
+
+        .publisher-table th.col-name {
+            min-width: 100px;
+        }
+
+        .publisher-table th.col-sgroup {
+            min-width: 50px;
+        }
+
+        .publisher-table th.col-privilege {
+            min-width: 80px;
+        }
+
+        .publisher-table th.col-rp {
+            min-width: 60px;
+        }
+
+        .publisher-table th.col-phone {
+            min-width: 100px;
+        }
+
+        .publisher-table th.col-email {
+            min-width: 150px;
+        }
+
+        .publisher-table th.col-notes {
+            min-width: 200px;
+        }
+
+        .publisher-table th.col-actions {
+            min-width: 100px;
+        }
 
 /* Specific Input Widths */
 .publisher-table input[name="phoneNumber"] {
@@ -1045,12 +1138,23 @@ text-align: center;*/
     max-width: 50px !important;
 }
 
-/* Reduced Input Max Width for Specific Columns */
-.publisher-table td.col-name input,
-.publisher-table td.col-sgroup input,
-.publisher-table td.col-privilege select {
-    max-width: 150px;
+/* ===== Dark Mode Adjustments ===== */
+.dark-mode .publisher-table input,
+.dark-mode .publisher-table select,
+.dark-mode .publisher-table textarea {
+    background-color: inherit !important; /* Ensures consistency in dark mode */
+    color: inherit !important;
+    border: 1px solid var(--table-border-color);
 }
+
+.dark-mode .publisher-table button {
+    background-color: var(--button-background);
+}
+
+    .dark-mode .publisher-table button:hover {
+        background-color: var(--button-hover);
+    }
+
 
 /* Fit Content Input Class */
 .fit-content-input {
@@ -1121,6 +1225,34 @@ text-align: center;*/
     color: var(--text-color);
 }
 
+/* Row Colors */
+.elder-row {
+    background-color: var(--elder-bg) !important;
+    color: var(--text-dark);
+}
+
+.servant-row {
+    background-color: var(--servant-bg) !important;
+    color: var(--text-dark);
+}
+
+.brother-row {
+    background-color: var(--brother-bg) !important;
+    color: var(--text-dark);
+}
+
+.sister-row {
+    background-color: var(--sister-bg) !important;
+    color: var(--text-dark);
+}
+
+/* RP Highlight */
+.rp-highlight {
+    background-color: var(--rp-highlight) !important;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
 /* Success Message */
 .success-message {
     background-color: #d4edda;
@@ -1145,4 +1277,130 @@ text-align: center;*/
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 5px;
+}
+
+/* Summary Table Styling */
+.summary-table-container {
+    margin-bottom: 20px;
+}
+
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    table-layout: fixed;
+}
+
+.summary-table th, .summary-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    width: 16.6%;
+}
+
+/* Apply Background Colors */
+.elder-bg {
+    background-color: var(--elder-bg) !important;
+    color: var(--text-dark);
+}
+
+.servant-bg {
+    background-color: var(--servant-bg) !important;
+    color: var(--text-dark);
+}
+
+.brother-bg {
+    background-color: var(--brother-bg) !important;
+    color: var(--text-dark);
+}
+
+.sister-bg {
+    background-color: var(--sister-bg) !important;
+    color: var(--text-dark);
+}
+
+.rp-highlight {
+    background-color: var(--rp-highlight) !important;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.publisher-bg {
+    background-color: var(--publisher-bg) !important;
+    color: var(--text-dark);
+}
+
+/* Dynamic Groups Table */
+.dynamic-groups-container {
+    margin-top: 20px;
+}
+
+.dynamic-groups-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    table-layout: fixed; /* Ensures even column widths */
+}
+
+.dynamic-groups-table th, .dynamic-groups-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+}
+
+/* Ensure Each Column Gets Equal Space */
+.dynamic-groups-table th {
+    background-color: var(--publisher-bg);
+    width: auto;
+}
+
+/* Style for Members */
+.dynamic-groups-table ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dynamic-groups-table li {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+    /* Styling for Radio Buttons */
+    .dynamic-groups-table input[type="radio"] {
+        margin-right: 5px;
+    }
+
+/* Button Styling */
+.btn-update {
+    display: block;
+    margin: 10px auto;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-update:hover {
+    background-color: #0056b3;
+}
+
+.btn-print {
+    display: block;
+    margin: 10px auto;
+    background-color: #000;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-print:hover {
+    background-color: #444;
+}
+
+.btn-success {
+    margin: 15px;
 }

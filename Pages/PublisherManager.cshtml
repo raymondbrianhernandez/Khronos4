@@ -3,15 +3,16 @@
 @using Microsoft.AspNetCore.Http
 @{
     ViewData["Title"] = "Publisher Manager - Khronos Pro 4";
+
+
 }
 
 <div class="page_heading">
-    <h4>Our Christian Life and Ministry Manager</h4>
+    <h4>@Model.CongregationName Congregation</h4>
+    <h5>Publisher Manager</h5>
     <p>
-        <a href="/OCLMManager">OCLM Manager Home</a> |
-        <a href="/PublisherManager">Manage Publishers</a> |
-        <a href="https://www.jw.org/en/library/jw-meeting-workbook/" target="_blank">JW Workbook</a> |
-        <a href="/Statistics">Statistics</a>
+        <a href="/OCLMManager">Midweek Meeting Manager</a> |
+        <a href="/PublicTalkManager">Weekend Meeting Manager</a>
     </p>
 </div>
 
@@ -51,6 +52,11 @@
     </div>
 } *@
 
+@* @if (TempData["DebugManagePublisher"] != null)
+{
+    <p>Manage Publisher Debug: @TempData["DebugManagePublisher"]</p>
+} *@
+
 @* @if (TempData["Debug"] != null)
 {
     <div class="alert alert-info">
@@ -85,7 +91,6 @@
         @TempData["UploadMessage"]
     </div>
 }
-
 
 @* ADD PUBLISHER AREA *@
 <div class="upload-publishers-area">
@@ -223,78 +228,203 @@
 @* CURRENT PUBLISHERS *@
 @if (Model.PublisherList != null && Model.PublisherList.Any())
 {
-    <div class="full-width-container">
-        <table class="publisher-table">
-        <thead>
-            <tr>
-                <th class="col-id">#</th>
-                <th class="col-name">Publisher</th>
-                <th class="col-sgroup">Group</th>
-                <th class="col-privilege">Privilege</th>
-                <th class="col-rp">RP</th>
-                <th class="col-phone">Phone</th>
-                @* <th class="col-email">Email</th> *@
-                <th class="col-notes">Notes</th>
-                <th class="col-actions">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                int i = 1;
-            }
-            @foreach (var publisher in Model.PublisherList)
-            {
+    int totalPublishers = Model.PublisherList.Count;
+    int totalElders = Model.PublisherList.Count(p => p.Privilege == "Elder");
+    int totalServants = Model.PublisherList.Count(p => p.Privilege == "Servant");
+    int totalPioneers = Model.PublisherList.Count(p => p.IsRP);
+    int totalBrothers = totalElders + totalServants + Model.PublisherList.Count(p => p.Privilege == "Brother");
+    int totalSisters = Model.PublisherList.Count(p => p.Privilege == "Sister");
+
+    var serviceGroups = Model.PublisherList.Select(p => p.ServiceGroup).Distinct().OrderBy(sg => sg).ToList();
+
+    <div class="summary-table-container">
+        <table class="summary-table">
+            <thead>
                 <tr>
-                    <form method="post">
-                    <td>
-                            @i
-                            @{
-                                i++;
-                            }
-                    </td>
-                    <td>
-                        <input type="text" name="name" value="@publisher.Name" required class="fit-content-input">
-                    </td>
-                    <td>
-                        <input type="text" name="serviceGroup" value="@publisher.ServiceGroup" pattern="[0-9]*" title="Enter a number" required class="fit-content-input">
-                    </td>
-                    <td>
-                        <select name="privilege">
-                            <option value="Elder" selected="@(publisher.Privilege == "Elder" ? "selected" : null)">Elder</option>
-                            <option value="Servant" selected="@(publisher.Privilege == "Servant" ? "selected" : null)">Servant</option>
-                            <option value="Brother" selected="@(publisher.Privilege == "Brother" ? "selected" : null)">Brother</option>
-                            <option value="Sister" selected="@(publisher.Privilege == "Sister" ? "selected" : null)">Sister</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="isRP" class="form-control" onchange="updateIsRP('@publisher.Id', this.value)">
-                            <option value="true" selected="@(publisher.IsRP ? "selected" : null)">Yes</option>
-                            <option value="false" selected="@(!publisher.IsRP ? "selected" : null)">No</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" name="phoneNumber" value="@publisher.PhoneNumber" pattern="^\+?[1-9]\d{1,14}$"
-                               title="Enter a valid phone number (e.g., +18181234567)" oninput="sanitizePhone(this)" class="fit-content-input">
-                    </td>
-                    @* <td>
-                        <input type="email" name="email" value="@publisher.Email" class="fit-content-input">
-                    </td> *@
-                    <td>
-                        <textarea name="notes" rows="2" class="notes-box">@publisher.Notes</textarea>
-                    </td>
-                    <td>
-                        <input type="hidden" name="id" value="@publisher.Id">
-                        <button type="submit" asp-page-handler="EditPublisher">Update</button>
-                        <button class="btn-danger" type="submit" asp-page-handler="DeletePublisher"
-                                onclick="return confirm('Are you sure you want to delete @publisher.Name?');">
-                            Delete
-                        </button>
-                    </td>
-                    </form>
+                    <th class="elder-bg">Elders</th>
+                    <th class="servant-bg">Servants</th>
+                    <th class="rp-highlight">RPs</th>
+                    <th class="brother-bg">Brothers</th>
+                    <th class="sister-bg">Sisters</th>
+                    <th class="publisher-bg">Publishers</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="elder-bg">@totalElders</td>
+                    <td class="servant-bg">@totalServants</td>
+                    <td class="rp-highlight">@totalPioneers</td>
+                    <td class="brother-bg">@totalBrothers</td>
+                    <td class="sister-bg">@totalSisters</td>
+                    <td class="publisher-bg">@totalPublishers</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @* SERVICE GROUPS *@
+    <div class="dynamic-groups-container">
+        <table class="dynamic-groups-table" id="serviceGroupsTable">
+            <thead>
+                <tr>
+                    @foreach (var group in serviceGroups)
+                    {
+                        <th>Group @group</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var group in serviceGroups)
+                    {
+                        <td>
+                            @{
+                                var groupMembers = Model.PublisherList
+                                .Where(p => p.ServiceGroup == group)
+                                .OrderBy(p => p.IsCBSOverseer ? 0 :
+                                p.IsCBSAssistant ? 1 :
+                                p.Privilege == "Elder" ? 2 :
+                                p.Privilege == "Servant" ? 3 :
+                                p.Privilege == "Brother" ? 4 : 5)
+                                .ToList();
+                            }
+
+                            @if (groupMembers.Any())
+                            {
+                                <ol>
+                                    @foreach (var member in groupMembers)
+                                    {
+                                        string roleSuffix = member.IsCBSOverseer ? " (Overseer)" :
+                                        member.IsCBSAssistant ? " (Assistant)" : "";
+
+                                        <li class="@member.Privilege.ToLower()-row">
+                                            @member.Name @roleSuffix
+                                        </li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>No members</p>
+                            }
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        @* <button id="downloadWordButton" class="btn-download">Download as Word</button> *@
+        <button id="printCBSButton" class="btn-print">Print Service Groups</button>
+    </div>
+    
+    @* ALL PUBLISHERS *@
+    <div class="full-width-container">
+        <table class="publisher-table" id="all-publishers-table">
+            <thead>
+                <tr>
+                    <th class="col-id">#</th>
+                    <th class="col-privilege">Privilege</th>
+                    <th class="col-name">Name</th>
+                    <th class="col-sgroup">Group</th>
+                    <th class="col-cbsOverseer">Overseer</th>
+                    <th class="col-cbsassistant">Assistant</th>
+                    <th class="col-rp">RP</th>
+                    <th class="col-phone">Phone</th>
+                    @* <th class="col-notes">Notes</th> *@
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                }
+                @foreach (var publisher in Model.PublisherList)
+                {
+                    // Set row class based on Privilege
+                    string rowClass = publisher.Privilege switch
+                    {
+                        "Elder" => "elder-row",
+                        "Servant" => "servant-row",
+                        "Brother" => "brother-row",
+                        "Sister" => "sister-row",
+                        _ => ""
+                    };
+
+                    // Check if RP should be highlighted
+                    string rpClass = publisher.IsRP ? "rp-highlight" : "";
+
+                    <tr class="@rowClass">
+                        <form method="post">
+                        <td>@i @{
+                                    i++;
+                                }
+                        </td>
+                        <td>
+                            <select name="privilege" class="privilege-dropdown" data-row="@i">
+                                <option value="Elder" selected="@(publisher.Privilege == "Elder" ? "selected" : null)">Elder</option>
+                                <option value="Servant" selected="@(publisher.Privilege == "Servant" ? "selected" : null)">Servant</option>
+                                <option value="Brother" selected="@(publisher.Privilege == "Brother" ? "selected" : null)">Brother</option>
+                                <option value="Sister" selected="@(publisher.Privilege == "Sister" ? "selected" : null)">Sister</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="name" value="@publisher.Name" required class="fit-content-input">
+                        </td>
+                        <td>
+                            <input type="text" name="serviceGroup" value="@publisher.ServiceGroup" pattern="[0-9]*" title="Enter a number" required class="fit-content-input">
+                        </td>
+                       
+                        <td>
+                            <div class="cbs-checkboxes">
+                                    @if (publisher.Privilege == "Elder")
+                                    {
+                                    <label>
+                                        <input type="checkbox" name="isCBSOverseer" value="true"
+                                            @(publisher.IsCBSOverseer ? "checked" : "")>
+                                    </label>
+                                    }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cbs-checkboxes">
+                                    @if (publisher.Privilege == "Elder" || publisher.Privilege == "Servant")
+                                    {
+                                    <label>
+                                        <input type="checkbox" name="isCBSAssistant" value="true"
+                                            @(publisher.IsCBSAssistant ? "checked" : "")>
+                                    </label>
+                                    }
+                            </div>
+                        </td>
+                        <td class="@rpClass">
+                            <center>
+                            <select name="isRP" class="form-control" onchange="updateIsRP('@publisher.Id', this.value)">
+                                <option value="true" selected="@(publisher.IsRP ? "selected" : null)">Yes</option>
+                                <option value="false" selected="@(!publisher.IsRP ? "selected" : null)">No</option>
+                            </select>
+                            </center>
+                        </td>
+                        <td>
+                            <input type="text" name="phoneNumber" value="@publisher.PhoneNumber" pattern="^\+?[1-9]\d{1,14}$"
+                                   title="Enter a valid phone number (e.g., +18181234567)" oninput="sanitizePhone(this)" class="fit-content-input">
+                        </td>
+                       @*  <td>
+                            <textarea name="notes" rows="2" class="notes-box">@publisher.Notes</textarea>
+                        </td> *@
+                        <td>
+                            <input type="hidden" name="id" value="@publisher.Id">
+                            <button type="submit" asp-page-handler="EditPublisher">Update</button>
+                            <button class="btn-danger" type="submit" asp-page-handler="DeletePublisher"
+                                    onclick="return confirm('Are you sure you want to delete @publisher.Name?');">
+                                Delete
+                            </button>
+                        </td>
+                        </form>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button id="printPubButton" class="btn-print">Print All Publishers</button>
     </div>
 }
 else

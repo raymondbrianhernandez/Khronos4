@@ -1,0 +1,82 @@
+﻿@page
+@model Khronos4.Pages.MeetingPreviewModel
+@{
+    ViewData["Title"] = "Meeting Preview";
+}
+
+<h2>Saved Meeting Assignments</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Part</th>
+            <th>Assignee</th>
+            <th>Assistant</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Date</td>
+            <td colspan="3"><b>@Model.CongregationName</b></td>
+        </tr>
+        <tr>
+            <td>@Model.StartTimes[0]</td>
+            <td>Opening Song - @Model.OpeningSong</td>
+            <td>@Model.OpeningPrayer</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>@Model.StartTimes[1]</td>
+            <td>Treasures Talk - @Model.TreasuresTalkPart</td>
+            <td>@Model.TreasuresTalkSpeaker</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>@Model.StartTimes[2]</td>
+            <td>Spiritual Gems - @Model.SpiritualGemsPart</td>
+            <td>@Model.SpiritualGemsSpeaker</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>@Model.StartTimes[3]</td>
+            <td>Bible Reading</td>
+            <td>@Model.BibleReadingStudent</td>
+            <td></td>
+        </tr>
+
+        @for (int i = 0; i < Model.StudentAssignment.Count; i++)
+        {
+            <tr>
+                <td>@Model.StartTimes[i + 4]</td>
+                <td>@Model.StudentAssignment[i]</td>
+                <td>@Model.StudentAssistant[i]</td>
+            </tr>
+        }
+
+        <tr>
+            <td>@Model.StartTimes[@Model.StartTimes.Count - 2]</td>
+            <td>Middle Song - @Model.MiddleSong</td>
+            <td></td>
+            <td></td>
+        </tr>
+
+        @for (int i = 0; i < Model.ElderAssignment.Count; i++)
+        {
+            <tr>
+                <td>@Model.StartTimes[i + 6]</td>
+                <td>@Model.ElderAssignment[i]</td>
+                <td>@Model.CbsReader[i]</td>
+            </tr>
+        }
+
+        <tr>
+            <td>@Model.StartTimes[@Model.StartTimes.Count - 1]</td>
+            <td>Closing Song - @Model.ClosingSong</td>
+            <td>@Model.ClosingPrayer</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<a href="/OCLMManager" class="btn btn-primary">Back to Meeting Manager</a>

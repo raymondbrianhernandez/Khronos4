@@ -4,13 +4,16 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net.Http;
 using NLog;
 using NLog.Web;
-using Microsoft.Extensions.Logging; // Added for logging
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc; // Added for logging
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine($"Connection String: {connectionString}");
 
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<BasePageModel>();
 
 // Register HttpClient
 builder.Services.AddHttpClient();
@@ -30,6 +33,21 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+/*Temp*/
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.ValueCountLimit = int.MaxValue;    // number of values
+    options.KeyLengthLimit = int.MaxValue;     // length of keys
+    options.ValueLengthLimit = int.MaxValue;   // length of values
+    options.MultipartBodyLengthLimit = long.MaxValue; // total request size
+});
+/*Temp*/
+builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
+{
+    options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+});
+
 
 // Configure Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>

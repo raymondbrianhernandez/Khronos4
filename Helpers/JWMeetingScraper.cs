@@ -30,6 +30,13 @@ namespace Khronos4.Helpers
                 var page = await context.NewPageAsync();
                 await page.GotoAsync(url, new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
 
+                // ✅ Extract the Bible Verses for the Week
+                var weeklyBibleVersesElement = await page.QuerySelectorAsync(".jsBibleLink strong");
+                meetingData["Weekly Bible Verses"] = weeklyBibleVersesElement != null
+                    ? await weeklyBibleVersesElement.InnerTextAsync()
+                    : "Not Found";
+
+
                 // ✅ Extract All Songs (Opening, Middle, Closing) by Selecting All h3.dc-icon--music
                 var songElements = await page.QuerySelectorAllAsync("//h3[contains(., 'Song')]");
                 if (songElements.Count >= 3)
@@ -47,15 +54,15 @@ namespace Khronos4.Helpers
 
                 // ✅ Extract "Treasures from God's Word" Section
                 var treasuresSection = await page.QuerySelectorAsync("div.dc-bleedToArticleEdge h3");
-                meetingData["Treasures Talk"] = treasuresSection != null ? await treasuresSection.InnerTextAsync() : "Not Found";
+                meetingData["Treasures Talk Part"] = treasuresSection != null ? await treasuresSection.InnerTextAsync() : "Not Found";
                 meetingData["Treasures Talk Time"] = "(10 min.)";
 
                 // ✅ Set Spiritual Gems
-                meetingData["Spiritual Gems"] = "2. Spiritual Gems";
+                meetingData["Spiritual Gems Part"] = "2. Spiritual Gems";
                 meetingData["Spiritual Gems Time"] = "(10 min.)";
 
                 // ✅ Set Bible Reading
-                meetingData["Bible Reading"] = "3. Bible Reading";
+                meetingData["Bible Reading Part"] = "3. Bible Reading";
                 meetingData["Bible Reading Time"] = "(4 min.)";
 
                 // ✅ Extract Student Assignments (Gold Font)
@@ -73,7 +80,7 @@ namespace Khronos4.Helpers
                         time = trimTime(timeElement.Trim()); // Apply trimTime() function
                     }
 
-                    meetingData[$"Student Assignment {studentCount}"] = title;
+                    meetingData[$"Student Assignment {studentCount} Part"] = title;
                     meetingData[$"Student Assignment {studentCount} Time"] = time;
                     studentCount++;
                 }
@@ -93,7 +100,7 @@ namespace Khronos4.Helpers
                         time = trimTime(timeElement.Trim()); // Apply trimTime() function
                     }
 
-                    meetingData[$"Elder Assignment {elderCount}"] = title;
+                    meetingData[$"Elder Assignment {elderCount} Part"] = title;
                     meetingData[$"Elder Assignment {elderCount} Time"] = time;
                     elderCount++;
                 }

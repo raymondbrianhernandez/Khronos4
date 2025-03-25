@@ -1,0 +1,514 @@
+﻿<!-- OCLM Editor -->
+    <div class="OCLM-Editor-Container">
+        <table class="OCLM-Editor">
+            <thead>
+                <tr>
+                    <th style="width: 1%;"></th>
+                    <th style="width: 49%;"></th>
+                    <th style="width: 10%;"></th>
+                    <th style="width: 10%;"></th>
+                    <th style="width: 10%;"></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td colspan="2"><h4>@Model.CongregationName</h4></td>
+                    <td colspan="3"><h4>Midweek Meeting Schedule</h4></td>
+                </tr>
+                <tr>
+                    <td colspan="5"><hr style="height: 3px; background-color: black; border: none;"></td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="date" id="dateField" value="Date">
+                    </td>
+                    <td>| WEEKLY BIBLE READING</td>
+                    <td style="text-align: right;"><small>Chairman:</small></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right;"><small>Auxiliary Classroom Counselor:</small></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>7:00</td>
+                    <td>● Song 23</td> @* meetingData["Opening Song"] *@
+                    <td style="text-align: right;">Prayer:</td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>7:03</td>
+                    <td>● Opening Comments <small>(1 min.)</small></td>
+                    <td style="text-align: right;">Prayer:</td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" style="background:gray; color:white"><b>TREASURES FROM GOD’S WORD</b></td>
+                </tr>
+                    
+                <tr>
+                    <td>7:04</td>
+                    <td>1. Treasure's Talk <small>(10 min.)</small></td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>7:14</td>
+                    <td>2. Spiritual Gems <small>(10 min.)</small></td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>7:24</td>
+                    <td>3. Bible Reading <small>(4 min.)</small></td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" style="background:gold; color:white"><b>APPLY YOURSELF TO THE FIELD MINISTRY</b></td>
+                </tr>
+                @* // LOOP TO LOAD ALL STUDENT ASSIGNMENTS *@
+                <tr>
+                    <td>7:28</td>
+                    <td>meetingData[$"Student Assignment {studentCount}"] <small>(meetingData[$"Student Assignment {studentCount} Time"])</small></td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>7:28 + meetingData[$"Student Assignment {studentCount} Time"]</td>
+                    <td>meetingData[$"Student Assignment {studentCount}"] <small>(meetingData[$"Student Assignment {studentCount} Time"])</small></td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>TIME FROM PREVIOUS ASSIGNMENT</td> @* TIME SILL ALWAYS BE DYNAMIC AND ADD THE PREVIOUS MINUTES *@
+                    <td>Student Assignment {studentCount} <small>(Student Assignment {studentCount} Time.)</small></td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" style="background:maroon; color:white"><b>LIVING AS CHRISTIANS</b></td>
+                </tr>
+
+                <tr>
+                    <td>7:38</td>
+                    <td>● Song 65</td> @* meetingData["Middle Song"] *@
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    @* // LOOP TO LOAD ALL ELDER ASSIGNMENTS *@
+                    <td>7:41</td> @* DYNAMIC TIME *@ 
+                    <td>meetingData[$"Elder Assignment {elderCount}"] = title <small>(meetingData[$"Elder Assignment {elderCount} Time"].)</small></td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>8:30</td>
+                    <td>● Concluding Comments</td>
+                    
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>8:34</td>
+                    <td>● Song 123</td> @* meetingData["cLOSING Song"] *@
+                    <td style="text-align: right;">Prayer:</td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div> 
+</div>
+
+<!-- OCLM Editor -->
+    <div class="OCLM-Editor-Container">
+        <table class="OCLM-Editor">
+            <thead>
+                <tr>
+                    <th style="width: 1%;"></th>
+                    <th style="width: 49%;"></th>
+                    <th style="width: 10%;"></th>
+                    <th style="width: 10%;"></th>
+                    <th style="width: 10%;"></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td colspan="2"><h4>@Model.CongregationName</h4></td>
+                    <td colspan="3"><h4>Midweek Meeting Schedule</h4></td>
+                </tr>
+                <tr>
+                    <td colspan="5"><hr style="height: 3px; background-color: black; border: none;"></td>
+                </tr>
+
+                <tr>
+                    <td>7:00</td>
+                    <td>● @(Model.MeetingData.ContainsKey("Opening Song") ? Model.MeetingData["Opening Song"] : "Not Available")</td>
+                    <td style="text-align: right;">Prayer:</td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>7:04</td>
+                    <td>@(Model.MeetingData.ContainsKey("Treasures Talk Part") ? Model.MeetingData["Treasures Talk Part"] : "Not Available")</td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>7:14</td>
+                    <td>@(Model.MeetingData.ContainsKey("Spiritual Gems Part") ? Model.MeetingData["Spiritual Gems Part"] : "Not Available")</td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>7:24</td>
+                    <td>@(Model.MeetingData.ContainsKey("Bible Reading Part") ? Model.MeetingData["Bible Reading Part"] : "Not Available")</td>
+                    <td></td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" style="background:gold; color:white"><b>APPLY YOURSELF TO THE FIELD MINISTRY</b></td>
+                </tr>
+
+                @* LOOP FOR STUDENT ASSIGNMENTS *@
+                @{
+                    int studentTime = 28; // Start at 7:28
+                    for (int i = 1; Model.MeetingData.ContainsKey($"Student Assignment {i} Part"); i++)
+                    {
+                        string assignment = Model.MeetingData[$"Student Assignment {i} Part"];
+                        string time = Model.MeetingData.ContainsKey($"Student Assignment {i} Time") ? Model.MeetingData[$"Student Assignment {i} Time"] : "(Unknown)";
+
+                        <tr>
+                            <td>7:@(studentTime)</td>
+                            <td>@assignment <small>@time</small></td>
+                            <td></td>
+                            <td>
+                                <select>
+                                    <option value="">-- Select Name --</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select>
+                                    <option value="">-- Select Name --</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        @* Increase time dynamically based on the assignment duration *@
+                        studentTime += int.TryParse(time.Replace(" min.)", "").Replace("(", "").Trim(), out int parsedTime) ? parsedTime : 0;
+                    }
+                }
+
+                <tr>
+                    <td colspan="2" style="background:maroon; color:white"><b>LIVING AS CHRISTIANS</b></td>
+                </tr>
+
+                <tr>
+                    <td>7:38</td>
+                    <td>● @(Model.MeetingData.ContainsKey("Middle Song") ? Model.MeetingData["Middle Song"] : "Not Available")</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                @* LOOP FOR ELDER ASSIGNMENTS *@
+                @{
+                    int elderTime = 41; // Start at 7:41
+                    for (int i = 1; Model.MeetingData.ContainsKey($"Elder Assignment {i} Part"); i++)
+                    {
+                        string assignment = Model.MeetingData[$"Elder Assignment {i} Part"];
+                        string time = Model.MeetingData.ContainsKey($"Elder Assignment {i} Time") ? Model.MeetingData[$"Elder Assignment {i} Time"] : "(Unknown)";
+
+                        <tr>
+                            <td>7:@(elderTime)</td>
+                            <td>@assignment <small>@time</small></td>
+                            <td></td>
+                            <td>
+                                <select>
+                                    <option value="">-- Select Name --</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select>
+                                    <option value="">-- Select Name --</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        @* Increase time dynamically based on the assignment duration *@
+                        elderTime += int.TryParse(time.Replace(" min.)", "").Replace("(", "").Trim(), out int parsedTime) ? parsedTime : 0;
+                    }
+                }
+
+                <tr>
+                    <td>8:30</td>
+                    <td>● Concluding Comments</td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>8:34</td>
+                    <td>● @(Model.MeetingData.ContainsKey("Closing Song") ? Model.MeetingData["Closing Song"] : "Not Available")</td>
+                    <td style="text-align: right;">Prayer:</td>
+                    <td>
+                        <select>
+                            <option value="">-- Select Name --</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+    async function startScraping() {
+        let selectedMeetingUrl = document.getElementById("meetingDropdown").value;
+        let detailsList = document.getElementById("meetingDetailsList");
+        let loadingIndicator = document.getElementById("loading");
+        let meetingData = document.getElementById("meetingData");
+
+        if (!selectedMeetingUrl) {
+            detailsList.innerHTML = "<li class='list-group-item'><i>Please select a week before scraping</i></li>";
+            return;
+        }
+
+        // Show loading
+        loadingIndicator.style.display = "block";
+        meetingData.style.display = "none";
+
+        try {
+            const response = await fetch(`/OCLMManager?handler=ScrapeMeetingDetails&meetingUrl=${encodeURIComponent(selectedMeetingUrl)}`);
+            const data = await response.json();
+
+            detailsList.innerHTML = "";
+
+            if (data.error) {
+                detailsList.innerHTML = `<li class='list-group-item text-danger'>${data.error}</li>`;
+            } else {
+                for (const [key, value] of Object.entries(data)) {
+                    detailsList.innerHTML += `<li class='list-group-item'><strong>${key}:</strong> ${value}</li>`;
+                }
+            }
+
+            // Hide loading, show data
+            loadingIndicator.style.display = "none";
+            meetingData.style.display = "block";
+        } catch (error) {
+            console.error("Error fetching meeting details:", error);
+            loadingIndicator.style.display = "none";
+        }
+    }
+
+    <!-- OCLM Editor -->
+        <div class="OCLM-Editor-Container">
+            <table class="OCLM-Editor">
+                <thead>
+                    <tr>
+                        <th style="width: 1%;"></th>
+                        <th style="width: 49%;"></th>
+                        <th style="width: 10%;"></th>
+                        <th style="width: 10%;"></th>
+                        <th style="width: 10%;"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td colspan="2"><h4>@Model.CongregationName</h4></td>
+                        <td colspan="3"><h4>Midweek Meeting Schedule</h4></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5"><hr style="height: 3px; background-color: black; border: none;"></td>
+                    </tr>
+
+                    <tr>
+                        <td>7:00</td>
+                        <td>● <span id="openingSong">Not Available</span></td>
+                        <td style="text-align: right;">Prayer:</td>
+                        <td><select><option value="">-- Select Name --</option></select></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>7:04</td>
+                        <td>● <span id="treasuresTalk">Not Available</span></td>
+                        <td></td>
+                        <td><select><option value="">-- Select Name --</option></select></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>7:14</td>
+                        <td>● <span id="spiritualGems">Not Available</span></td>
+                        <td></td>
+                        <td><select><option value="">-- Select Name --</option></select></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>7:24</td>
+                        <td>● <span id="bibleReading">Not Available</span></td>
+                        <td></td>
+                        <td><select><option value="">-- Select Name --</option></select></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" style="background:gold; color:white"><b>APPLY YOURSELF TO THE FIELD MINISTRY</b></td>
+                    </tr>
+
+                    <!-- Student Assignments -->
+                <tbody id="studentAssignmentsBody"></tbody>
+
+                <tr>
+                    <td colspan="2" style="background:maroon; color:white"><b>LIVING AS CHRISTIANS</b></td>
+                </tr>
+
+                <tr>
+                    <td>7:38</td>
+                    <td>● <span id="middleSong">Not Available</span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                <!-- Elder Assignments -->
+                <tbody id="elderAssignmentsBody"></tbody>
+
+                <tr>
+                    <td>8:30</td>
+                    <td>● Concluding Comments</td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td>8:34</td>
+                    <td>● <span id="closingSong">Not Available</span></td>
+                    <td style="text-align: right;">Prayer:</td>
+                    <td><select><option value="">-- Select Name --</option></select></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>

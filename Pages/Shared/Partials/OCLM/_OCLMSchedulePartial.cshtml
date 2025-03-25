@@ -1,0 +1,544 @@
+﻿@using Khronos4.Models
+@model Khronos4.Models.OCLMScheduleViewModel
+
+@{
+    List<OCLMPart> existingParts = Model.ExistingParts;
+
+    int startTimeMinutes = (int)Model.StartTime.TotalMinutes;
+    int index = 0;
+    string today = DateTime.Now.ToString("yyyy-MM-dd");
+
+    bool hasExistingData = Model.IsFromDatabase
+        && existingParts != null
+        && existingParts.Any()
+        && Model.ExistingWeekText == Model.SelectedMeetingWeekText;
+
+    string Get(string key) => Model.ScrapedData.TryGetValue(key, out var val) ? val : "";
+
+    string GetOrDb(string key)
+    {
+        if (hasExistingData)
+        {
+            var match = existingParts.FirstOrDefault(p =>
+                !string.IsNullOrWhiteSpace(p.Part) &&
+                (p.Part.Contains(key, StringComparison.OrdinalIgnoreCase)
+                 || key.Contains(p.Part, StringComparison.OrdinalIgnoreCase)));
+
+            return match?.Part ?? "";
+        }
+
+        return Get(key);
+    }
+
+    string GetValue(string partName, string field)
+    {
+        if (!hasExistingData) return "";
+
+        var match = existingParts.FirstOrDefault(p => p.Part != null && p.Part.Contains(partName));
+        if (match == null) return "";
+
+        return field switch
+        {
+            "Assignee" => match.Assignee ?? "",
+            "Assistant" => match.Assistant ?? "",
+            "Time" => match.StartTime.ToString(@"hh\:mm"),
+            _ => ""
+        };
+    }
+
+    string Selected(string value, string compare) =>
+        hasExistingData && value == compare ? "selected" : null;
+
+    int ExtractMinutes(string timeText)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(timeText ?? "", @"\d+");
+        return match.Success ? int.Parse(match.Value) : 0;
+    }
+
+    string Sanitize(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return input;
+
+        return input
+            .Replace('“', '"')
+            .Replace('”', '"')
+            .Replace('‘', '\'')
+            .Replace('’', '\'')
+            .Replace('–', '-')
+            .Replace('—', '-')
+            .Replace("…", "...");
+    }
+
+    string DisplayTime(int minutes) =>
+        $"{(minutes / 60 > 12 ? minutes / 60 - 12 : minutes / 60)}:{minutes % 60:D2} {(minutes / 60 >= 12 ? "PM" : "AM")}";
+
+    string SubmitTime(int minutes) =>
+        $"{minutes / 60:D2}:{minutes % 60:D2}";
+
+    // SONG HANDLING 
+    var allSongs = hasExistingData
+    ? existingParts
+        .Where(p => p.Part?.TrimStart().StartsWith("Song", StringComparison.OrdinalIgnoreCase) ?? false)
+        .OrderBy(p => p.StartTime)
+        .ToList()
+    : new List<OCLMPart>(); // empty list when scraping
+
+    var openingSong = hasExistingData
+        ? allSongs.ElementAtOrDefault(0)?.Part ?? ""
+        : Get("Opening Song");
+
+    var middleSong = hasExistingData
+        ? allSongs.ElementAtOrDefault(1)?.Part ?? ""
+        : Get("Middle Song");
+
+    var closingSong = hasExistingData
+        ? allSongs.ElementAtOrDefault(2)?.Part ?? ""
+        : Get("Closing Song");
+
+    // Chairman Assignee: First part with time = 00:00:00 and not a Song
+    var chairmanAssignee = hasExistingData
+        ? existingParts.FirstOrDefault(p => p.StartTime == TimeSpan.Zero && !p.Part.StartsWith("Song", StringComparison.OrdinalIgnoreCase))?.Assignee ?? ""
+        : GetValue("Weekly Bible Verses", "Assignee");
+
+    // Opening Prayer: First assignee after first Song
+    var openingPrayerAssignee = hasExistingData
+        ? existingParts
+            .OrderBy(p => p.StartTime)
+            .SkipWhile(p => !p.Part.StartsWith("Song ", StringComparison.OrdinalIgnoreCase))
+            .Skip(1)
+            .FirstOrDefault(p => !string.IsNullOrEmpty(p.Assignee))?.Assignee ?? ""
+        : GetValue("Opening Prayer", "Assignee");
+
+    // Closing Prayer
+    var closingPrayerAssignee = hasExistingData
+        ? existingParts.FirstOrDefault(p => p.Part == "Closing Prayer")?.Assignee ?? ""
+        : GetValue("Closing Prayer", "Assignee");
+}
+
+<!-- FORM START -->
+<form method="post" action="/OCLMManager?handler=UpdateMeeting">
+    <input type="hidden" name="CongregationName" value="@Model.CongregationName" />
+    <input type="hidden" name="SelectedMeetingWeekText" value="@Model.SelectedMeetingWeekText" />
+
+    <table class="OCLM-Editor">
+        <tr>
+            <td colspan="2"><h4>@Model.CongregationName</h4></td>
+            <td colspan="3"><h4>Midweek Meeting Schedule</h4></td>
+        </tr>
+
+        <!-- Bible Verse + Chairman -->
+        <tr>
+            <td><input type="date" name="Date" value="@today" /></td>
+            @{
+                var bibleVerse = hasExistingData
+                ? existingParts.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.Part) && !p.Part.Contains("Song") && p.StartTime == TimeSpan.Zero)?.Part ?? ""
+                : Get("Weekly Bible Verses");
+            }
+            <td>| @Sanitize(bibleVerse)<input type="hidden" name="BibleVerse" value="@Sanitize(bibleVerse)" /></td>
+            <td style="text-align:right;"><small><i>Chairman:</i></small></td>
+            <td>
+                <select name="Chairman" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var person in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@person.Value" selected="@Selected(person.Value, chairmanAssignee)">@person.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+
+        <!-- Opening Song & Prayer -->
+        <tr>
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                @{
+                    var part = openingSong;
+                    var partId = hasExistingData ? existingParts.FirstOrDefault(p => p.Part == part)?.ID ?? 0 : 0;
+                }
+                <input type="hidden" name="PartIDs[@index]" value="@partId" />
+            </td>
+
+            <td>
+                @Sanitize(openingSong)
+                <input type="hidden" name="OpeningSong" value="@Sanitize(openingSong)" />
+            </td>
+
+            <td style="text-align:right;"><small><i>Opening Prayer:</i></small></td>
+            <td>
+                <select name="OpeningPrayer" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var person in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@person.Value" selected="@Selected(person.Value, openingPrayerAssignee)">
+                            @person.Text
+                        </option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += 3; index++;
+        }
+
+        <!-- Opening Comments -->
+        <tr>
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+
+                @{
+                    var openingCommentsPartName = "Opening Comments";
+                    var openingCommentsPartId = hasExistingData
+                    ? existingParts.FirstOrDefault(p => p.Part == openingCommentsPartName)?.ID ?? 0
+                    : 0;
+                }
+                <input type="hidden" name="PartIDs[@index]" value="@openingCommentsPartId" />
+            </td>
+
+            <td>@openingCommentsPartName <small>(1 min.)</small></td>
+            <td></td>
+            <td></td>
+        </tr>
+        @{
+            startTimeMinutes += 1; index++;
+        }
+
+        <!-- TREASURES BANNER -->
+        <tr><td colspan="5" style="background:gray;color:white;">TREASURES FROM GOD’S WORD</td></tr>
+        
+        <!-- TREASURES -->
+        <tr>
+            @{
+                var treasuresPartName = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part.Contains("Inheritance"))?.Part ?? ""
+                : Get("Treasures Talk Part");
+
+                var treasuresTime = hasExistingData ? "10 min." : Get("Treasures Talk Time");
+                var treasuresAssignee = GetValue(treasuresPartName, "Assignee");
+                var treasuresPartId = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == treasuresPartName)?.ID ?? 0
+                : 0;
+            }
+
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                <input type="hidden" name="PartIDs[@index]" value="@treasuresPartId" />
+            </td>
+
+            <td>
+                @Sanitize(treasuresPartName) <small>@treasuresTime</small>
+                <input type="hidden" name="TreasuresTalkPart" value="@Sanitize(treasuresPartName)" />
+            </td>
+
+            <td></td>
+
+            <td>
+                <select name="TreasuresTalkSpeaker" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var p in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@p.Value" selected="@Selected(p.Value, treasuresAssignee)">@p.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += ExtractMinutes(Get("Treasures Talk Time"));
+            index++;
+        }
+
+        <!-- SPIRITUAL GEMS -->
+        <tr>
+            @{
+                var gemsPartName = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part.StartsWith("2."))?.Part ?? ""
+                : Get("Spiritual Gems Part");
+
+                var gemsTime = hasExistingData ? "10 min." : Get("Spiritual Gems Time");
+                var gemsAssignee = GetValue(gemsPartName, "Assignee");
+                var gemsPartId = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == gemsPartName)?.ID ?? 0
+                : 0;
+            }
+
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                <input type="hidden" name="PartIDs[@index]" value="@gemsPartId" />
+            </td>
+
+            <td>
+                @Sanitize(gemsPartName) <small>@gemsTime</small>
+                <input type="hidden" name="SpiritualGemsPart" value="@Sanitize(gemsPartName)" />
+            </td>
+
+            <td></td>
+
+            <td>
+                <select name="SpiritualGemsSpeaker" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var p in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@p.Value" selected="@Selected(p.Value, gemsAssignee)">@p.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += ExtractMinutes(Get("Spiritual Gems Time"));
+            index++;
+        }
+
+        <!-- Bible Reading -->
+        <tr>
+            @{
+                var bibleReadingPartName = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part.StartsWith("Bible Reading"))?.Part ?? "Bible Reading"
+                : "Bible Reading";
+
+                var bibleReader = GetValue(bibleReadingPartName, "Assignee");
+
+                var bibleReadingPartId = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == bibleReadingPartName)?.ID ?? 0
+                : 0;
+            }
+
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                <input type="hidden" name="PartIDs[@index]" value="@bibleReadingPartId" />
+            </td>
+
+            <td>
+                Bible Reading <small>(4 min.)</small>
+                <input type="hidden" name="BibleReadingPart" value="Bible Reading" />
+            </td>
+
+            <td></td>
+
+            <td>
+                <select name="BibleReadingStudent" class="form-control">
+                    <option value="">Brothers</option>
+                    @foreach (var b in Model.BrothersDropdown)
+                    {
+                        <option value="@b.Value" selected="@Selected(b.Value, bibleReader)">@b.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += 4;
+            index++;
+        }
+
+        <!-- APPLY YOURSELF BANNER-->
+        <tr><td colspan="5" style="background:gold;color:white;">APPLY YOURSELF TO THE FIELD MINISTRY</td></tr>
+
+        <!-- STUDENTS -->
+        @for (int i = 4; i <= 8; i++)
+        {
+            string studentPartText = "";
+            string studentTimeText = "";
+            string studentAssignee = "";
+            string studentAssistant = "";
+            int studentPartId = 0;
+
+            if (hasExistingData)
+            {
+                var dbStudentPart = existingParts.FirstOrDefault(p => p.Part.StartsWith($"{i}."));
+                if (dbStudentPart == null) continue;
+
+                studentPartText = dbStudentPart.Part;
+                studentAssignee = dbStudentPart.Assignee;
+                studentAssistant = dbStudentPart.Assistant;
+                studentTimeText = "4 min."; // fallback default
+                studentPartId = dbStudentPart.ID;
+            }
+            else
+            {
+                studentPartText = Get($"Student Assignment {i - 3} Part");  // 4 maps to 1, etc.
+                studentTimeText = Get($"Student Assignment {i - 3} Time");
+
+                if (string.IsNullOrWhiteSpace(studentPartText)) continue;
+
+                studentAssignee = GetValue(studentPartText, "Assignee");
+                studentAssistant = GetValue(studentPartText, "Assistant");
+            }
+
+            <tr>
+                <td>
+                    @DisplayTime(startTimeMinutes)
+                    <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                </td>
+
+                @if (hasExistingData)
+                {
+                    <input type="hidden" name="PartIDs[@index]" value="@studentPartId" />
+                }
+
+                <td>
+                    @Sanitize(studentPartText) <small>@studentTimeText</small>
+                    <input type="hidden" name="StudentPartText[@(i - 4)]" value="@Sanitize(studentPartText)" />
+                </td>
+
+                <td></td>
+
+                <td>
+                    <select name="StudentAssignment[@(i - 4)]" class="form-control">
+                        <option value="">Students</option>
+                        @foreach (var p in Model.PublishersDropdown)
+                        {
+                            <option value="@p.Value" selected="@Selected(p.Value, studentAssignee)">@p.Text</option>
+                        }
+                    </select>
+                </td>
+
+                <td>
+                    <select name="StudentAssistant[@(i - 4)]" class="form-control">
+                        <option value="">Assistants</option>
+                        @foreach (var p in Model.PublishersDropdown)
+                        {
+                            <option value="@p.Value" selected="@Selected(p.Value, studentAssistant)">@p.Text</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+
+            startTimeMinutes += 4;
+            index++;
+        }
+
+        <!-- LIVING AS CHRISTIANS BANNER -->
+        <tr><td colspan="5" style="background:maroon;color:white;">LIVING AS CHRISTIANS</td></tr>
+
+        <!-- Middle Song Row -->
+        <tr>
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+            </td>
+
+            @if (hasExistingData)
+            {
+                var middleSongPart = middleSong;
+                var middleSongPartId = existingParts.FirstOrDefault(p => p.Part == middleSongPart)?.ID ?? 0;
+                <input type="hidden" name="PartIDs[@index]" value="@middleSongPartId" />
+            }
+
+            <td>
+                @Sanitize(middleSong)
+                <input type="hidden" name="MiddleSong" value="@Sanitize(middleSong)" />
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += 3;
+            index++;
+        }
+
+        <!-- Elder Parts -->
+        @for (int i = 7; i <= 11; i++)
+        {
+            string elderPart = "";
+            string time = "";
+            string assignee = "";
+            string assistant = "";
+
+            if (hasExistingData)
+            {
+                var dbPart = existingParts.FirstOrDefault(p => p.Part.StartsWith($"{i}.")); // Match 7., 8., etc.
+                if (dbPart == null) continue;
+
+                elderPart = dbPart.Part;
+                assignee = dbPart.Assignee;
+                assistant = dbPart.Assistant;
+                time = elderPart.Contains("Congregation Bible Study") ? "30 min." : ""; // Optional: adjust per real data
+            }
+            else
+            {
+                elderPart = Get($"Elder Assignment {i - 6} Part");
+                time = Get($"Elder Assignment {i - 6} Time");
+                if (string.IsNullOrWhiteSpace(elderPart)) continue;
+
+                assignee = GetValue(elderPart, "Assignee");
+                assistant = GetValue(elderPart, "Assistant");
+            }
+
+            <tr>
+                <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+
+                @if (hasExistingData)
+                {
+                    var elderPartId = existingParts.FirstOrDefault(p => p.Part == elderPart)?.ID ?? 0;
+                    <input type="hidden" name="PartIDs[@index]" value="@elderPartId" />
+                }
+
+                <td>@Sanitize(elderPart) @time <input type="hidden" name="ElderAssignmentText[@(i - 7)]" value="@Sanitize(elderPart)" /></td>
+                <td></td>
+                <td>
+                    <select name="ElderAssignment[@(i - 7)]" class="form-control">
+                        <option value="">Elders/Servants</option>
+                        @foreach (var p in Model.EldersAndServantsDropdown)
+                        {
+                            <option value="@p.Value" selected="@Selected(p.Value, assignee)">@p.Text</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    @if (elderPart.Contains("Congregation Bible Study"))
+                    {
+                        <select name="CbsReader[@(i - 7)]" class="form-control">
+                            <option value="">Readers</option>
+                            @foreach (var p in Model.EldersAndServantsDropdown)
+                            {
+                                <option value="@p.Value" selected="@Selected(p.Value, assistant)">@p.Text</option>
+                            }
+                        </select>
+                    }
+                </td>
+            </tr>
+
+            startTimeMinutes += elderPart.Contains("Congregation Bible Study") ? 30 : ExtractMinutes(time);
+            index++;
+        }
+
+        <!-- Closing Song + Prayer -->
+        <tr>
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+            </td>
+
+            @if (hasExistingData)
+            {
+                var closingPart = closingSong;
+                var closingPartId = existingParts.FirstOrDefault(p => p.Part == closingPart)?.ID ?? 0;
+                <input type="hidden" name="PartIDs[@index]" value="@closingPartId" />
+            }
+
+            <td>
+                @Sanitize(closingSong)
+                <input type="hidden" name="ClosingSong" value="@Sanitize(closingSong)" />
+            </td>
+
+            <td style="text-align:right;"><small><i>Closing Prayer:</i></small></td>
+            <td>
+                <select name="ClosingPrayer" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var p in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@p.Value" selected="@Selected(p.Value, closingPrayerAssignee)">@p.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += 3;
+            index++;
+        }
+
+    </table>
+
+    <center><button type="submit" style="margin:20px;">Save All Assignments</button></center>
+</form>

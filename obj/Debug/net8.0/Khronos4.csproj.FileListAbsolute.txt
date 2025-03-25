@@ -337,6 +337,8 @@ C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\AngleSharp.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Azure.Identity.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\CsvHelper.dll
+C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
+C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\DocumentFormat.OpenXml.Framework.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\HtmlAgilityPack.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Humanizer.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
@@ -375,6 +377,7 @@ C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Microsoft.Playwright.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\NLog.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\NLog.Extensions.Logging.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\NLog.Web.AspNetCore.dll
@@ -397,6 +400,7 @@ C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.Diagnostics.Diagnos
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.Drawing.Common.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.Formats.Asn1.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.IO.Packaging.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.IO.Pipelines.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.Memory.Data.dll
 C:\Users\Owner\source\repos\Khronos4\bin\Debug\net8.0\System.Runtime.Caching.dll

@@ -1,0 +1,148 @@
+﻿@page
+@model Khronos4.Pages.CongregationManagerModel
+@{
+    ViewData["Title"] = "Congregation Manager - Khronos4";
+}
+
+@if (TempData["DebugError"] != null && TempData["DebugError"] is string debugData)
+{
+    List<string> debugMessages;
+    try
+    {
+        debugMessages = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(debugData) ?? new List<string>();
+    }
+    catch (Newtonsoft.Json.JsonReaderException)
+    {
+        debugMessages = new List<string>(); // Reset if parsing fails
+    }
+
+    if (debugMessages.Count > 0)
+    {
+        <div class="alert alert-info">
+            <ul>
+                @foreach (var message in debugMessages)
+                {
+                    <li>@message</li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+<div class="container">
+    <h4>Edit Congregation Details</h4>
+
+    <!-- Display Success or Error Messages -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Form for Editing Congregation Details -->
+    <form method="post">
+        <input type="hidden" asp-for="CongregationDetails.CongID" />
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td><b>Congregation Name:</b></td>
+                    <td>
+                        <input type="text" asp-for="CongregationDetails.Name" class="form-control" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Language:</b></td>
+                    <td>
+                        <select asp-for="CongregationDetails.Language" class="form-control">
+                            <option value="English">English</option>
+                            <option value="Tagalog">Tagalog</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="Japanese">Japanese</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Address:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.Address" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>City:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.City" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>State & Zip Code:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.State" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>Country:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.Country" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>Coordinator:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.CongCOBE" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>Secretary:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.CongSect" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>Service Overseer:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.CongSO" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>Midweek Day:</b></td>
+                    <td>
+                        <select asp-for="CongregationDetails.MidweekDate" class="form-control">
+                            <option value="Sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Midweek Time:</b></td>
+                    <td><input type="time" asp-for="CongregationDetails.MidweekTime" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>Weekend Day:</b></td>
+                    <td>
+                        <select asp-for="CongregationDetails.WeekendDate" class="form-control">
+                            <option value="Sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Weekend Time:</b></td>
+                    <td><input type="time" asp-for="CongregationDetails.WeekendTime" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td><b>Circuit:</b></td>
+                    <td><input type="text" asp-for="CongregationDetails.Circuit" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-center">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

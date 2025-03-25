@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Khronos4")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8027399e40339866d3c59ad8297c009a6fc9e18")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79cef9781c54d49c51ca18a48cf037405c6826d2")]
 [assembly: System.Reflection.AssemblyProductAttribute("Khronos4")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Khronos4")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

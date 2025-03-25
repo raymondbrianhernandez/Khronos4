@@ -1,0 +1,1698 @@
+﻿        public async Task<IActionResult> OnGetScrapeMeetingDetailsAsync(string meetingUrl)
+        {
+            if (string.IsNullOrEmpty(meetingUrl))
+                return Content("Please select a meeting.");
+
+            try
+            {
+                var data = await _scraper.ScrapeMeetingDetailsAsync(meetingUrl);
+                if (data == null || data.Count == 0)
+                {
+                    TempData["Error"] = "❌ No data returned from the workbook URL.";
+                    return Content("<p class='text-danger'>No data found.</p>", "text/html");
+                }
+
+                // Extract readable week
+                var weekText = GetDisplayText(meetingUrl); 
+
+                // Load dropdowns BEFORE building the ViewModel
+                await LoadEldersAndServantsDropdown();
+                await LoadPublishersDropdown();
+                await LoadBrothersDropdown(); 
+
+                // Ensure CongregationName is set
+                CongregationName = GetCongregationName(CongregationID.ToString());
+
+                // Get midweek start time
+                var midweekTime = await FetchMidweekTimeFromDb();
+
+                // Now safely build the ViewModel
+                var viewModel = new OCLMScheduleViewModel
+                {
+                    CongregationName = CongregationName,
+                    WeeklyBibleVerses = data.ContainsKey("Weekly Bible Verses") ? data["Weekly Bible Verses"] : "",
+                    StartTime = midweekTime,
+                    ScrapedData = data,
+                    EldersAndServantsDropdown = EldersAndServantsDropdown,
+                    PublishersDropdown = PublishersDropdown,
+                    BrothersDropdown = BrothersDropdown,
+                    SelectedMeetingWeekText = weekText
+                };
+
+                TempData["Error"] += $"✅ ViewModel built: {EldersAndServantsDropdown.Count} Elders/Servants, {PublishersDropdown.Count} Publishers\n";
+
+                return Partial("Shared/Partials/OCLM/_OCLMSchedulePartial", viewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"❌ Error: {ex.Message}";
+                return Content("<p class='text-danger'>Error generating meeting schedule.</p>", "text/html");
+            }
+        }
+
+
+@model Khronos4.Models.OCLMScheduleViewModel
+
+@functions {
+    public int ExtractMinutes(string timeText)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(timeText, @"\d+");
+        return match.Success ? int.Parse(match.Value) : 0;
+    }
+}
+
+@{
+    int startTimeMinutes = (int)Model.StartTime.TotalMinutes;
+    int index = 0;
+
+    string DisplayTime(int minutes) => $"{(minutes / 60 > 12 ? minutes / 60 - 12 : minutes / 60)}:{minutes % 60:D2} {(minutes / 60 >= 12 ? "PM" : "AM")}";
+    string SubmitTime(int minutes) => $"{minutes / 60:D2}:{minutes % 60:D2}";
+    string Get(string key) => Model.ScrapedData.TryGetValue(key, out var val) ? val : "";
+
+    string today = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<form method="post" action="/OCLMManager?handler=UpdateMeeting">
+    <input type="hidden" name="CongregationName" value="@Model.CongregationName" />
+    <input type="hidden" name="SelectedMeetingWeekText" value="@Model.SelectedMeetingWeekText" />
+
+    <table class="OCLM-Editor">
+        <tr><td colspan="2"><h4>@Model.CongregationName</h4></td><td colspan="3"><h4>Midweek Meeting Schedule</h4></td></tr>
+        <tr>
+            <td><input type="date" name="Date" value="@today" /></td>
+            <td>| @Get("Weekly Bible Verses")</td>
+            <td style="text-align:right;"><small><i>Chairman:</i></small></td>
+            <td>
+                <select name="Chairman" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var person in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@person.Value">@person.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+
+        <!-- OPENING -->
+        <tr>
+            <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+            <td>@Get("Opening Song")<input type="hidden" name="OpeningSong" value="@Get("Opening Song")" /></td>
+            <td style="text-align:right;"><small><i>Opening Prayer:</i></small></td>
+            <td>
+                <select name="OpeningPrayer" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var person in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@person.Value">@person.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += 5; 
+            index++;
+        }
+
+        <!-- Opening Comments -->
+        <tr>
+            <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+            <td>Opening Comments <small>(1 min.)</small></td>
+            <td></td>
+            <td></td>
+        </tr>
+        @{
+            startTimeMinutes += 1; 
+            index++;
+        }
+
+        <!-- TREASURES BANNER -->
+        <tr><td colspan="5" style="background:gray;color:white;">TREASURES FROM GOD’S WORD</td></tr>
+
+        <!-- Treasures Talk -->
+        <tr>
+            <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+            <td>@Get("Treasures Talk Part") <small>@Get("Treasures Talk Time")</small><input type="hidden" name="TreasuresTalkPart" value="@Get("Treasures Talk Part")" /></td>
+            <td></td>
+            <td>
+                <select name="TreasuresTalkSpeaker" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var p in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@p.Value">@p.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += ExtractMinutes(@Get("Treasures Talk Time"));
+            index++;
+        }
+
+        <!-- Spiritual Gems -->
+        <tr>
+            <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+            <td>@Get("Spiritual Gems Part") <small>@Get("Spiritual Gems Time")</small><input type="hidden" name="SpiritualGemsPart" value="@Get("Spiritual Gems Part")" /></td>
+            <td></td>
+            <td>
+                <select name="SpiritualGemsSpeaker" class="form-control">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var p in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@p.Value">@p.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += ExtractMinutes(@Get("Spiritual Gems Time")); ;
+            index++;
+        }
+
+        <!-- Bible Reading -->
+        <tr>
+            <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+            <td>Bible Reading <small>(4 min.)</small><input type="hidden" name="BibleReadingPart" value="Bible Reading" /></td>
+            <td></td>
+            <td>
+                <select name="BibleReadingStudent" class="form-control">
+                    <option value="">Brothers</option>
+                    @foreach (var b in Model.BrothersDropdown)
+                    {
+                        <option value="@b.Value">@b.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += 4; 
+            index++;
+        }
+
+        <!-- APPLY YOURSELF BANNER -->
+        <tr><td colspan="5" style="background:gold;color:white;">APPLY YOURSELF TO THE FIELD MINISTRY</td></tr>
+
+        @for (int i = 1; i <= 5; i++)
+        {
+            var part = Get($"Student Assignment {i} Part");
+            var time = Get($"Student Assignment {i} Time");
+
+            if (string.IsNullOrWhiteSpace(part)) continue;
+            <tr>
+                <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+                <td>@part <small>@time</small><input type="hidden" name="StudentPartText[@(i-1)]" value="@part" /></td>
+                <td></td>
+                <td><select name="StudentAssignment[@(i-1)]" class="form-control"><option value="">Students</option>@foreach (var p in Model.PublishersDropdown)
+                        {
+                            <option value="@p.Value">@p.Text</option>
+                        }</select></td>
+                <td><select name="StudentAssistant[@(i-1)]" class="form-control"><option value="">Assistants</option>@foreach (var p in Model.PublishersDropdown)
+                        {
+                            <option value="@p.Value">@p.Text</option>
+                        }</select></td>
+            </tr>
+            startTimeMinutes += ExtractMinutes(time);
+            index++;
+        }
+
+        <!-- LIVING AS CHRISTIANS BANNER -->
+        <tr><td colspan="5" style="background:maroon;color:white;">LIVING AS CHRISTIANS</td></tr>
+
+        <!-- Middle Song -->
+        <tr>
+            <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+            <td>@Get("Middle Song")<input type="hidden" name="MiddleSong" value="@Get("Middle Song")" /></td>
+        </tr>
+        @{
+            startTimeMinutes += 3; index++;
+        }
+
+        @for (int i = 1; i <= 5; i++)
+        {
+            var part = Get($"Elder Assignment {i} Part");
+            var time = Get($"Elder Assignment {i} Time");
+
+            if (string.IsNullOrWhiteSpace(part)) continue;
+            <tr>
+                <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+                <td>@part @time <input type="hidden" name="ElderAssignmentText[@(i-1)]" value="@part" /></td>
+                <td></td>
+                <td><select name="ElderAssignment[@(i-1)]" class="form-control"><option value="">Elders/Servants</option>@foreach (var p in Model.EldersAndServantsDropdown)
+                        {
+                            <option value="@p.Value">@p.Text</option>
+                        }</select></td>
+                <td>@if (part.Contains("Congregation Bible Study"))
+                    {
+                        <select name="CbsReader[@(i-1)]" class="form-control"><option value="">Readers</option>@foreach (var p in Model.EldersAndServantsDropdown)
+                            {
+                                <option value="@p.Value">@p.Text</option>
+                            }</select>
+                    }</td>
+            </tr>
+            startTimeMinutes += part.Contains("Congregation Bible Study") ? 30 : ExtractMinutes(time);
+            index++;
+        }
+
+        <!-- Closing Song -->
+        <tr>
+            <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
+            <td>@Get("Closing Song")<input type="hidden" name="ClosingSong" value="@Get("Closing Song")" /></td>
+            <td style="text-align:right;"><small><i>Closing Prayer:</i></small></td>
+            <td><select name="ClosingPrayer" class="form-control"><option value="">Elders/Servants</option>@foreach (var p in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@p.Value">@p.Text</option>
+                    }</select></td>
+        </tr>
+    </table>
+    <center><button type="submit" style="margin:20px;">Save All Assignments</button></center>
+</form>
+
+
+
+________________________________________________________________________________________________________________
+@page
+@model Khronos4.Pages.OCLMManagerModel
+@{
+    ViewData["Title"] = "OCLM Meeting Schedule - Khronos Pro ";
+}
+
+<div class="page_heading">
+    <h4>@Model.CongregationName Congregation</h4>
+    <h5>Our Christian Life and Ministry Manager</h5>
+    <p>
+        <a href="/OCLMManager">OCLM Manager Home</a> |
+        <a href="/PublisherManager">Manage Publishers</a> |
+        <a href="https://www.jw.org/en/library/jw-meeting-workbook/" target="_blank">JW Workbook</a> |
+        <a href="/Statistics">Statistics</a>
+    </p>
+    @* <img class="tile-icon-large" src="./images/OclmElder.jpg" /> *@
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="container">
+    <!-- Year Dropdown -->
+    <label for="yearDropdown" class="mt-3">Select a Year:</label>
+    <select id="yearDropdown" class="form-control" onchange="updateYearSelection()">
+        @foreach (var year in Model.AvailableYears)
+        {
+            <option value="@year" selected="@(year == Model.SelectedYear ? "selected" : null)">@year</option>
+        }
+    </select>
+
+    <!-- Dropdown for Weekly Meetings -->
+    <label for="meetingDropdown" class="mt-3">Select a Week:</label>
+    <select id="meetingDropdown" class="form-control">
+        <option value="">Select a Week</option>
+        @foreach (var meeting in Model.WeeklyMeetingLinks)
+        {
+            var displayText = Model.GetDisplayText(meeting);
+            <option value="@meeting">@displayText</option> 
+        }
+    </select>
+    <br />
+    <button id="scrapeButton" class="btn btn-primary" onclick="startScraping()">Load Workbook</button>
+
+    <div id="loading" style="display: none; text-align: center; margin-top: 20px;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Fetching workbook ...</p>
+    </div>
+
+    <div id="meetingData" style="margin-top: 20px;"></div>
+
+
+</div>
+
+
+<script>
+    function updateYearSelection() {
+        let selectedYear = document.getElementById("yearDropdown").value;
+        window.location.href = `?year=${selectedYear}`;
+    }
+</script>
+
+<script>
+    document.addEventListener("click", async function (event) {
+        if (event.target && event.target.id === "updateButton") {
+            await updateOCLMParts();
+        }
+    });
+
+    async function fetchMidweekTime() {
+        try {
+            const response = await fetch(`/OCLMManager?handler=CongregationMidweekTime`);
+            const data = await response.json();
+
+            if (data.success) {
+                return data.midweekTime; // Return the time as a string (e.g., "19:00")
+            } else {
+                console.error("Error fetching Midweek Time:", data.message);
+                return null; // Return null if error
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            return null;
+        }
+    }
+    
+    async function startScraping() {
+        let selectedMeetingUrl = document.getElementById("meetingDropdown").value;
+        let meetingDataDiv = document.getElementById("meetingData");
+        let loadingIndicator = document.getElementById("loading");
+
+        if (!selectedMeetingUrl) {
+            meetingDataDiv.innerHTML = "<p class='text-danger'>Please select a week before scraping.</p>";
+            return;
+        }
+
+        // Show loading
+        loadingIndicator.style.display = "block";
+        meetingDataDiv.style.display = "none";
+
+        try {
+            const response = await fetch(`/OCLMManager?handler=ScrapeMeetingDetails&meetingUrl=${encodeURIComponent(selectedMeetingUrl)}`);
+            const data = await response.json();
+
+            if (!data || Object.keys(data).length === 0) {
+                meetingDataDiv.innerHTML = "<p class='text-danger'>No data found.</p>";
+                loadingIndicator.style.display = "none";
+                return;
+            }
+
+            // Fetch MidweekTime from server before proceeding
+            let startTimeStr = await fetchMidweekTime();
+            let startTime; 
+
+            if (startTimeStr) {
+                let [hours, minutes] = startTimeStr.split(":").map(Number);
+                startTime = hours * 60 + minutes; // Convert to minutes
+            } else {
+                startTime = 19 * 60; // Default to 7:00 PM
+            }
+
+            let html = `<div class="OCLM-Editor-Container">
+                    <table class="OCLM-Editor">
+                        <thead>
+                            <tr>
+                                <th style="width: 1%;"></th>
+                                <th style="width: 49%;"></th>
+                                <th style="width: 10%;"></th>
+                                <th style="width: 10%;"></th>
+                                <th style="width: 10%;"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td colspan="2"><h4>@Model.CongregationName</h4></td>
+                                <td colspan="3"><h4>Midweek Meeting Schedule</h4></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5"><hr style="height: 3px; background-color: black; border: none;"></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <input type="date" id="dateField" value="Date">
+                                    <input type="hidden" id="congID" value="@Model.CongregationName">
+                                </td>
+                                <td>| ${data["Weekly Bible Verses"]}</td>
+                                <td style="text-align: right;"><small>Chairman:</small></td> 
+                                <td>
+                                    <select id="eldersAndServantsDropdown" class="form-control">
+                                        <option value="">Elder/Servant</option> 
+                                        @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                        {
+                                            @foreach (var person in Model.EldersAndServantsDropdown)
+                                            {
+                                                <option value="@person.Value">@person.Text</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="">No Elders or Servants Found</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td></td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align: right;"><small>Auxiliary Classroom Counselor:</small></td> 
+                                <td>
+                                    <select id="eldersAndServantsDropdown" class="form-control">
+                                        <option value="">Elder/Servant</option> 
+                                        @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                        {
+                                            @foreach (var person in Model.EldersAndServantsDropdown)
+                                            {
+                                                <option value="@person.Value">@person.Text</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="">No Elders or Servants Found</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td></td>
+                            </tr>`;
+
+            
+            // Function to format time in 12-hour format
+            function formatTime(minutes) {
+                let hours = Math.floor(minutes / 60);
+                let mins = minutes % 60;
+                let period = hours >= 12 ? "PM" : "AM";
+    
+                // Convert to 12-hour format
+                hours = hours > 12 ? hours - 12 : hours;
+    
+                return `${hours}:${mins.toString().padStart(2, "0")} ${period}`;
+            }
+                            
+            // 1. Opening Song 
+            if (data["Opening Song"]) 
+            {
+                html += `<tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>● ${data["Opening Song"]}</td>
+                            <td style="text-align: right;"><small>Opening Prayer:</small></td>
+                            <td>
+                                <select id="eldersAndServantsDropdown" class="form-control">
+                                    <option value="">Elder/Servant</option> 
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`
+            }
+            startTime += 3;
+
+            // Opening Comments
+            html += `<tr>
+                        <td>${formatTime(startTime)}</td>
+                        <td>● Opening Comments <small>(1 min.)</small></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>`;
+            startTime += 1;
+
+            // Treasures Banner 
+            html += `<tr> 
+                        <td colspan="5" style="background:gray; color:white"><b>TREASURES FROM GOD’S WORD</b></td>
+                    </tr>`
+                           
+            // 2. Treasures Talk
+            if (data["Treasures Talk Part"]) {
+                html += `<tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>${data["Treasures Talk Part"]} <small>(10 min.)</small></td> 
+                            <td></td>
+                            <td>
+                                <select id="eldersAndServantsDropdown" class="form-control"> 
+                                    <option value="">Elder/Servant</option>
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`;
+                startTime += 10;
+            }
+
+            // 3. Spiritual Gems
+            if (data["Spiritual Gems Part"]) {
+                html += `<tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>${data["Spiritual Gems Part"]} <small>(10 min.)</small></td> 
+                            <td></td>
+                            <td>
+                                <select id="eldersAndServantsDropdown" class="form-control"> 
+                                    <option value="">Elder/Servant</option>
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`;
+                startTime += 10;
+            }
+
+            // 4. Bible Reading
+            if (data["Bible Reading Part"]) {
+                html += `<tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>Bible Reading <small>(4 min.)</small></td> 
+                            <td></td>
+                            <td>
+                                <select id="publisherDropdown" class="form-control"> 
+                                    <option value="">Select Student</option>
+                                    @foreach (var publisher in Model.PublishersDropdown)
+                                    {
+                                        <option value="@publisher.Value" data-privilege="@publisher.Group.Name">@publisher.Text</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`;
+                startTime += 4;
+            }
+
+            html += `<tr>
+                <td colspan="5" style="background:gold; color:white"><b>APPLY YOURSELF TO THE FIELD MINISTRY</b></td>
+            </tr>`
+
+            // 5. LOOP through Student Assignments (With Fix)
+            let studentIndex = 1;
+            const maxAssignments = 5; // Prevent infinite loops
+            while (data.hasOwnProperty(`Student Assignment ${studentIndex} Part`)) {
+                let durationText = data[`Student Assignment ${studentIndex} Time`] || "4 min.)"; // Default to (4 min.)
+                let duration = parseInt(durationText.match(/\d+/)[0]); // Extracts only the number
+                html += `<tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>${data[`Student Assignment ${studentIndex} Part`]} <small>${data[`Student Assignment ${studentIndex} Time`]}</small></td>
+                            <td></td>
+                            <td>
+                                <select id="publisherDropdown" class="form-control">
+                                    <option value="">Student</option> 
+                                    @foreach (var publisher in Model.PublishersDropdown)
+                                    {
+                                        <option value="@publisher.Value" data-privilege="@publisher.Group.Name">@publisher.Text</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <select id="publisherDropdown" class="form-control"> 
+                                    <option value="">Assistant</option>
+                                    @foreach (var publisher in Model.PublishersDropdown)
+                                    {
+                                        <option value="@publisher.Value" data-privilege="@publisher.Group.Name">@publisher.Text</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>`;
+                startTime += duration;
+                studentIndex++;
+                
+                if (studentIndex > maxAssignments) break;
+            }
+
+            // 6. Middle Song
+            if (data["Middle Song"]) {
+                html += ` <tr>
+                            <td colspan="5" style="background:maroon; color:white"><b>LIVING AS CHRISTIANS</b></td>
+                        </tr>
+                        <tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>${data["Middle Song"]}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>`;
+                startTime += 3;
+            }
+
+            // 7. LOOP through Elder Assignments (With Fix)
+            let elderIndex = 1;
+                while (data.hasOwnProperty(`Elder Assignment ${elderIndex} Part`)) {
+                    let durationText = data[`Elder Assignment ${elderIndex} Time`] || "15 min.)"; // Default to (15 min.)
+                    let duration = parseInt(durationText.match(/\d+/)[0]); // Extracts only the minutes
+                    let assignmentText = data[`Elder Assignment ${elderIndex} Part`];
+
+                    html += `<tr>
+                    <td>${formatTime(startTime)}</td>
+                    <td>${assignmentText} <small>${durationText}</small></td> 
+                    <td></td>
+                    <td>
+                        <select id="eldersAndServantsDropdown" class="form-control"> 
+                            <option value="">Elder/Servant</option>
+                            @foreach (var person in Model.EldersAndServantsDropdown ?? new List<SelectListItem>())
+                            {
+                                <option value="@person.Value">@person.Text</option>
+                            }
+                        </select>
+                    </td>
+                    <td>`;
+
+                    // If the assignment contains "Congregation Bible Study", add another dropdown for Reader
+                    if (assignmentText.includes("Congregation Bible Study")) {
+                        html += `<select id="cbsReaderDropdown" class="form-control"> 
+                                    <option value="">Reader</option>
+                                    @foreach (var person in Model.EldersAndServantsDropdown ?? new List<SelectListItem>())
+                                    {
+                                        <option value="@person.Value">@person.Text</option>
+                                    }
+                                </select>`;
+                    }
+
+                    html += `</td></tr>`;
+
+                    startTime += duration;
+                    elderIndex++;
+
+                    if (elderIndex > maxAssignments) break;
+                }
+
+            // 8. Closing Song
+            if (data["Closing Song"]) { 
+                html += `<tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>${data["Closing Song"]}</td>
+                            <td style="text-align: right;"><small>Closing Prayer:</small></td>
+                            <td>
+                                <select id="eldersAndServantsDropdown" class="form-control"> 
+                                    <option value="">Elder/Servant</option>
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>
+
+                        <button id="updateButton" class="btn btn-success mt-3">Update</button>`
+
+            }
+
+            // Insert the generated HTML into #meetingData
+            meetingDataDiv.innerHTML = html;
+
+            // Hide loading, show data
+            loadingIndicator.style.display = "none";
+            meetingDataDiv.style.display = "block";
+        } catch (error) {
+            console.error("Error fetching meeting details:", error);
+            loadingIndicator.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    document.getElementById("updateButton").addEventListener("click", async function () {
+        let weekOf = document.getElementById("meetingDropdown").value; // Get selected week
+        let congID = document.getElementById("congID").value; // Assuming you have a hidden input for CongID
+
+        let rows = document.querySelectorAll(".OCLM-Editor tbody tr"); // Select table rows
+        let oclmParts = [];
+
+        rows.forEach(row => {
+            let columns = row.querySelectorAll("td");
+
+            if (columns.length >= 4) {
+                let startTime = columns[0].textContent.trim();
+                let hours = parseInt(timeParts[1]);
+                let minutes = parseInt(timeParts[2]);
+                let period = timeParts[3];
+
+                if (period === "PM" && hours < 12) hours += 12;
+                if (period === "AM" && hours === 12) hours = 0;
+
+                let startTimeFormatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+
+                let part = columns[1].textContent.trim();
+                let assigneeDropdown = columns[3].querySelector("select");
+                let assistantDropdown = columns[4]?.querySelector("select");
+
+                let assignee = assigneeDropdown ? assigneeDropdown.value : "";
+                let assistant = assistantDropdown ? assistantDropdown.value : "";
+
+                if (part && startTime) {
+                    oclmParts.push({
+                        WeekOf: weekOf,
+                        CongID: congID,
+                        StartTime: startTime,
+                        Part: part,
+                        Assignee: assignee,
+                        Assistant: assistant
+                    });
+                }
+            }
+        });
+
+        if (oclmParts.length === 0) {
+            alert("No data to save.");
+            return;
+        }
+
+        // Send data to server
+        try {
+            let response = await fetch("@Url.Page("OCLMManager", "SaveOCLMParts")", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(oclmParts)
+            });
+
+            let result = await response.json();
+            if (result.success) {
+                alert("✅ OCLM Parts saved successfully!");
+            } else {
+                alert("❌ Error saving OCLM Parts: " + result.message);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("❌ Failed to save OCLM Parts.");
+        }
+    });
+</script>
+
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Khronos4.Helpers;
+using Khronos4.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Khronos4.Models;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace Khronos4.Pages
+{
+    [Authorize]
+    public class OCLMManagerModel : BasePageModel
+    {
+        private readonly JWMeetingScraper _scraper = new();
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
+
+        [BindProperty]
+        public List<string> EldersList { get; set; } = new List<string>();
+        public List<SelectListItem> EldersDropdown { get; set; } = new List<SelectListItem>();
+
+        [BindProperty]
+        public List<string> EldersAndServantsList { get; set; } = new List<string>();
+        public List<SelectListItem> EldersAndServantsDropdown { get; set; } = new List<SelectListItem>();
+
+        [BindProperty]
+        public List<string> PublishersList { get; set; } = new List<string>();
+        public List<SelectListItem> PublishersDropdown { get; set; } = new List<SelectListItem>();
+
+        public OCLMManagerModel(IConfiguration configuration, AppDbContext context) : base(context)
+        {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        [BindProperty]
+        public int SelectedYear { get; set; } = DateTime.Now.Year;
+
+        [BindProperty]
+        public string OpeningSong { get; set; }
+
+        public List<int> AvailableYears { get; set; }
+        public List<string> WeeklyMeetingLinks { get; set; }
+        public string CongregationName { get; set; }
+        public Dictionary<string, string> MeetingData { get; set; } = new Dictionary<string, string>();
+        public int MidweekTimeInMinutes { get; set; }
+
+        public async Task OnGetAsync(int? year, string meetingUrl = null)
+        {
+            if (_context == null)
+            {
+                TempData["Error"] += " ❌ Database context is NULL on page load.";
+                return;
+            }
+
+            if (!await _context.Database.CanConnectAsync())
+            {
+                TempData["Error"] += " ❌ Database connection failed in OnGetAsync().";
+                return;
+            }
+
+            await LoadEldersDropdown();
+            await LoadEldersAndServantsDropdown();
+            await LoadPublishersDropdown();
+
+            var user = HttpContext.User;
+            AvailableYears = GenerateYearList();
+            SelectedYear = year ?? DateTime.Now.Year;
+            WeeklyMeetingLinks = GenerateWeeklyMeetingLinks(SelectedYear);
+
+            // Persist MeetingData across page reloads using ViewData
+            if (TempData.ContainsKey("MeetingData"))
+            {
+                var tempDataValue = TempData["MeetingData"] as Dictionary<string, string>;
+                MeetingData = tempDataValue ?? new Dictionary<string, string>();
+            }
+
+            string congregationId = user.Claims.FirstOrDefault(c => c.Type == "Congregation")?.Value ?? "0";
+            CongregationName = GetCongregationName(congregationId);
+
+           /* MidweekTimeInMinutes = await GetMidweekMeetingTimeAsync(CongregationName);*/
+
+            TempData["Error"] += $" ✅ Retrieved Congregation Name: {CongregationName}.";
+        }
+
+        private string GetCongregationName(string congregationId)
+        {
+            string congregationName = "Unassigned";
+            using (var connection = _context.Database.GetDbConnection())
+            {
+                if (connection.State == ConnectionState.Closed) // Only open if it's closed
+                {
+                    connection.Open();
+                }
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "dbo.GetCongregationName"; // Stored Procedure Name
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new SqlParameter("@CongID", congregationId));
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            congregationName = reader.GetString(0);
+                        }
+                    }
+                }
+            }
+            return congregationName;
+        }
+
+        private List<int> GenerateYearList()
+        {
+            int currentYear = DateTime.Now.Year;
+            return new List<int> { currentYear - 1, currentYear, currentYear + 1 };
+        }
+
+        public async Task<IActionResult> OnGetScrapeMeetingDetailsAsync(string meetingUrl)
+        {
+            if (string.IsNullOrEmpty(meetingUrl))
+            {
+                return new JsonResult(new { error = "No URL selected" });
+            }
+
+            try
+            {
+                var meetingDetails = await _scraper.ScrapeMeetingDetailsAsync(meetingUrl);
+                
+                MeetingData = await _scraper.ScrapeMeetingDetailsAsync(meetingUrl);
+                TempData["MeetingData"] = MeetingData;
+                return new JsonResult(meetingDetails);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { error = $"Error scraping meeting details: {ex.Message}" });
+            }
+        }
+
+        private List<string> GenerateWeeklyMeetingLinks(int year)
+        {
+            List<string> links = new List<string>();
+            DateTime startDate = new DateTime(year, 1, 1);
+
+            while (startDate.DayOfWeek != DayOfWeek.Monday)
+            {
+                startDate = startDate.AddDays(1);
+            }
+
+            while (startDate.Year == year || (startDate.Year == year + 1 && startDate.Month == 1))
+            {
+                DateTime endDate = startDate.AddDays(6);
+                string startMonth = startDate.ToString("MMMM", CultureInfo.InvariantCulture);
+                string endMonth = endDate.ToString("MMMM", CultureInfo.InvariantCulture);
+                string monthRange = GetMonthRange(startDate.Month, startDate.Year);
+
+                string formattedDate = startMonth == endMonth
+                    ? $"{startMonth}-{startDate.Day}-{endDate.Day}-{startDate.Year}"
+                    : $"{startMonth}-{startDate.Day}-{startDate.Year}-{endMonth}-{endDate.Day}-{endDate.Year}";
+
+                string url = $"https://www.jw.org/en/library/jw-meeting-workbook/{monthRange}-mwb/Life-and-Ministry-Meeting-Schedule-for-{formattedDate}/";
+                links.Add(FormatURL(url));
+
+                startDate = startDate.AddDays(7);
+            }
+
+            return links;
+        }
+
+        private string GetMonthRange(int month, int year)
+        {
+            string[] monthRanges = { "january-february", "march-april", "may-june", "july-august", "september-october", "november-december" };
+            int periodIndex = (month - 1) / 2;
+            return $"{monthRanges[periodIndex]}-{year}";
+        }
+
+        private string FormatURL(string link)
+        {
+            return Regex.Replace(link, @"(\w+)-(\d+)-(\d{4})-(\w+)-(\d+)-\3/", "$1-$2-$4-$5-$3/");
+        }
+
+        public string GetDisplayText(string link)
+        {
+            var match = Regex.Match(link, @"Life-and-Ministry-Meeting-Schedule-for-([\w]+)-(\d+)(?:-(\d{4}))?-(?:([\w]+)-)?(\d+)-(\d{4})/");
+            if (match.Success)
+            {
+                string startMonth = match.Groups[1].Value;
+                string startDay = match.Groups[2].Value;
+                string startYear = match.Groups[3].Value;
+                string endMonth = match.Groups[4].Value;
+                string endDay = match.Groups[5].Value;
+                string endYear = match.Groups[6].Value;
+
+                return string.IsNullOrEmpty(endMonth)
+                    ? $"{startMonth} {startDay}-{endDay}"
+                    : $"{startMonth} {startDay}-{endMonth} {endDay}";
+            }
+
+            return "Invalid Date";
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OnGetCongregationMidweekTime()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_context.Database.GetConnectionString()))
+                {
+                    await connection.OpenAsync();
+                    using (var command = new SqlCommand("dbo.GetCongregationMidweekTime", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@CongID", CongregationID);
+
+                        var result = await command.ExecuteScalarAsync(); // Get the single value
+
+                        if (result != null && TimeSpan.TryParse(result.ToString(), out TimeSpan midweekTime))
+                        {
+                            return new JsonResult(new { success = true, midweekTime = midweekTime.ToString(@"hh\:mm") });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Error: {ex.Message}" });
+            }
+
+            return new JsonResult(new { success = false, message = "No data found." });
+        }
+
+        private async Task LoadEldersDropdown()
+        {
+            using (var connection = new SqlConnection(_context.Database.GetConnectionString()))
+            {
+                await connection.OpenAsync();
+                using (var command = new SqlCommand("dbo.GetEldersFromCongregation", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@UserCongregation", CongregationID);
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            EldersList.Add(reader.GetString(0)); // Add Elder's Name to the List
+                        }
+                    }
+                }
+            }
+        }
+
+        private async Task LoadEldersAndServantsDropdown()
+        {
+            try
+            {
+                if (_context == null)
+                {
+                    TempData["Error"] += " ❌ Database context is NULL in LoadEldersAndServantsDropdown().";
+                    return;
+                }
+
+                var connection = _context.Database.GetDbConnection();
+                if (connection.State == ConnectionState.Closed)
+                {
+                    await connection.OpenAsync();
+                }
+
+                TempData["Error"] += " ✅ Database connection is available. Attempting to load Elders and Servants...";
+
+                EldersAndServantsDropdown = await _context.Publishers
+                    .AsNoTracking()
+                    .Where(p => p.Privilege == "Elder" || p.Privilege == "Servant")
+                    .OrderBy(p => p.Name)
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.Name
+                    })
+                    .ToListAsync();
+
+                if (!EldersAndServantsDropdown.Any())
+                {
+                    TempData["Error"] += " 🚨 No Elders or Servants found in the database.";
+                }
+                else
+                {
+                    TempData["Error"] += $" ✅ Loaded {EldersAndServantsDropdown.Count} Elders/Servants.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] += $" ❌ Error in LoadEldersAndServantsDropdown: {ex.Message}";
+            }
+        }
+
+        private async Task LoadPublishersDropdown()
+        {
+            try
+            {
+                if (_context == null)
+                {
+                    TempData["Error"] += " ❌ Database context is NULL in LoadPublishersDropdown().";
+                    return;
+                }
+
+                using (var connection = new SqlConnection(_context.Database.GetConnectionString()))
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = new SqlCommand("dbo.GetPublishersByCongregation", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@CongregationId", CongregationID);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            var tempList = new List<SelectListItem>();
+
+                            while (await reader.ReadAsync())
+                            {
+                                tempList.Add(new SelectListItem
+                                {
+                                    Value = reader["Id"].ToString(),  // Unique ID
+                                    Text = $"{reader["Name"]} ({reader["Privilege"]})",  // Display Name with Privilege
+                                    Group = new SelectListGroup { Name = reader["Privilege"].ToString() } // Grouping
+                                });
+                            }
+
+                            // ✅ Custom Sorting Order: Brother → Sister → Servant → Elder
+                            PublishersDropdown = tempList
+                                .OrderBy(p => p.Group.Name == "Brother" ? 1 :
+                                              p.Group.Name == "Sister" ? 2 :
+                                              p.Group.Name == "Servant" ? 3 : 4) // Elder is last
+                                .ThenBy(p => p.Text) // Sort by Name within groups
+                                .ToList();
+                        }
+                    }
+                }
+
+                if (!PublishersDropdown.Any())
+                {
+                    TempData["Error"] += " 🚨 No publishers found in the database.";
+                }
+                else
+                {
+                    TempData["Error"] += $" ✅ Loaded {PublishersDropdown.Count} publishers.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] += $" ❌ Error in LoadPublishersDropdown: {ex.Message}";
+            }
+        }
+    }
+}
+
+************************************************************************************************************
+
+@page
+@model Khronos4.Pages.OCLMManagerModel
+@{
+    ViewData["Title"] = "OCLM Meeting Schedule - Khronos Pro ";
+}
+
+<div class="page_heading">
+    <h4>@Model.CongregationName Congregation</h4>
+    <h5>Our Christian Life and Ministry Manager</h5>
+    <p>
+        <a href="/OCLMManager">OCLM Manager Home</a> |
+        <a href="/PublisherManager">Manage Publishers</a> |
+        <a href="https://www.jw.org/en/library/jw-meeting-workbook/" target="_blank">JW Workbook</a> |
+        <a href="/Statistics">Statistics</a>
+    </p>
+    @* <img class="tile-icon-large" src="./images/OclmElder.jpg" /> *@
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="container">
+    <!-- Year Dropdown -->
+    <label for="yearDropdown" class="mt-3">Select a Year:</label>
+    <select id="yearDropdown" class="form-control" onchange="updateYearSelection()">
+        @foreach (var year in Model.AvailableYears)
+        {
+            <option value="@year" selected="@(year == Model.SelectedYear ? "selected" : null)">@year</option>
+        }
+    </select>
+
+    <!-- Dropdown for Weekly Meetings -->
+    <label for="meetingDropdown" class="mt-3">Select a Week:</label>
+    <select id="meetingDropdown" class="form-control">
+        <option value="">Select a Week</option>
+        @foreach (var meeting in Model.WeeklyMeetingLinks)
+        {
+            var displayText = Model.GetDisplayText(meeting);
+            <option value="@meeting">@displayText</option> 
+        }
+    </select>
+    <br />
+    <button id="scrapeButton" class="btn btn-primary" onclick="startScraping()">Load Workbook</button>
+
+    <div id="loading" style="display: none; text-align: center; margin-top: 20px;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Fetching workbook ...</p>
+    </div>
+
+    <div id="meetingData" style="margin-top: 20px;"></div>
+</div>
+
+<script> /* updateYearSelection() */
+    function updateYearSelection() {
+        let selectedYear = document.getElementById("yearDropdown").value;
+        window.location.href = `?year=${selectedYear}`;
+    }
+
+    document.addEventListener("click", async function (event) {
+        if (event.target && event.target.id === "updateButton") {
+            await updateOCLMParts();
+        }
+    });
+</script>
+
+<script> /* fetchMidweekTime() */
+    async function fetchMidweekTime() {
+        try {
+            const response = await fetch(`/OCLMManager?handler=CongregationMidweekTime`);
+            const data = await response.json();
+
+            if (data.success) {
+                return data.midweekTime; // Return the time as a string (e.g., "19:00")
+            } else {
+                console.error("Error fetching Midweek Time:", data.message);
+                return null; // Return null if error
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            return null;
+        }
+    }
+</script>
+
+<script> /* startScraping() */
+ async function startScraping() {
+        let selectedMeetingUrl = document.getElementById("meetingDropdown").value;
+        let meetingDataDiv = document.getElementById("meetingData");
+        let loadingIndicator = document.getElementById("loading");
+
+        if (!selectedMeetingUrl) {
+            meetingDataDiv.innerHTML = "<p class='text-danger'>Please select a week before scraping.</p>";
+            return;
+        }
+
+        // Show loading
+        loadingIndicator.style.display = "block";
+        meetingDataDiv.style.display = "none";
+
+        try {
+            const response = await fetch(`/OCLMManager?handler=ScrapeMeetingDetails&meetingUrl=${encodeURIComponent(selectedMeetingUrl)}`);
+            const data = await response.json();
+
+            if (!data || Object.keys(data).length === 0) {
+                meetingDataDiv.innerHTML = "<p class='text-danger'>No data found.</p>";
+                loadingIndicator.style.display = "none";
+                return;
+            }
+
+            // Fetch MidweekTime from server before proceeding
+            let startTimeStr = await fetchMidweekTime();
+            let startTime; 
+
+            if (startTimeStr) {
+                let [hours, minutes] = startTimeStr.split(":").map(Number);
+                startTime = hours * 60 + minutes; // Convert to minutes
+            } else {
+                startTime = 19 * 60; // Default to 7:00 PM
+            }
+
+            // ================== ADDED: Safe model values passed from Razor into JS ==================
+            const congregationName = "@Model.CongregationName"; // Injected from Razor at runtime
+            const eldersAndServantsDropdownHtml = `@Html.Raw(Json.Serialize(Model.EldersAndServantsDropdown))`; // Optional: if you want to serialize it
+            // ================================================================================
+
+            // 0. Date, Congregation Name, Chairman, Aux Counsel 
+            let html = `
+                <form id="meetingForm" method="POST" action="/OCLMManager?handler=SaveMeetingParts">
+                    <div class="OCLM-Editor-Container">
+                        <table class="OCLM-Editor">
+                        <thead>
+                            <tr>
+                                <th style="width: 1%;"></th>
+                                <th style="width: 49%;"></th>
+                                <th style="width: 10%;"></th>
+                                <th style="width: 10%;"></th>
+                                <th style="width: 10%;"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td colspan="2"><h4>${congregationName}</h4></td> <!-- Changed from @Model to JS var -->
+                                <td colspan="3"><h4>Midweek Meeting Schedule</h4></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5"><hr style="height: 3px; background-color: black; border: none;"></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <input type="date" name="Date" id="dateField" value="Date">
+                                    <input type="hidden" name="CongregationName" id="congID" value="${congregationName}"> <!-- Changed -->
+                                </td>
+                                <td>| ${data["Weekly Bible Verses"]}</td>
+                                <td style="text-align: right;"><small>Chairman:</small></td> 
+                                <td>
+                                    <select name="Chairman" class="form-control eldersAndServantsDropdown"> <!-- FIXED: changed ID to class -->
+                                        <option value="">Elder/Servant</option> 
+                                        <!-- KEEP Razor loop for now -->
+                                        @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                        {
+                                            @foreach (var person in Model.EldersAndServantsDropdown)
+                                            {
+                                                <option value="@person.Value">@person.Text</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="">No Elders or Servants Found</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td></td>
+                            </tr>`;
+
+            // ================== CHANGED: All duplicated `id="eldersAndServantsDropdown"` became class ==================
+            // This avoids multiple identical IDs on the same page, which causes unpredictable behavior.
+            // Example change:
+            // From: <select id="eldersAndServantsDropdown" ...>
+            // To:   <select class="form-control eldersAndServantsDropdown">
+            // =============================================================================
+
+            // Function to format time in 12-hour format
+            function formatTime(minutes) {
+                let hours = Math.floor(minutes / 60);
+                let mins = minutes % 60;
+                let period = hours >= 12 ? "PM" : "AM";
+
+                hours = hours > 12 ? hours - 12 : hours;
+                return `${hours}:${mins.toString().padStart(2, "0")} ${period}`;
+            }
+                            
+            // 1. Opening Song 
+            if (data["Opening Song"]) 
+            {
+                html += `<tr>
+                            <td>
+                                ${formatTime(startTime)}
+                                <input type="hidden" name="StartTimes[]" value="${formatTime(startTime)}">
+                            </td>
+                            <td>
+                                ● ${data["Opening Song"]}
+                                <input type="hidden" name="OpeningSong" value="${data["Opening Song"]}">
+                            </td>
+                            <td style="text-align: right;"><small>Opening Prayer:</small></td>
+                            <td>
+                                <select name="OpeningPrayer" id="eldersAndServantsDropdown" class="form-control">
+                                    <option value="">Elder/Servant</option> 
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`
+            }
+            startTime += 3;
+
+            // Opening Comments
+            html += `<tr>
+                        <td>
+                            ${formatTime(startTime)}
+                            <input type="hidden" name="StartTimes[]" value="${formatTime(startTime)}">
+                        </td>
+                        <td>● Opening Comments <small>(1 min.)</small></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>`;
+            startTime += 1;
+
+            // Treasures Banner 
+            html += `<tr> 
+                        <td colspan="5" style="background:gray; color:white"><b>TREASURES FROM GOD’S WORD</b></td>
+                    </tr>`
+                           
+            // 2. Treasures Talk
+            if (data["Treasures Talk Part"]) {
+                html += `<tr>
+                            <td>
+                                ${formatTime(startTime)}
+                                <input type="hidden" name="StartTimes[]" value="${formatTime(startTime)}">
+                            </td>
+                            <td>
+                                ${data["Treasures Talk Part"]} <small>(10 min.)</small>
+                                <input type="hidden" name="TreasuresTalkPart" value="${data["Treasures Talk Part"]}">
+                            </td>
+                            <td></td>
+                            <td>
+                                <select name="TreasuresTalkSpeaker" id="eldersAndServantsDropdown" class="form-control"> 
+                                    <option value="">Elder/Servant</option>
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`;
+                startTime += 10;
+            }
+
+            // 3. Spiritual Gems
+            if (data["Spiritual Gems Part"]) {
+                html += `<tr>
+                            <td>
+                                ${formatTime(startTime)}
+                                <input type="hidden" name="StartTimes[]" value="${formatTime(startTime)}">
+                            </td>
+                            <td>
+                                ${data["Spiritual Gems Part"]} <small>(10 min.)</small>
+                                <input type="hidden" name="SpiritualGemsPart" value="${data["Spiritual Gems Part"]}">
+                            </td>
+                            <td></td>
+                            <td>
+                                <select name="SpiritualGemsSpeaker" id="eldersAndServantsDropdown" class="form-control">
+                                    <option value="">Elder/Servant</option>
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`;
+                startTime += 10;
+            }
+
+            // 4. Bible Reading
+            if (data["Bible Reading Part"]) {
+                html += `<tr>
+                            <td>
+                                ${formatTime(startTime)}
+                                <input type="hidden" name="StartTimes[]" value="${formatTime(startTime)}">
+                            </td>
+                            <td>
+                                Bible Reading <small>(4 min.)</small>
+                                <input type="hidden" name="BibleReadingPart" value="Bible Reading">
+                            </td>
+                            <td></td>
+                            <td>
+                                <select name="BibleReadingStudent" id="publisherDropdown" class="form-control">
+                                    <option value="">Select Student</option>
+                                    @foreach (var publisher in Model.PublishersDropdown)
+                                    {
+                                        <option value="@publisher.Value" data-privilege="@publisher.Group.Name">@publisher.Text</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`;
+                startTime += 4;
+            }
+
+            // 5. Students
+            html += `<tr>
+                <td colspan="5" style="background:gold; color:white"><b>APPLY YOURSELF TO THE FIELD MINISTRY</b></td>
+            </tr>`
+
+            const maxAssignments = 5; // Always attempt 5 student assignments
+            for (let studentIndex = 1; studentIndex <= maxAssignments; studentIndex++) {
+                let part = data[`Student Assignment ${studentIndex} Part`] || "";
+                if (!part.trim()) continue; // Skip if the part is empty or just whitespace
+
+                let durationText = data[`Student Assignment ${studentIndex} Time`] || "4 min.)";
+                let duration = parseInt(durationText.match(/\d+/)?.[0] || "4");
+
+                let selectedStudent = data[`Student Assignment ${studentIndex} Assignee`] || "";
+                let selectedAssistant = data[`Student Assignment ${studentIndex} Assistant`] || "";
+
+                html += `<tr>
+                            <td>
+                                ${formatTime(startTime)}
+                                <input type="hidden" name="StartTimes[${studentIndex - 1}]" value="${formatTime(startTime)}">
+                                <input type="hidden" name="StudentIndex[]" value="${studentIndex}">
+                            </td>
+                            <td>
+                                ${part} <small>${durationText}</small>
+                                <input type="hidden" name="StudentPartText[${studentIndex - 1}]" value="${part}">
+                                <!-- ^ changed from StudentAssignment[...] to avoid conflict with select -->
+                            </td>
+                            <td></td>
+                            <td>
+                                <select name="StudentAssignment[${studentIndex - 1}]" class="studentDropdown form-control" data-index="${studentIndex}">
+                                    <option value="">Student</option> 
+                                    @foreach (var publisher in Model.PublishersDropdown)
+                                    {
+                                        <option value="@publisher.Value" data-privilege="@publisher.Group.Name">@publisher.Text</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <select name="StudentAssistant[${studentIndex - 1}]" class="assistantDropdown form-control" data-index="${studentIndex}"> 
+                                    <option value="">Assistant</option>
+                                    @foreach (var publisher in Model.PublishersDropdown)
+                                    {
+                                        <option value="@publisher.Value" data-privilege="@publisher.Group.Name">@publisher.Text</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>`;
+
+                startTime += duration;
+            }
+
+            // 6. Middle Song
+            if (data["Middle Song"]) {
+                html += ` <tr>
+                            <td colspan="5" style="background:maroon; color:white"><b>LIVING AS CHRISTIANS</b></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ${formatTime(startTime)}
+                                <input type="hidden" name="StartTimes[]" value="${formatTime(startTime)}">
+                            </td>
+                            <td>
+                                ${data["Middle Song"]}
+                                <input type="hidden" name="MiddleSong" value="${data["Middle Song"]}">
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>`;
+                startTime += 3;
+            }
+
+            // 7. LOOP through Elder Assignments (With Fix)
+            let elderIndex = 0;
+            const maxElderAssignments = 5;
+
+            for (; elderIndex < maxElderAssignments; elderIndex++) {
+                let partKey = `Elder Assignment ${elderIndex + 1} Part`;
+                let timeKey = `Elder Assignment ${elderIndex + 1} Time`;
+                let assignmentText = data[partKey] || "";
+                let durationText = data[timeKey] || "0 min.)";
+                let duration = parseInt(durationText.match(/\d+/)?.[0] || "0");
+
+                // Skip if part is empty
+                if (assignmentText.trim() === "") continue;
+
+                html += `<tr>
+                    <td>
+                        ${formatTime(startTime)}
+                        <input type="hidden" name="StartTimes[${elderIndex}]" value="${formatTime(startTime)}">
+                        <input type="hidden" name="ElderIndex[${elderIndex}]" value="${elderIndex}">
+                        <input type="hidden" name="ElderAssignmentText[${elderIndex}]" value="${assignmentText}">
+                        <!-- ^ changed input name to ElderAssignmentText to avoid conflict with dropdown -->
+                    </td>
+                    <td>
+                        ${assignmentText} <small>${durationText}</small>
+                    </td> 
+                    <td></td>
+                    <td>
+                        <select name="ElderAssignment[${elderIndex}]" class="form-control"> 
+                            <option value="">Elder/Servant</option>
+                            @foreach (var person in Model.EldersAndServantsDropdown ?? new List<SelectListItem>())
+                            {
+                                <option value="@person.Value">@person.Text</option>
+                            }
+                        </select>
+                    </td>
+                    <td>`;
+
+                // Only show CBS reader dropdown if the assignment contains "Congregation Bible Study"
+                if (assignmentText.toLowerCase().includes("congregation bible study")) {
+                    html += `<select name="CbsReader[${elderIndex}]" class="form-control"> 
+                                <option value="">Reader</option>
+                                @foreach (var person in Model.EldersAndServantsDropdown ?? new List<SelectListItem>())
+                                {
+                                    <option value="@person.Value">@person.Text</option>
+                                }
+                            </select>`;
+                }
+
+                html += `</td></tr>`;
+
+                startTime += duration;
+            }
+
+            // 8. Closing Song
+            if (data["Closing Song"]) { 
+                html += `<tr>
+                            <td>${formatTime(startTime)}</td>
+                            <td>
+                                ${data["Closing Song"]}
+                                <input type="hidden" name="ClosingSong" value="${data["Closing Song"]}">
+                            </td>
+                            <td style="text-align: right;"><small>Closing Prayer:</small></td>
+                            <td>
+                                <select name="ClosingPrayer" id="eldersAndServantsDropdown" class="form-control">
+                                    <option value="">Elder/Servant</option>
+                                    @if (Model.EldersAndServantsDropdown != null && Model.EldersAndServantsDropdown.Count > 0)
+                                    {
+                                        @foreach (var person in Model.EldersAndServantsDropdown)
+                                        {
+                                            <option value="@person.Value">@person.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="">No Elders or Servants Found</option>
+                                    }
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>`
+            }
+
+            html += `
+                        </tbody>
+                    </table>
+                    <center>
+                        <button type="submit" class="btn btn-success mt-3">Save All Assignments</button>
+                    </center>
+                </div>
+            </form>
+        `;
+
+            // Insert the generated HTML into #meetingData
+            meetingDataDiv.innerHTML = html;
+
+            // Set today's date in the dynamically created date field
+            let today = new Date().toISOString().split("T")[0];
+            let dateField = document.getElementById("dateField");
+            if (dateField) {
+                dateField.value = today;
+            }
+
+            // Hide loading, show data
+            loadingIndicator.style.display = "none";
+            meetingDataDiv.style.display = "block";
+        } catch (error) {
+            console.error("Error fetching meeting details:", error);
+            loadingIndicator.style.display = "none";
+        }
+    }
+</script>

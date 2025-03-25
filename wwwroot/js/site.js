@@ -70,3 +70,150 @@ function sanitizePhone(input) {
     }*/
 
 }
+
+/**
+ * Prints the CBS table from the PublisherManager
+ * 
+ */
+document.getElementById("printCBSButton").addEventListener("click", function () {
+    const tableHtml = document.getElementById("serviceGroupsTable").outerHTML;
+    const newWindow = window.open("", "_blank");
+    newWindow.document.write(`
+            <html>
+            <head>
+                <title>Print Service Groups</title>
+                <style>
+                @media print {
+                    @page { margin: 0; } /* Removes headers & footers */
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        padding: 20px; 
+                        margin: 0; 
+                        text-align: center;
+                    }
+                    .dynamic-groups-table { 
+                        width: 100%; 
+                        border-collapse: collapse; 
+                        margin-top: 20px;
+                    }
+                    .dynamic-groups-table th, .dynamic-groups-table td { 
+                        border: 1px solid black; 
+                        padding: 8px; 
+                        text-align: left; 
+                    }
+                    .btn-print {
+                        display: none !important; /* Hide print button when printing */
+                    }
+                }
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .dynamic-groups-table { width: 100%; border-collapse: collapse; }
+                .dynamic-groups-table th, .dynamic-groups-table td { border: 1px solid black; padding: 8px; text-align: left; }
+                .btn-print { background-color: black; color: white; padding: 10px; margin-top: 10px; cursor: pointer; }
+            </style>
+            </head>
+            <body>
+                <h2><center>Service Groups</center></h2>
+                ${tableHtml}
+                <br>
+                <button onclick="window.print()" class="btn-print">Print</button>
+            </body>
+            </html>
+        `);
+    newWindow.document.close();
+});
+
+/**
+ * Prints the CBS table from the PublisherManager
+ * 
+ */
+document.getElementById("printPubButton").addEventListener("click", function () {
+    const tableHtml = document.getElementById("all-publishers-table").outerHTML;
+    const newWindow = window.open("", "_blank");
+    newWindow.document.write(`
+            <html>
+            <head>
+                <title>Print All Publishers</title>
+                <style>
+                @media print {
+                    @page { margin: 0; } /* Removes headers & footers */
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        padding: 20px; 
+                        margin: 0; 
+                        text-align: center;
+                    }
+                    .dynamic-groups-table { 
+                        width: 100%; 
+                        border-collapse: collapse; 
+                        margin-top: 20px;
+                    }
+                    .dynamic-groups-table th, .dynamic-groups-table td { 
+                        border: 1px solid black; 
+                        padding: 8px; 
+                        text-align: left; 
+                    }
+                    .btn-print {
+                        display: none !important; /* Hide print button when printing */
+                    }
+                }
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .dynamic-groups-table { width: 100%; border-collapse: collapse; }
+                .dynamic-groups-table th, .dynamic-groups-table td { border: 1px solid black; padding: 8px; text-align: left; }
+                .btn-print { background-color: black; color: white; padding: 10px; margin-top: 10px; cursor: pointer; }
+            </style>
+            </head>
+            <body>
+                <h2><center>Service Groups</center></h2>
+                ${tableHtml}
+                <br>
+                <button onclick="window.print()" class="btn-print">Print</button>
+            </body>
+            </html>
+        `);
+    newWindow.document.close();
+});
+
+/**
+ * Downloads table as Word document from the PublisherManager
+ * 
+ */
+document.getElementById("downloadWordButton").addEventListener("click", function () {
+    const tableHtml = document.getElementById("serviceGroupsTable").outerHTML;
+
+    fetch("/PrintView?handler=DownloadWord", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ html: tableHtml })
+    })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "ServiceGroups.docx";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        })
+        .catch(error => console.error("Error generating Word file:", error));
+});
+
+/**
+ * Hides/shows the CBS checkboxes dynamically
+ * 
+ */
+document.querySelectorAll(".privilege-dropdown").forEach(dropdown => {
+    dropdown.addEventListener("change", function () {
+        let rowId = this.getAttribute("data-row");
+        let cbsOptions = document.getElementById("cbs-options-" + rowId);
+
+        if (this.value === "Elder" || this.value === "Servant") {
+            cbsOptions.style.display = "block";
+        } else {
+            cbsOptions.style.display = "none";
+            cbsOptions.querySelectorAll("input").forEach(checkbox => checkbox.checked = false);
+        }
+    });
+});

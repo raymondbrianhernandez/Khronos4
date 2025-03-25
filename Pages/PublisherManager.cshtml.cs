@@ -18,20 +18,20 @@ using CsvHelper.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
-using System.Runtime.CompilerServices;
-using System.Data.SqlTypes;
+using static System.Net.Mime.MediaTypeNames;
+using System.IO;
+using DocumentFormat.OpenXml;
 
 
 namespace Khronos4.Pages
 {
     [Authorize]
-    public class PublisherManagerModel : PageModel
+    public class PublisherManagerModel : BasePageModel
     {
         private readonly IConfiguration _configuration;
         private readonly AppDbContext _context;
 
-        public PublisherManagerModel(IConfiguration configuration, AppDbContext context)
+        public PublisherManagerModel(IConfiguration configuration, AppDbContext context) : base(context)
         {
             _configuration = configuration;
             _context = context;
@@ -42,8 +42,6 @@ namespace Khronos4.Pages
         public string Congregation { get; set; }
         [BindProperty]
         public Publisher Publisher { get; set; } = new Publisher();
-
-        public string CongregationName { get; set; }
         
         public List<CSVPublisher> BulkUploadPreview { get; set; } = new List<CSVPublisher>();
         public List<Publisher> PublisherList { get; set; } = new List<Publisher>();
@@ -53,6 +51,7 @@ namespace Khronos4.Pages
         public async Task<IActionResult> OnGetAsync()
         {
             await LoadPublishers();
+            LoadUserDetails();
 
             Congregations = new List<SelectListItem>();
 
@@ -106,71 +105,80 @@ namespace Khronos4.Pages
         {
             using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                await conn.OpenAsync();
-                using (SqlCommand cmd = new SqlCommand("GetPublishersByCongregation", conn))
+                try
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    int userCongregationId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "Congregation")?.Value ?? "0");
-                    cmd.Parameters.AddWithValue("@CongregationId", userCongregationId);
-
-                    TempData["DebugCongregationId"] = $"CongregationId: {userCongregationId}";
-
-                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    await conn.OpenAsync();
+                    using (SqlCommand cmd = new SqlCommand("GetPublishersByCongregation", conn))
                     {
-                        PublisherList.Clear();
-                        if (reader.HasRows)
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        int userCongregationId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "Congregation")?.Value ?? "0");
+                        cmd.Parameters.AddWithValue("@CongregationId", userCongregationId);
+
+                        TempData["Debug"] = $"Loading publishers for CongregationId: {userCongregationId}";
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
-                            TempData["DebugColumns"] = "Columns Found: ";
-                            for (int i = 0; i < reader.FieldCount; i++)
+                            PublisherList.Clear();
+                            if (reader.HasRows)
                             {
-                                TempData["DebugColumns"] += reader.GetName(i) + ", ";
-                            }
+                                TempData["Debug"] += " | Data Found";
 
-                            int index = 0;
-                            while (await reader.ReadAsync())
-                            {
-                                try
+                                while (await reader.ReadAsync())
                                 {
-                                    TempData["DebugReaderIndex"] = $"Processing Row {index}";
-                                    index++;
-
-                                    int id = reader.GetInt32(0);
-                                    string name = reader.IsDBNull(1) ? "" : reader.GetString(1);
-                                    int congregationId = reader.GetInt32(2);
-                                    string congregationName = reader.IsDBNull(3) ? "Unknown" : reader.GetString(3);
-                                    int serviceGroup = reader.IsDBNull(4) ? 0 : reader.GetInt32(4);
-                                    string privilege = reader.IsDBNull(5) ? "" : reader.GetString(5);
-                                    bool isRP = !reader.IsDBNull(6) && reader.GetBoolean(6);
-                                    string phoneNumber = reader.IsDBNull(7) ? null : reader.GetString(7);
-                                    string email = reader.IsDBNull(8) ? null : reader.GetString(8);
-                                    string status = reader.IsDBNull(9) ? "" : reader.GetString(9);
-                                    string notes = reader.IsDBNull(10) || string.IsNullOrWhiteSpace(reader.GetString(10)) ? null : reader.GetString(10).Trim();
-
-                                    PublisherList.Add(new Publisher
+                                    try
                                     {
-                                        Id = id,
-                                        Name = name,
-                                        Congregation = congregationId,
-                                        CongregationName = congregationName,
-                                        ServiceGroup = serviceGroup,
-                                        Privilege = privilege,
-                                        IsRP = isRP,
-                                        PhoneNumber = phoneNumber,
-                                        Email = email,
-                                        Status = status,
-                                        Notes = notes
-                                    });
+                                        int id = reader.GetInt32(0);
+                                        string name = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                                        int congregationId = reader.GetInt32(2);
+                                        int serviceGroup = reader.GetInt32(3);
+                                        string privilege = reader.IsDBNull(4) ? "" : reader.GetString(4);
+
+                                        bool isRP = reader.IsDBNull(5) ? false : reader.GetBoolean(5);
+                                        bool isCBSOverseer = reader.IsDBNull(6) ? false : reader.GetBoolean(6);
+                                        bool isCBSAssistant = reader.IsDBNull(7) ? false : reader.GetBoolean(7);
+
+                                        string phoneNumber = reader.IsDBNull(8) ? null : reader.GetString(8);
+                                        string email = reader.IsDBNull(9) ? null : reader.GetString(9);
+                                        string status = reader.IsDBNull(10) ? "" : reader.GetString(10);
+                                        string notes = reader.IsDBNull(11) || string.IsNullOrWhiteSpace(reader.GetString(11)) ? null : reader.GetString(11).Trim();
+
+                                        PublisherList.Add(new Publisher
+                                        {
+                                            Id = id,
+                                            Name = name,
+                                            Congregation = congregationId,
+                                            ServiceGroup = serviceGroup,
+                                            Privilege = privilege,
+                                            IsRP = isRP,
+                                            IsCBSOverseer = isCBSOverseer,
+                                            IsCBSAssistant = isCBSAssistant,
+                                            PhoneNumber = phoneNumber,
+                                            Email = email,
+                                            Status = status,
+                                            Notes = notes
+                                        });
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        TempData["DebugError"] += $" | Error reading row: {ex.Message}";
+                                    }
                                 }
-                                catch (Exception ex)
-                                {
-                                    TempData["DebugError"] = $"General Exception in LoadPublishers: {ex.Message}";
-                                }
+
+                                TempData["Debug"] += $" | Total Publishers Loaded: {PublisherList.Count}";
+                            }
+                            else
+                            {
+                                TempData["Debug"] += " | No Data Found";
                             }
                         }
-                        TempData["DebugPublisherListCount"] = $"PublisherList Count: {PublisherList.Count}";
                     }
                 }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Database Error: {ex.Message}";
+                }
+
             }
         }
 
@@ -191,6 +199,8 @@ namespace Khronos4.Pages
                 string privilege = Request.Form["Publisher.Privilege"].ToString().Trim();
                 string notes = Request.Form["Publisher.Notes"].ToString().Trim();
                 bool isRp = Publisher.IsRP; // This will get the boolean value from the dropdown.
+                bool isCBSOverseer = Publisher.IsCBSOverseer;
+                bool isCBSAssistant = Publisher.IsCBSAssistant;
 
                 // Ensure ServiceGroup is an int
                 int serviceGroup = int.TryParse(Request.Form["Publisher.ServiceGroup"], out int sg) ? sg : 0;
@@ -224,6 +234,8 @@ namespace Khronos4.Pages
                     serviceGroup.ToString(),
                     privilege,
                     isRp,
+                    isCBSOverseer,
+                    isCBSAssistant,
                     phoneNumber,
                     email,
                     "Active",
@@ -270,11 +282,13 @@ namespace Khronos4.Pages
                 int serviceGroup = int.TryParse(serviceGroupValue, out int sg) ? sg : 0;
 
                 bool isRp = Request.Form["isRp"] == "true";
+                bool isCBSOverseer = Request.Form["isCBSOverseer"] == "true";
+                bool isCBSAssistant = Request.Form["isCBSAssistant"] == "true";
 
                 var user = HttpContext.User;
                 string userCongregationId = user.Claims.FirstOrDefault(c => c.Type == "Congregation")?.Value;
 
-                await ManagePublisher("EDIT", id, name, userCongregationId, serviceGroup.ToString(), privilege, isRp, phoneNumber, email, status, notes);
+                await ManagePublisher("EDIT", id, name, userCongregationId, serviceGroup.ToString(), privilege, isRp, isCBSOverseer, isCBSAssistant, phoneNumber, email, status, notes);
 
                 TempData["Message"] = "Publisher Info Edited Successfully!";
             }
@@ -303,7 +317,7 @@ namespace Khronos4.Pages
                     return RedirectToPage();
                 }
 
-                await ManagePublisher("DELETE", id, null, null, null, null, false, null, null, null, null);
+                await ManagePublisher("DELETE", id, null, null, null, null, false, false, false, null, null, null, null);
                 TempData["Message"] = "Publisher Deleted Successfully!";
             }
             catch (Exception ex)
@@ -314,7 +328,7 @@ namespace Khronos4.Pages
             return RedirectToPage();
         }
 
-        private async Task ManagePublisher(string action, int? id, string name, string congregation, string serviceGroup, string privilege, bool isRp, string phoneNumber, string email, string status, string notes)
+        private async Task ManagePublisher(string action, int? id, string name, string congregation, string serviceGroup, string privilege, bool isRp, bool isCBSOverseer, bool isCBSAssistant, string phoneNumber, string email, string status, string notes)
         {
             using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
@@ -328,8 +342,10 @@ namespace Khronos4.Pages
                     cmd.Parameters.AddWithValue("@Name", (object)name ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Congregation", (object)congregation ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@ServiceGroup", (object)serviceGroup ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Privilege", string.IsNullOrWhiteSpace(privilege) ? "Brother" : privilege); // ✅ Default to "Brother"
+                    cmd.Parameters.AddWithValue("@Privilege", string.IsNullOrWhiteSpace(privilege) ? "---" : privilege);
                     cmd.Parameters.AddWithValue("@IsRP", isRp);
+                    cmd.Parameters.AddWithValue("@IsCBSOverseer", isCBSOverseer);  
+                    cmd.Parameters.AddWithValue("@IsCBSAssistant", isCBSAssistant); 
                     cmd.Parameters.AddWithValue("@PhoneNumber", (object)phoneNumber ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Email", (object)email ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Status", (object)status ?? DBNull.Value);
