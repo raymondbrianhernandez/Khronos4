@@ -10,6 +10,11 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Text.Json;
+using System.Text;
+using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Office.Word;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace Khronos4.Pages
 {
@@ -49,6 +54,7 @@ namespace Khronos4.Pages
         [BindProperty] public List<string> BrothersList { get; set; } = new List<string>();
 
         /* OCLM Parts to Export to DB */
+        [BindProperty] public List<int> PartIDs { get; set; } = new();
         [BindProperty] public string CongregationName { get; set; }
         [BindProperty] public string SelectedMeetingWeekText { get; set; }
         [BindProperty] public DateTime Date { get; set; }
@@ -68,9 +74,12 @@ namespace Khronos4.Pages
         [BindProperty] public string MiddleSong { get; set; }
         [BindProperty] public List<string> ElderAssignmentText { get; set; }
         [BindProperty] public List<string?> ElderAssignment { get; set; }
-        [BindProperty] public List<string?> CbsReader { get; set; }
+        [BindProperty] public string? CbsReader { get; set; }
         [BindProperty] public string ClosingSong { get; set; }
         [BindProperty] public string? ClosingPrayer { get; set; }
+        [BindProperty] public List<string> AllAssignees { get; set; } = new();
+        [BindProperty] public List<string> AllAssistants { get; set; } = new();
+        [BindProperty] public List<string> Parts { get; set; }
 
         public async Task OnGetAsync(int? year, string meetingUrl = null)
         {
@@ -468,6 +477,23 @@ namespace Khronos4.Pages
                 CongregationName = GetCongregationName(CongregationID.ToString());
                 var midweekTime = await FetchMidweekTimeFromDb();
 
+                // 🔍 Try to load the saved Date (if any) for this week and congregation
+                DateTime? savedDate = null;
+                using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    await conn.OpenAsync();
+
+                    using (var cmd = new SqlCommand(@"SELECT Date FROM CongregationsMidweekDates WHERE CongID = @CongID AND WeekOf = @WeekOf", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@CongID", CongregationID);
+                        cmd.Parameters.AddWithValue("@WeekOf", weekText);
+
+                        var result = await cmd.ExecuteScalarAsync();
+                        if (result != null && result != DBNull.Value)
+                            savedDate = (DateTime)result;
+                    }
+                }
+
                 if (existingParts.Any())
                 {
                     // ✅ Map DB values to the ViewModel
@@ -476,6 +502,7 @@ namespace Khronos4.Pages
                         CongregationName = CongregationName,
                         SelectedMeetingWeekText = weekText,
                         StartTime = midweekTime,
+                        SavedDate = savedDate != default ? savedDate : (DateTime?)null,
                         EldersAndServantsDropdown = EldersAndServantsDropdown,
                         PublishersDropdown = PublishersDropdown,
                         BrothersDropdown = BrothersDropdown,
@@ -520,119 +547,6 @@ namespace Khronos4.Pages
             }
         }
 
-        public async Task<IActionResult> OnPostUpdateMeeting()
-        {
-            if (string.IsNullOrWhiteSpace(SelectedMeetingWeekText))
-            {
-                TempData["Error"] = "Week selection (SelectedMeetingWeekText) cannot be empty.";
-                return RedirectToPage();
-            }
-
-            if (CongregationID == 0)
-            {
-                TempData["Error"] = "CongregationID is missing or invalid. Please log in again.";
-                return RedirectToPage();
-            }
-
-            List<TimeSpan> parsedStartTimes;
-            try
-            {
-                parsedStartTimes = StartTimes.Select(t =>
-                    string.IsNullOrWhiteSpace(t) ? TimeSpan.Zero : TimeSpan.Parse(t)
-                ).ToList();
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = $"StartTimes parsing failed: {ex.Message}";
-                return RedirectToPage();
-            }
-
-            try
-            {
-                var weekOf = SelectedMeetingWeekText;
-                var congID = CongregationID;
-
-                using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-                await connection.OpenAsync();
-
-                var tasks = new List<Task>();
-                int index = 0;
-
-                async Task AddPartAsync(string part, string assignee, string assistant = null, bool useStartTime = true)
-                {
-                    if (string.IsNullOrWhiteSpace(part)) return;
-
-                    var command = new SqlCommand("SaveOCLMParts", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
-
-                    command.Parameters.AddWithValue("@CongID", congID);
-                    command.Parameters.AddWithValue("@WeekOf", weekOf);
-                    command.Parameters.AddWithValue("@StartTime", useStartTime && index < parsedStartTimes.Count ? parsedStartTimes[index] : TimeSpan.Zero);
-                    command.Parameters.AddWithValue("@Part", part);
-                    command.Parameters.AddWithValue("@Assignee", string.IsNullOrWhiteSpace(assignee) ? DBNull.Value : assignee);
-                    command.Parameters.AddWithValue("@Assistant", string.IsNullOrWhiteSpace(assistant) ? DBNull.Value : assistant);
-
-                    tasks.Add(command.ExecuteNonQueryAsync());
-
-                    if (useStartTime) index++;
-                }
-
-                // Order: Weekly Bible Verses
-                await AddPartAsync($"{BibleVerse}", Chairman, useStartTime: false);
-
-                // Opening Song
-                await AddPartAsync(OpeningSong, OpeningPrayer);
-
-                // Opening Comments (1 min)
-                await AddPartAsync("Opening Comments (1 min.)", null);
-
-                // Treasures Talk
-                await AddPartAsync($"{TreasuresTalkPart} (10 min.)", TreasuresTalkSpeaker);
-
-                // Spiritual Gems
-                await AddPartAsync($"{SpiritualGemsPart} (10 min.)", SpiritualGemsSpeaker);
-
-                // Bible Reading
-                await AddPartAsync("Bible Reading (4 min.)", BibleReadingStudent);
-
-                // Student Assignments
-                for (int i = 0; i < StudentPartText.Count; i++)
-                {
-                    string part = $"{StudentPartText[i]} (4 min.)";
-                    await AddPartAsync(part, StudentAssignment[i], StudentAssistant[i]);
-                }
-
-                // Middle Song
-                await AddPartAsync(MiddleSong, null);
-
-                // Elder Assignments
-                for (int i = 0; i < ElderAssignmentText.Count; i++)
-                {
-                    string part = ElderAssignmentText[i];
-                    string assignee = ElderAssignment[i];
-                    string assistant = (part.Contains("Congregation Bible Study") && CbsReader.Count > i) ? CbsReader[i] : null;
-                    await AddPartAsync(part, assignee, assistant);
-                }
-
-                // Closing Song
-                await AddPartAsync(ClosingSong, null);
-
-                // Closing Prayer
-                await AddPartAsync("Closing Prayer", ClosingPrayer);
-
-                await Task.WhenAll(tasks);
-                TempData["Success"] = "Meeting schedule saved successfully!";
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = $"Database error: {ex.Message}";
-            }
-
-            return RedirectToPage();
-        }
-
         public async Task<IActionResult> OnGetCheckMeetingExistsAsync(string weekOf)
         {
             try
@@ -652,6 +566,131 @@ namespace Khronos4.Pages
             {
                 return new JsonResult(new { error = true, message = ex.Message });
             }
+        }
+
+        public async Task<IActionResult> OnPostUpdateMeeting()
+        {
+            var debugLog = new StringBuilder();
+            debugLog.AppendLine("<b>🔍 Payload Sent to Database:</b><br/>");
+
+            if (string.IsNullOrWhiteSpace(SelectedMeetingWeekText))
+            {
+                TempData["Error"] += "⚠️ Week selection cannot be empty.<br/>";
+                return RedirectToPage();
+            }
+
+            if (CongregationID == 0)
+            {
+                TempData["Error"] += "⚠️ CongregationID is missing.<br/>";
+                return RedirectToPage();
+            }
+
+            try
+            {
+                var partIds = Request.Form.Keys.Where(k => k.StartsWith("PartIDs[")).OrderBy(k => k).Select(k => Request.Form[k]).ToList();
+                var parts = Request.Form.Keys.Where(k => k.StartsWith("AllParts[")).OrderBy(k => k).Select(k => Request.Form[k]).ToList();
+                var assignees = Request.Form.Keys.Where(k => k.StartsWith("AllAssignees[")).OrderBy(k => k).Select(k => Request.Form[k]).ToList();
+                var assistants = Request.Form.Keys.Where(k => k.StartsWith("AllAssistants[")).OrderBy(k => k).Select(k => Request.Form[k]).ToList();
+                var startTimes = Request.Form.Keys.Where(k => k.StartsWith("StartTimes[")).OrderBy(k => k).Select(k => Request.Form[k]).ToList();
+
+                int count = parts.Count;
+                debugLog.AppendLine($"🧮 parts.Count = {parts.Count}, startTimes.Count = {startTimes.Count}<br/>");
+
+                if (count == 0)
+                {
+                    TempData["Error"] += $"⚠️ No parts were received from the form.<br/>{debugLog}<br/>";
+                    return RedirectToPage();
+                }
+
+                // Combine all rows into a single list and sort them by StartTime
+                var records = new List<(int ID, string Part, string Assignee, string Assistant, TimeSpan StartTime)>();
+
+                for (int i = 0; i < count; i++)
+                {
+                    int id = int.TryParse(partIds[i], out var parsedId) ? parsedId : 0;
+                    string part = parts[i];
+                    string assignee = assignees[i];
+                    string assistant = assistants[i];
+                    TimeSpan startTime = TimeSpan.TryParse(startTimes[i], out var parsedTime) ? parsedTime : TimeSpan.Zero;
+
+                    records.Add((id, part, assignee, assistant, startTime));
+                }
+
+                // ✅ Sort by StartTime
+                records = records.OrderBy(r => r.StartTime).ToList();
+
+                using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+                await connection.OpenAsync();
+
+                int inserted = 0;
+
+                if (DateTime.TryParse(Request.Form["Date"], out var meetingDate))
+                {
+                    using var dateCmd = new SqlCommand("SaveMidweekDate", connection)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    dateCmd.Parameters.AddWithValue("@CongID", CongregationID);
+                    dateCmd.Parameters.AddWithValue("@WeekOf", SelectedMeetingWeekText);
+                    dateCmd.Parameters.AddWithValue("@Date", meetingDate);
+
+                    await dateCmd.ExecuteNonQueryAsync();
+                    debugLog.AppendLine($"📅 Saved Date {meetingDate:yyyy-MM-dd} for WeekOf '{SelectedMeetingWeekText}'");
+                }
+                else
+                {
+                    debugLog.AppendLine("⚠️ Invalid or missing Date field.");
+                }
+
+                for (int i = 0; i < records.Count; i++)
+                {
+                    var r = records[i];
+
+                    debugLog.AppendLine($"🟢 DB Payload [{i}]: ID={r.ID}, Part='{r.Part}', Assignee='{r.Assignee}', Assistant='{r.Assistant}', StartTime={r.StartTime}<br/>");
+
+                    try
+                    {
+                        using var cmd = new SqlCommand("SaveOCLMParts", connection)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+
+                        cmd.Parameters.AddWithValue("@ID", r.ID);
+                        cmd.Parameters.AddWithValue("@CongID", CongregationID);
+                        cmd.Parameters.AddWithValue("@WeekOf", SelectedMeetingWeekText);
+                        cmd.Parameters.AddWithValue("@StartTime", r.StartTime);
+                        cmd.Parameters.AddWithValue("@Part", string.IsNullOrWhiteSpace(r.Part) ? "_" : r.Part);
+                        cmd.Parameters.AddWithValue("@Assignee", string.IsNullOrWhiteSpace(r.Assignee) ? DBNull.Value : r.Assignee);
+                        cmd.Parameters.AddWithValue("@Assistant", string.IsNullOrWhiteSpace(r.Assistant) ? DBNull.Value : r.Assistant);
+
+                        int rows = await cmd.ExecuteNonQueryAsync();
+                        string operation = r.ID > 0 ? "📝 UPDATE" : "➕ INSERT";
+                        debugLog.AppendLine($"{operation} | Rows affected: {rows}<br/>");
+
+                        inserted += rows;
+                    }
+                    catch (Exception ex)
+                    {
+                        debugLog.AppendLine($"❌ DB Error on row {i}: {ex.Message}<br/>");
+                    }
+                }
+
+                if (inserted > 0)
+                {
+                    TempData["Success"] = $"✅ {inserted} assignment(s) saved successfully.<br/><hr/>{debugLog}";
+                }
+                else
+                {
+                    TempData["Error"] += $"⚠️ No data was saved.<br/><hr/>{debugLog}";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] += $"❌ Critical error: {ex.Message}<br/>";
+            }
+
+            return RedirectToPage();
         }
     }
 }

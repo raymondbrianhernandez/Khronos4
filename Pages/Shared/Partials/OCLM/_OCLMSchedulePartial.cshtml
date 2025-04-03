@@ -55,6 +55,12 @@
         return match.Success ? int.Parse(match.Value) : 0;
     }
 
+    string ExtractMinutesFromPart(string part)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(part ?? "", @"\((\d+)\s*min");
+        return match.Success ? $"{match.Groups[1].Value} min." : "";
+    }
+
     string Sanitize(string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return input;
@@ -100,13 +106,9 @@
         ? existingParts.FirstOrDefault(p => p.StartTime == TimeSpan.Zero && !p.Part.StartsWith("Song", StringComparison.OrdinalIgnoreCase))?.Assignee ?? ""
         : GetValue("Weekly Bible Verses", "Assignee");
 
-    // Opening Prayer: First assignee after first Song
+    // Opening Prayer
     var openingPrayerAssignee = hasExistingData
-        ? existingParts
-            .OrderBy(p => p.StartTime)
-            .SkipWhile(p => !p.Part.StartsWith("Song ", StringComparison.OrdinalIgnoreCase))
-            .Skip(1)
-            .FirstOrDefault(p => !string.IsNullOrEmpty(p.Assignee))?.Assignee ?? ""
+        ? existingParts.FirstOrDefault(p => p.Part == openingSong)?.Assignee ?? ""
         : GetValue("Opening Prayer", "Assignee");
 
     // Closing Prayer
@@ -128,49 +130,39 @@
 
         <!-- Bible Verse + Chairman -->
         <tr>
-            <td><input type="date" name="Date" value="@today" /></td>
+            <td>
+                <input type="date" name="Date"
+                       value="@(Model.SavedDate.HasValue ? Model.SavedDate.Value.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd"))" />
+            </td>
             @{
-                var bibleVerse = hasExistingData
+                var part = hasExistingData
                 ? existingParts.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.Part) && !p.Part.Contains("Song") && p.StartTime == TimeSpan.Zero)?.Part ?? ""
                 : Get("Weekly Bible Verses");
+
+                var display = System.Text.RegularExpressions.Regex.Replace(part, @"\s*\(.*?\)", "").Trim();
+                var id = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == part)?.ID ?? 0
+                : 0;
             }
-            <td>| @Sanitize(bibleVerse)<input type="hidden" name="BibleVerse" value="@Sanitize(bibleVerse)" /></td>
-            <td style="text-align:right;"><small><i>Chairman:</i></small></td>
             <td>
-                <select name="Chairman" class="form-control">
+                | @Sanitize(display)
+                <input type="hidden" name="BibleVerse" value="@Sanitize(part)" />
+
+                <!-- ✅ Required for OnPostUpdateMeeting -->
+                <input type="hidden" name="PartIDs[@index]" value="@id" />
+                <input type="hidden" name="AllAssignees[@index]" value="@chairmanAssignee" data-index="@index" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(part)" />
+                <input type="hidden" name="StartTimes[@index]" value="00:00" />
+            </td>
+            <td style="text-align:right;"><i><small>Chairman:</small></i></td>
+            <td>
+                <select name="Chairman" class="form-control" data-index="@index"Opening Prayer
+                        onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
                     <option value="">Elders/Servants</option>
                     @foreach (var person in Model.EldersAndServantsDropdown)
                     {
-                        <option value="@person.Value" selected="@Selected(person.Value, chairmanAssignee)">@person.Text</option>
-                    }
-                </select>
-            </td>
-        </tr>
-
-        <!-- Opening Song & Prayer -->
-        <tr>
-            <td>
-                @DisplayTime(startTimeMinutes)
-                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
-                @{
-                    var part = openingSong;
-                    var partId = hasExistingData ? existingParts.FirstOrDefault(p => p.Part == part)?.ID ?? 0 : 0;
-                }
-                <input type="hidden" name="PartIDs[@index]" value="@partId" />
-            </td>
-
-            <td>
-                @Sanitize(openingSong)
-                <input type="hidden" name="OpeningSong" value="@Sanitize(openingSong)" />
-            </td>
-
-            <td style="text-align:right;"><small><i>Opening Prayer:</i></small></td>
-            <td>
-                <select name="OpeningPrayer" class="form-control">
-                    <option value="">Elders/Servants</option>
-                    @foreach (var person in Model.EldersAndServantsDropdown)
-                    {
-                        <option value="@person.Value" selected="@Selected(person.Value, openingPrayerAssignee)">
+                        <option value="@person.Value" selected="@Selected(person.Value, chairmanAssignee)">
                             @person.Text
                         </option>
                     }
@@ -178,30 +170,75 @@
             </td>
         </tr>
         @{
-            startTimeMinutes += 3; index++;
+            index++;
+        }
+
+        <!-- Opening Song & Prayer -->
+        <tr>
+            @{
+                var partName1 = openingSong;
+                var partId1 = hasExistingData ? existingParts.FirstOrDefault(p => p.Part == partName1)?.ID ?? 0 : 0;
+            }
+
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                <input type="hidden" name="PartIDs[@index]" value="@partId1" />
+                <input type="hidden" name="AllAssignees[@index]" value="@openingPrayerAssignee" data-index="@index" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(partName1)" />
+            </td>
+
+            <td>
+                • @Sanitize(partName1)
+                <input type="hidden" name="OpeningSong" value="@Sanitize(partName1)" />
+            </td>
+
+            <td style="text-align:right;"><i><small>Opening Prayer:</small></i></td>
+            <td>
+                <select name="OpeningPrayer" class="form-control" data-index="@index"
+                        onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
+                    <option value="">Elders/Servants</option>
+                    @foreach (var p in Model.EldersAndServantsDropdown)
+                    {
+                        <option value="@p.Value" selected="@Selected(p.Value, openingPrayerAssignee)">@p.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        @{
+            startTimeMinutes += 5;
+            index++;
         }
 
         <!-- Opening Comments -->
         <tr>
+            @{
+                var partName2 = "Opening Comments (1 min.)";
+                var partId2 = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part.StartsWith("Opening Comments"))?.ID ?? 0
+                : 0;
+            }
+
             <td>
                 @DisplayTime(startTimeMinutes)
                 <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
-
-                @{
-                    var openingCommentsPartName = "Opening Comments";
-                    var openingCommentsPartId = hasExistingData
-                    ? existingParts.FirstOrDefault(p => p.Part == openingCommentsPartName)?.ID ?? 0
-                    : 0;
-                }
-                <input type="hidden" name="PartIDs[@index]" value="@openingCommentsPartId" />
+                <input type="hidden" name="PartIDs[@index]" value="@partId2" />
+                <input type="hidden" name="AllAssignees[@index]" value="" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(partName2)" />
             </td>
 
-            <td>@openingCommentsPartName <small>(1 min.)</small></td>
+            <td>
+                • @Sanitize("Opening Comments") (1 min.)
+            </td>
+
             <td></td>
             <td></td>
         </tr>
         @{
-            startTimeMinutes += 1; index++;
+            startTimeMinutes += 1;
+            index++;
         }
 
         <!-- TREASURES BANNER -->
@@ -210,120 +247,133 @@
         <!-- TREASURES -->
         <tr>
             @{
-                var treasuresPartName = hasExistingData
-                ? existingParts.FirstOrDefault(p => p.Part.Contains("Inheritance"))?.Part ?? ""
-                : Get("Treasures Talk Part");
+                var rawPart = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part.StartsWith("1."))?.Part ?? ""
+                : $"{Get("Treasures Talk Part")} (10 min.)";
 
-                var treasuresTime = hasExistingData ? "10 min." : Get("Treasures Talk Time");
-                var treasuresAssignee = GetValue(treasuresPartName, "Assignee");
-                var treasuresPartId = hasExistingData
-                ? existingParts.FirstOrDefault(p => p.Part == treasuresPartName)?.ID ?? 0
+                var partId = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == rawPart)?.ID ?? 0
                 : 0;
+
+                var assignee = GetValue(rawPart, "Assignee");
+                var partLabel = System.Text.RegularExpressions.Regex.Replace(rawPart, @"\s*\(.*?\)", "").Trim();
             }
 
             <td>
                 @DisplayTime(startTimeMinutes)
                 <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
-                <input type="hidden" name="PartIDs[@index]" value="@treasuresPartId" />
+                <input type="hidden" name="PartIDs[@index]" value="@partId" />
+                <input type="hidden" name="AllAssignees[@index]" value="@assignee" data-index="@index" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(rawPart)" />
             </td>
 
             <td>
-                @Sanitize(treasuresPartName) <small>@treasuresTime</small>
-                <input type="hidden" name="TreasuresTalkPart" value="@Sanitize(treasuresPartName)" />
+                @Sanitize(partLabel) (10 min.)
             </td>
 
             <td></td>
 
             <td>
-                <select name="TreasuresTalkSpeaker" class="form-control">
+                <select name="TreasuresTalkSpeaker" class="form-control" data-index="@index"
+                        onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
                     <option value="">Elders/Servants</option>
                     @foreach (var p in Model.EldersAndServantsDropdown)
                     {
-                        <option value="@p.Value" selected="@Selected(p.Value, treasuresAssignee)">@p.Text</option>
+                        <option value="@p.Value" selected="@Selected(p.Value, assignee)">@p.Text</option>
                     }
                 </select>
             </td>
         </tr>
         @{
-            startTimeMinutes += ExtractMinutes(Get("Treasures Talk Time"));
+            startTimeMinutes += 10;
             index++;
         }
 
         <!-- SPIRITUAL GEMS -->
         <tr>
             @{
-                var gemsPartName = hasExistingData
+                var spiritualGemsFull = hasExistingData
                 ? existingParts.FirstOrDefault(p => p.Part.StartsWith("2."))?.Part ?? ""
-                : Get("Spiritual Gems Part");
+                : $"{Get("Spiritual Gems Part")} (10 min.)";
 
-                var gemsTime = hasExistingData ? "10 min." : Get("Spiritual Gems Time");
-                var gemsAssignee = GetValue(gemsPartName, "Assignee");
-                var gemsPartId = hasExistingData
-                ? existingParts.FirstOrDefault(p => p.Part == gemsPartName)?.ID ?? 0
+                var spiritualGemsId = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == spiritualGemsFull)?.ID ?? 0
                 : 0;
+
+                var spiritualGemsAssignee = GetValue(spiritualGemsFull, "Assignee");
+                var spiritualGemsLabel = System.Text.RegularExpressions.Regex.Replace(spiritualGemsFull, @"\s*\(.*?\)", "").Trim();
             }
 
             <td>
                 @DisplayTime(startTimeMinutes)
                 <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
-                <input type="hidden" name="PartIDs[@index]" value="@gemsPartId" />
+                <input type="hidden" name="PartIDs[@index]" value="@spiritualGemsId" />
+                <input type="hidden" name="AllAssignees[@index]" value="@spiritualGemsAssignee" data-index="@index" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(spiritualGemsFull)" />
             </td>
 
             <td>
-                @Sanitize(gemsPartName) <small>@gemsTime</small>
-                <input type="hidden" name="SpiritualGemsPart" value="@Sanitize(gemsPartName)" />
+                @Sanitize(spiritualGemsLabel) (10 min.)
             </td>
 
             <td></td>
 
             <td>
-                <select name="SpiritualGemsSpeaker" class="form-control">
+                <select name="SpiritualGemsSpeaker" class="form-control" data-index="@index"
+                        onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
                     <option value="">Elders/Servants</option>
                     @foreach (var p in Model.EldersAndServantsDropdown)
                     {
-                        <option value="@p.Value" selected="@Selected(p.Value, gemsAssignee)">@p.Text</option>
+                        <option value="@p.Value" selected="@Selected(p.Value, spiritualGemsAssignee)">@p.Text</option>
                     }
                 </select>
             </td>
         </tr>
         @{
-            startTimeMinutes += ExtractMinutes(Get("Spiritual Gems Time"));
+            startTimeMinutes += 10;
             index++;
         }
 
         <!-- Bible Reading -->
         <tr>
             @{
-                var bibleReadingPartName = hasExistingData
-                ? existingParts.FirstOrDefault(p => p.Part.StartsWith("Bible Reading"))?.Part ?? "Bible Reading"
-                : "Bible Reading";
+                var bibleReadingFull = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part.StartsWith("3. Bible Reading"))?.Part ?? "3. Bible Reading (4 min.)"
+                : "3. Bible Reading (4 min.)";
 
-                var bibleReader = GetValue(bibleReadingPartName, "Assignee");
-
-                var bibleReadingPartId = hasExistingData
-                ? existingParts.FirstOrDefault(p => p.Part == bibleReadingPartName)?.ID ?? 0
+                var bibleReadingId = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == bibleReadingFull)?.ID ?? 0
                 : 0;
+
+                var bibleReadingAssignee = GetValue(bibleReadingFull, "Assignee");
+                var bibleReadingLabel = "3. Bible Reading";
+                var bibleReadingTime = "(4 min.)";
             }
 
             <td>
                 @DisplayTime(startTimeMinutes)
                 <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
-                <input type="hidden" name="PartIDs[@index]" value="@bibleReadingPartId" />
+                <input type="hidden" name="PartIDs[@index]" value="@bibleReadingId" />
+                <input type="hidden" name="AllAssignees[@index]" value="@bibleReadingAssignee" data-index="@index" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(bibleReadingFull)" />
             </td>
 
             <td>
-                Bible Reading <small>(4 min.)</small>
-                <input type="hidden" name="BibleReadingPart" value="Bible Reading" />
+                @Sanitize(bibleReadingLabel) @bibleReadingTime
             </td>
 
             <td></td>
 
             <td>
-                <select name="BibleReadingStudent" class="form-control">
+                <select name="BibleReadingStudent" class="form-control" data-index="@index"
+                        onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
                     <option value="">Brothers</option>
                     @foreach (var b in Model.BrothersDropdown)
                     {
-                        <option value="@b.Value" selected="@Selected(b.Value, bibleReader)">@b.Text</option>
+                        <option value="@b.Value" selected="@Selected(b.Value, bibleReadingAssignee)">@b.Text</option>
                     }
                 </select>
             </td>
@@ -337,77 +387,149 @@
         <tr><td colspan="5" style="background:gold;color:white;">APPLY YOURSELF TO THE FIELD MINISTRY</td></tr>
 
         <!-- STUDENTS -->
-        @for (int i = 4; i <= 8; i++)
+        @{
+            int i = 4;
+            int studentIndex = 0;
+        }
+
+        @if (hasExistingData)
         {
-            string studentPartText = "";
-            string studentTimeText = "";
-            string studentAssignee = "";
-            string studentAssistant = "";
-            int studentPartId = 0;
+            bool startStudentParts = false;
 
-            if (hasExistingData)
+            var ordered = existingParts
+            .OrderBy(p => p.StartTime)
+            .Where(p => !string.IsNullOrWhiteSpace(p.Part))
+            .ToList();
+
+            foreach (var item in ordered)
             {
-                var dbStudentPart = existingParts.FirstOrDefault(p => p.Part.StartsWith($"{i}."));
-                if (dbStudentPart == null) continue;
+                var studentFull = item.Part;
 
-                studentPartText = dbStudentPart.Part;
-                studentAssignee = dbStudentPart.Assignee;
-                studentAssistant = dbStudentPart.Assistant;
-                studentTimeText = "4 min."; // fallback default
-                studentPartId = dbStudentPart.ID;
-            }
-            else
-            {
-                studentPartText = Get($"Student Assignment {i - 3} Part");  // 4 maps to 1, etc.
-                studentTimeText = Get($"Student Assignment {i - 3} Time");
-
-                if (string.IsNullOrWhiteSpace(studentPartText)) continue;
-
-                studentAssignee = GetValue(studentPartText, "Assignee");
-                studentAssistant = GetValue(studentPartText, "Assistant");
-            }
-
-            <tr>
-                <td>
-                    @DisplayTime(startTimeMinutes)
-                    <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
-                </td>
-
-                @if (hasExistingData)
+                if (!startStudentParts)
                 {
-                    <input type="hidden" name="PartIDs[@index]" value="@studentPartId" />
+                    if (studentFull.StartsWith("3. Bible Reading", StringComparison.OrdinalIgnoreCase))
+                    {
+                        startStudentParts = true;
+                        continue;
+                    }
+                    continue;
                 }
 
-                <td>
-                    @Sanitize(studentPartText) <small>@studentTimeText</small>
-                    <input type="hidden" name="StudentPartText[@(i - 4)]" value="@Sanitize(studentPartText)" />
-                </td>
+                if (studentFull.StartsWith("Song", StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
 
-                <td></td>
+                var studentTime = ExtractMinutesFromPart(studentFull);
+                var studentAssignee = item.Assignee ?? "";
+                var studentAssistant = item.Assistant ?? "";
+                var studentId = item.ID;
+                var studentFullWithTime = $"{studentFull} {studentTime}".Trim();
 
-                <td>
-                    <select name="StudentAssignment[@(i - 4)]" class="form-control">
-                        <option value="">Students</option>
-                        @foreach (var p in Model.PublishersDropdown)
-                        {
-                            <option value="@p.Value" selected="@Selected(p.Value, studentAssignee)">@p.Text</option>
-                        }
-                    </select>
-                </td>
+                <tr>
+                    <td>
+                        @DisplayTime(startTimeMinutes)
+                        <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                        <input type="hidden" name="PartIDs[@index]" value="@studentId" />
+                        <input type="hidden" name="AllAssignees[@index]" value="@studentAssignee" data-index="@index" />
+                        <input type="hidden" name="AllAssistants[@index]" value="@studentAssistant" data-index="@index" />
+                        <input type="hidden" name="AllParts[@index]" value="@studentFullWithTime" />
+                    </td>
 
-                <td>
-                    <select name="StudentAssistant[@(i - 4)]" class="form-control">
-                        <option value="">Assistants</option>
-                        @foreach (var p in Model.PublishersDropdown)
-                        {
-                            <option value="@p.Value" selected="@Selected(p.Value, studentAssistant)">@p.Text</option>
-                        }
-                    </select>
-                </td>
-            </tr>
+                    <td>
+                        @Sanitize(studentFull)
+                        <input type="hidden" name="StudentPartText[@studentIndex]" value="@Sanitize(studentFull)" />
+                    </td>
 
-            startTimeMinutes += 4;
-            index++;
+                    <td></td>
+
+                    <td>
+                        <select name="StudentAssignment[@studentIndex]" class="form-control" data-index="@index"
+                                onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
+                            <option value="">Students</option>
+                            @foreach (var p in Model.PublishersDropdown)
+                            {
+                                <option value="@p.Value" selected="@Selected(p.Value, studentAssignee)">@p.Text</option>
+                            }
+                        </select>
+                    </td>
+
+                    <td>
+                        <select name="StudentAssistant[@studentIndex]" class="form-control" data-index="@index"
+                                onchange="document.querySelector(`input[name='AllAssistants[@index]']`).value = this.value;">
+                            <option value="">Assistants</option>
+                            @foreach (var p in Model.PublishersDropdown)
+                            {
+                                <option value="@p.Value" selected="@Selected(p.Value, studentAssistant)">@p.Text</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+
+                startTimeMinutes += ExtractMinutes(studentTime);
+                index++;
+                studentIndex++;
+            }
+        }
+        else
+        {
+            while (true)
+            {
+                var studentLabel = Get($"Student Assignment {i - 3} Part");
+                var studentTime = Get($"Student Assignment {i - 3} Time");
+
+                if (string.IsNullOrWhiteSpace(studentLabel)) break;
+                if ((studentLabel.Contains("Song ") || studentLabel.Contains("Song ")) && string.IsNullOrWhiteSpace(studentTime)) break;
+
+                var studentAssignee = GetValue(studentLabel, "Assignee");
+                var studentAssistant = GetValue(studentLabel, "Assistant");
+                var studentFullWithTime = $"{studentLabel} {studentTime}".Trim();
+
+                <tr>
+                    <td>
+                        @DisplayTime(startTimeMinutes)
+                        <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                        <input type="hidden" name="PartIDs[@index]" value="0" />
+                        <input type="hidden" name="AllAssignees[@index]" value="@studentAssignee" data-index="@index" />
+                        <input type="hidden" name="AllAssistants[@index]" value="@studentAssistant" data-index="@index" />
+                        <input type="hidden" name="AllParts[@index]" value="@studentFullWithTime" />
+                    </td>
+
+                    <td>
+                        @Sanitize(studentLabel) @studentTime
+                        <input type="hidden" name="StudentPartText[@studentIndex]" value="@Sanitize(studentLabel)" />
+                    </td>
+
+                    <td></td>
+
+                    <td>
+                        <select name="StudentAssignment[@studentIndex]" class="form-control" data-index="@index"
+                                onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
+                            <option value="">Students</option>
+                            @foreach (var p in Model.PublishersDropdown)
+                            {
+                                <option value="@p.Value" selected="@Selected(p.Value, studentAssignee)">@p.Text</option>
+                            }
+                        </select>
+                    </td>
+
+                    <td>
+                        <select name="StudentAssistant[@studentIndex]" class="form-control" data-index="@index"
+                                onchange="document.querySelector(`input[name='AllAssistants[@index]']`).value = this.value;">
+                            <option value="">Assistants</option>
+                            @foreach (var p in Model.PublishersDropdown)
+                            {
+                                <option value="@p.Value" selected="@Selected(p.Value, studentAssistant)">@p.Text</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+
+                startTimeMinutes += ExtractMinutes(studentTime);
+                index++;
+                studentIndex++;
+                i++;
+            }
         }
 
         <!-- LIVING AS CHRISTIANS BANNER -->
@@ -415,21 +537,24 @@
 
         <!-- Middle Song Row -->
         <tr>
+            @{
+                var song = middleSong;
+                var songId = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == song)?.ID ?? 0
+                : 0;
+            }
             <td>
                 @DisplayTime(startTimeMinutes)
                 <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                <input type="hidden" name="PartIDs[@index]" value="@songId" />
+                <input type="hidden" name="AllAssignees[@index]" value="" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(song)" />
             </td>
 
-            @if (hasExistingData)
-            {
-                var middleSongPart = middleSong;
-                var middleSongPartId = existingParts.FirstOrDefault(p => p.Part == middleSongPart)?.ID ?? 0;
-                <input type="hidden" name="PartIDs[@index]" value="@middleSongPartId" />
-            }
-
             <td>
-                @Sanitize(middleSong)
-                <input type="hidden" name="MiddleSong" value="@Sanitize(middleSong)" />
+                • @Sanitize(song)
+                <input type="hidden" name="MiddleSong" value="@Sanitize(song)" />
             </td>
         </tr>
         @{
@@ -437,98 +562,213 @@
             index++;
         }
 
-        <!-- Elder Parts -->
-        @for (int i = 7; i <= 11; i++)
+        <!-- ELDER ASSIGNMENTS -->
+        @{
+            int elderIndex = 0;
+            bool startElderParts = false;
+        }
+
+        @if (hasExistingData)
         {
-            string elderPart = "";
-            string time = "";
-            string assignee = "";
-            string assistant = "";
+            var orderedParts = existingParts
+            .OrderBy(p => p.StartTime)
+            .Where(p => !string.IsNullOrWhiteSpace(p.Part))
+            .ToList();
 
-            if (hasExistingData)
+            foreach (var assignment in orderedParts)
             {
-                var dbPart = existingParts.FirstOrDefault(p => p.Part.StartsWith($"{i}.")); // Match 7., 8., etc.
-                if (dbPart == null) continue;
+                var elderTitle = assignment.Part;
 
-                elderPart = dbPart.Part;
-                assignee = dbPart.Assignee;
-                assistant = dbPart.Assistant;
-                time = elderPart.Contains("Congregation Bible Study") ? "30 min." : ""; // Optional: adjust per real data
-            }
-            else
-            {
-                elderPart = Get($"Elder Assignment {i - 6} Part");
-                time = Get($"Elder Assignment {i - 6} Time");
-                if (string.IsNullOrWhiteSpace(elderPart)) continue;
-
-                assignee = GetValue(elderPart, "Assignee");
-                assistant = GetValue(elderPart, "Assistant");
-            }
-
-            <tr>
-                <td>@DisplayTime(startTimeMinutes)<input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" /></td>
-
-                @if (hasExistingData)
+                if (!startElderParts)
                 {
-                    var elderPartId = existingParts.FirstOrDefault(p => p.Part == elderPart)?.ID ?? 0;
-                    <input type="hidden" name="PartIDs[@index]" value="@elderPartId" />
+                    if (elderTitle.Equals(middleSong, StringComparison.OrdinalIgnoreCase))
+                        startElderParts = true;
+
+                    continue;
                 }
 
-                <td>@Sanitize(elderPart) @time <input type="hidden" name="ElderAssignmentText[@(i - 7)]" value="@Sanitize(elderPart)" /></td>
-                <td></td>
-                <td>
-                    <select name="ElderAssignment[@(i - 7)]" class="form-control">
-                        <option value="">Elders/Servants</option>
-                        @foreach (var p in Model.EldersAndServantsDropdown)
-                        {
-                            <option value="@p.Value" selected="@Selected(p.Value, assignee)">@p.Text</option>
-                        }
-                    </select>
-                </td>
-                <td>
-                    @if (elderPart.Contains("Congregation Bible Study"))
-                    {
-                        <select name="CbsReader[@(i - 7)]" class="form-control">
-                            <option value="">Readers</option>
+                if (elderTitle.StartsWith("Concluding Comments", StringComparison.OrdinalIgnoreCase))
+                    break;
+
+                var elderId = assignment.ID;
+                var elderTimeText = ExtractMinutesFromPart(elderTitle);
+                var elderAssignee = assignment.Assignee ?? "";
+                var elderAssistant = assignment.Assistant ?? "";
+                var fullWithTime = $"{elderTitle} {elderTimeText}".Trim();
+
+                <tr>
+                    <td>
+                        @DisplayTime(startTimeMinutes)
+                        <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                        <input type="hidden" name="PartIDs[@index]" value="@elderId" />
+                        <input type="hidden" name="AllAssignees[@index]" value="@elderAssignee" data-index="@index" />
+                        <input type="hidden" name="AllAssistants[@index]" value="@elderAssistant" data-index="@index" />
+                        <input type="hidden" name="AllParts[@index]" value="@fullWithTime" />
+                    </td>
+
+                    <td>
+                        @Sanitize(elderTitle)
+                        <input type="hidden" name="ElderAssignmentText[@elderIndex]" value="@Sanitize(elderTitle)" />
+                    </td>
+
+                    <td></td>
+
+                    <td>
+                        <select name="ElderAssignment[@elderIndex]" class="form-control" data-index="@index"
+                                onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
+                            <option value="">Elders/Servants</option>
                             @foreach (var p in Model.EldersAndServantsDropdown)
                             {
-                                <option value="@p.Value" selected="@Selected(p.Value, assistant)">@p.Text</option>
+                                <option value="@p.Value" selected="@Selected(p.Value, elderAssignee)">@p.Text</option>
                             }
                         </select>
-                    }
-                </td>
-            </tr>
+                    </td>
 
-            startTimeMinutes += elderPart.Contains("Congregation Bible Study") ? 30 : ExtractMinutes(time);
+                    <td>
+                        @if (elderTitle.Contains("Congregation Bible Study"))
+                        {
+                            <select name="CbsReader" class="form-control" data-index="@index"
+                                    onchange="document.querySelector(`input[name='AllAssistants[@index]']`).value = this.value;">
+                                <option value="">Readers</option>
+                                @foreach (var p in Model.EldersAndServantsDropdown)
+                                {
+                                    <option value="@p.Value" selected="@Selected(p.Value, elderAssistant)">@p.Text</option>
+                                }
+                            </select>
+                        }
+                    </td>
+                </tr>
+
+                startTimeMinutes += elderTitle.Contains("Congregation Bible Study") ? 30 : ExtractMinutes(elderTimeText);
+                index++;
+                elderIndex++;
+            }
+        }
+        else
+        {
+            while (true)
+            {
+                var elderTitle = Get($"Elder Assignment {elderIndex + 1} Part");
+                var elderTime = Get($"Elder Assignment {elderIndex + 1} Time");
+                if (string.IsNullOrWhiteSpace(elderTitle)) break;
+
+                var elderAssignee = GetValue(elderTitle, "Assignee");
+                var elderAssistant = GetValue(elderTitle, "Assistant");
+                var fullWithTime = $"{elderTitle} {elderTime}".Trim();
+
+                <tr>
+                    <td>
+                        @DisplayTime(startTimeMinutes)
+                        <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                        <input type="hidden" name="PartIDs[@index]" value="0" />
+                        <input type="hidden" name="AllAssignees[@index]" value="@elderAssignee" data-index="@index" />
+                        <input type="hidden" name="AllAssistants[@index]" value="@elderAssistant" data-index="@index" />
+                        <input type="hidden" name="AllParts[@index]" value="@fullWithTime" />
+                    </td>
+
+                    <td>
+                        @Sanitize(elderTitle) @elderTime
+                        <input type="hidden" name="ElderAssignmentText[@elderIndex]" value="@Sanitize(elderTitle)" />
+                    </td>
+
+                    <td></td>
+
+                    <td>
+                        <select name="ElderAssignment[@elderIndex]" class="form-control" data-index="@index"
+                                onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
+                            <option value="">Elders/Servants</option>
+                            @foreach (var p in Model.EldersAndServantsDropdown)
+                            {
+                                <option value="@p.Value" selected="@Selected(p.Value, elderAssignee)">@p.Text</option>
+                            }
+                        </select>
+                    </td>
+
+                    <td>
+                        @if (elderTitle.Contains("Congregation Bible Study"))
+                        {
+                            <select name="CbsReader" class="form-control" data-index="@index"
+                                    onchange="document.querySelector(`input[name='AllAssistants[@index]']`).value = this.value;">
+                                <option value="">Readers</option>
+                                @foreach (var p in Model.EldersAndServantsDropdown)
+                                {
+                                    <option value="@p.Value" selected="@Selected(p.Value, elderAssistant)">@p.Text</option>
+                                }
+                            </select>
+                        }
+                    </td>
+                </tr>
+
+                startTimeMinutes += elderTitle.Contains("Congregation Bible Study") ? 30 : ExtractMinutes(elderTime);
+                index++;
+                elderIndex++;
+            }
+        }
+
+        <!-- Concluding Comments -->
+        <tr>
+            @{
+                var closingPart = "Concluding Comments (3 min.)";
+                var closingPartId2 = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part.StartsWith("Concluding Comments"))?.ID ?? 0
+                : 0;
+            }
+
+            <td>
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                <input type="hidden" name="PartIDs[@index]" value="@closingPartId2" />
+                <input type="hidden" name="AllAssignees[@index]" value="" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(closingPart)" />
+            </td>
+
+            <td>
+                • @Sanitize("Concluding Comments") (3 min.)
+            </td>
+
+            <td></td>
+            <td></td>
+        </tr>
+        @{
+            startTimeMinutes += 3;
             index++;
         }
 
         <!-- Closing Song + Prayer -->
         <tr>
-            <td>
-                @DisplayTime(startTimeMinutes)
-                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
-            </td>
-
-            @if (hasExistingData)
-            {
-                var closingPart = closingSong;
-                var closingPartId = existingParts.FirstOrDefault(p => p.Part == closingPart)?.ID ?? 0;
-                <input type="hidden" name="PartIDs[@index]" value="@closingPartId" />
+            @* Final Part: Closing Song & Closing Prayer *@
+            @{
+                var closingTitle = closingSong;
+                var closingId = hasExistingData ? existingParts.FirstOrDefault(p => p.Part == closingTitle)?.ID ?? 0 : 0;
+                var closingAssignee = hasExistingData
+                ? existingParts.FirstOrDefault(p => p.Part == closingTitle)?.Assignee ?? ""
+                : closingPrayerAssignee;
             }
 
             <td>
-                @Sanitize(closingSong)
-                <input type="hidden" name="ClosingSong" value="@Sanitize(closingSong)" />
+                @DisplayTime(startTimeMinutes)
+                <input type="hidden" name="StartTimes[@index]" value="@SubmitTime(startTimeMinutes)" />
+                <input type="hidden" name="PartIDs[@index]" value="@closingId" />
+                <input type="hidden" name="AllAssignees[@index]" value="@closingAssignee" data-index="@index" />
+                <input type="hidden" name="AllAssistants[@index]" value="" />
+                <input type="hidden" name="AllParts[@index]" value="@Sanitize(closingTitle)" />
             </td>
 
-            <td style="text-align:right;"><small><i>Closing Prayer:</i></small></td>
             <td>
-                <select name="ClosingPrayer" class="form-control">
+                • @Sanitize(closingTitle)
+                <input type="hidden" name="ClosingSong" value="@Sanitize(closingTitle)" />
+            </td>
+
+            <td style="text-align:right;"><i><small>Closing Prayer:</small></i></td>
+
+            <td>
+                <select name="ClosingPrayer" class="form-control" data-index="@index"
+                        onchange="document.querySelector(`input[name='AllAssignees[@index]']`).value = this.value;">
                     <option value="">Elders/Servants</option>
                     @foreach (var p in Model.EldersAndServantsDropdown)
                     {
-                        <option value="@p.Value" selected="@Selected(p.Value, closingPrayerAssignee)">@p.Text</option>
+                        <option value="@p.Value" selected="@Selected(p.Value, closingAssignee)">@p.Text</option>
                     }
                 </select>
             </td>
@@ -539,6 +779,61 @@
         }
 
     </table>
-
     <center><button type="submit" style="margin:20px;">Save All Assignments</button></center>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+
+        if (form) {
+            form.addEventListener('submit', function () {
+                document.querySelectorAll('select').forEach(select => {
+                    const index = select.dataset.index;
+                    if (!index) {
+                        console.warn(`⛔ Missing data-index on: ${select.name}`);
+                        return;
+                    }
+
+                    // 🔁 Log the select and value
+                    console.log(`🔄 Syncing: ${select.name} [${index}] = ${select.value}`);
+
+                    // Update Assignee
+                    if (
+                        select.name.startsWith('Chairman') ||
+                        select.name.startsWith('OpeningPrayer') ||
+                        select.name.startsWith('TreasuresTalkSpeaker') ||
+                        select.name.startsWith('SpiritualGemsSpeaker') ||
+                        select.name.startsWith('BibleReadingStudent') ||
+                        select.name.startsWith('StudentAssignment') ||
+                        select.name.startsWith('ElderAssignment') ||
+                        select.name.startsWith('ClosingPrayer')
+                    ) {
+                        const hiddenAssignee = document.querySelector(`input[name="AllAssignees[${index}]"]`);
+                        if (hiddenAssignee) {
+                            hiddenAssignee.value = select.value;
+                            console.log(`✅ Updated AllAssignees[${index}] = ${select.value}`);
+                        } else {
+                            console.warn(`❌ AllAssignees[${index}] not found`);
+                        }
+                    }
+
+                    // Update Assistant
+                    if (
+                        select.name.startsWith('StudentAssistant') ||
+                        select.name.startsWith('CbsReader')
+                    ) {
+                        const hiddenAssistant = document.querySelector(`input[name="AllAssistants[${index}]"]`);
+                        if (hiddenAssistant) {
+                            hiddenAssistant.value = select.value;
+                            console.log(`✅ Updated AllAssistants[${index}] = ${select.value}`);
+                        } else {
+                            console.warn(`❌ AllAssistants[${index}] not found`);
+                        }
+                    }
+                });
+            });
+        }
+    });
+</script>
+

@@ -7,16 +7,12 @@
       "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\shared\\partials\\oclm\\_oclmschedulepartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\models\\oclmscheduleviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:models\\oclmscheduleviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\oclmmanager.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:pages\\oclmmanager.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\models\\oclmpart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:models\\oclmpart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\models\\oclmscheduleviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|solutionrelative:models\\oclmscheduleviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{696809B6-CF81-4C18-8704-5D40E354BC01}|Khronos4.csproj|c:\\users\\owner\\source\\repos\\khronos4\\pages\\oclmmanager.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -38,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -50,39 +46,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "OCLMPart.cs",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\OCLMPart.cs",
-              "RelativeDocumentMoniker": "Models\\OCLMPart.cs",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\OCLMPart.cs",
-              "RelativeToolTip": "Models\\OCLMPart.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T05:54:57.588Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "OCLMScheduleViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\OCLMScheduleViewModel.cs",
-              "RelativeDocumentMoniker": "Models\\OCLMScheduleViewModel.cs",
-              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\OCLMScheduleViewModel.cs",
-              "RelativeToolTip": "Models\\OCLMScheduleViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAA3AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T17:19:18.155Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "_OCLMSchedulePartial.cshtml",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Shared\\Partials\\OCLM\\_OCLMSchedulePartial.cshtml",
               "RelativeDocumentMoniker": "Pages\\Shared\\Partials\\OCLM\\_OCLMSchedulePartial.cshtml",
               "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\Shared\\Partials\\OCLM\\_OCLMSchedulePartial.cshtml*",
               "RelativeToolTip": "Pages\\Shared\\Partials\\OCLM\\_OCLMSchedulePartial.cshtml*",
-              "ViewState": "AgIAAPMBAAAAAAAAAAAzwJABAAARAAAAAAAAAA==",
+              "ViewState": "AgIAADgCAAAAAAAAAAAjwFECAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-03-21T16:31:03.03Z",
               "EditorCaption": ""
@@ -90,32 +60,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "OCLMScheduleViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\OCLMScheduleViewModel.cs",
+              "RelativeDocumentMoniker": "Models\\OCLMScheduleViewModel.cs",
+              "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Models\\OCLMScheduleViewModel.cs",
+              "RelativeToolTip": "Models\\OCLMScheduleViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T21:05:54.775Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "OCLMManager.cshtml.cs",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OCLMManager.cshtml.cs",
               "RelativeDocumentMoniker": "Pages\\OCLMManager.cshtml.cs",
               "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OCLMManager.cshtml.cs",
               "RelativeToolTip": "Pages\\OCLMManager.cshtml.cs",
-              "ViewState": "AgIAAOgBAAAAAAAAAAAzwMYBAAA6AAAAAAAAAA==",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAjwD0AAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-19T05:12:30.118Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "OCLMManager.cshtml",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OCLMManager.cshtml",
               "RelativeDocumentMoniker": "Pages\\OCLMManager.cshtml",
               "ToolTip": "C:\\Users\\Owner\\source\\repos\\Khronos4\\Pages\\OCLMManager.cshtml",
               "RelativeToolTip": "Pages\\OCLMManager.cshtml",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAxwHkAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwDsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-03-19T05:08:01.089Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "site.css",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
@@ -128,7 +111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "site.js",
               "DocumentMoniker": "C:\\Users\\Owner\\source\\repos\\Khronos4\\wwwroot\\js\\site.js",
               "RelativeDocumentMoniker": "wwwroot\\js\\site.js",

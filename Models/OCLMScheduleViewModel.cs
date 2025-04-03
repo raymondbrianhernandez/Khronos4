@@ -16,6 +16,7 @@ namespace Khronos4.Models
         public List<OCLMPart>? ExistingParts { get; set; }
         public string ExistingWeekText { get; set; }
         public bool IsFromDatabase { get; set; }
+        public DateTime? SavedDate { get; set; }
 
         [BindProperty]
         public List<int> PartIDs { get; set; } = new();
